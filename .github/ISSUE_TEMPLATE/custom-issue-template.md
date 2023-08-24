@@ -1,9 +1,9 @@
 ---
 name: Custom Issue Template
-about: 이슈 목적
+about: 기본 이슈 템플릿
 title: 이슈 제목
-labels: 문서
-assignees: pia2011
+labels: ''
+assignees: ''
 
 ---
 
