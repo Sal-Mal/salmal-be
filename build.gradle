@@ -90,18 +90,12 @@ bootJar {
 
 
 // QueryDSL
-def generated = 'src/main/generated'
-
-tasks.withType(JavaCompile) {
-	options.getGeneratedSourceOutputDirectory().set(file(generated))
-}
+def querydslSrcDir = 'src/main/generated'
 
 sourceSets {
-	main.java.srcDirs += [ generated ]
+	main {
+		java {
+			srcDirs = ['src/main/java', querydslSrcDir]
+		}
+	}
 }
-
-clean {
-	delete file(generated)
-}
-
-
