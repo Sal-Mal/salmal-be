@@ -1,0 +1,3 @@
+[submodule "BE-SECURITY"]
+	path = src/src/main/resources/BE-SECURITY
+	url = https://github.com/Sal-Mal/BE-SECURITY
