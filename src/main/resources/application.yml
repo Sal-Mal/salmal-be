@@ -2,7 +2,7 @@ spring:
   config:
     activate:
       on-profile: local
-    import: "classpath:application-local.yml"
+    import: "classpath:BE-SECURITY/application-local.yml"
 
 ---
 
@@ -10,7 +10,7 @@ spring:
   config:
     activate:
       on-profile: dev
-    import: "classpath:application-dev.yml"
+    import: "classpath:BE-SECURITY/application-dev.yml"
 
 ---
 
@@ -18,4 +18,4 @@ spring:
   config:
     activate:
       on-profile: prod
-    import: "classpath:application-prod.yml"
+    import: "classpath:BE-SECURITY/application-prod.yml"
