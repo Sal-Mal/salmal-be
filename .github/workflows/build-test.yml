@@ -1,8 +1,6 @@
 name: CI 빌드 테스트 자동화
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
