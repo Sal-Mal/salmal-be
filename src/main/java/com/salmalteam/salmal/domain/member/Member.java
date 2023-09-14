@@ -1,10 +1,7 @@
 package com.salmalteam.salmal.domain.member;
 
 import com.salmalteam.salmal.domain.BaseEntity;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -19,19 +16,36 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "provider_id", nullable = false)
+    private String providerId;
+
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
     @Embedded
     private NickName nickName;
 
     @Embedded
+    private Setting setting;
+
+    @Embedded
     private MemberImage memberImage;
 
-    private Member(final NickName nickName, final MemberImage memberImage){
-        this.nickName = nickName;
-        this.memberImage = memberImage;
+    @Builder(access = AccessLevel.PRIVATE)
+    private Member(final String providerId, final String nickName, final String provider, final Boolean marketingInformationConsent){
+        this.providerId = providerId;
+        this.nickName = NickName.from(nickName);
+        this.memberImage = MemberImage.initMemberImage();
+        this.provider = Provider.from(provider);
+        this.setting = Setting.of(marketingInformationConsent);
     }
-
-    public static Member of(final NickName nickName, final MemberImage memberImage){
-        return new Member(nickName, memberImage);
+    public static Member of(final String providerId, final String nickName, final String provider, final Boolean marketingInformationConsent){
+        return Member.builder()
+                .providerId(providerId)
+                .nickName(nickName)
+                .provider(provider)
+                .marketingInformationConsent(marketingInformationConsent)
+                .build();
     }
 
 }
