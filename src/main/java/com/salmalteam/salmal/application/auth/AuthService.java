@@ -1,15 +1,18 @@
 package com.salmalteam.salmal.application.auth;
 
 import com.salmalteam.salmal.application.member.MemberService;
+import com.salmalteam.salmal.domain.auth.LogoutAccessToken;
 import com.salmalteam.salmal.domain.auth.RefreshToken;
 import com.salmalteam.salmal.domain.auth.TokenRepository;
 import com.salmalteam.salmal.dto.request.LoginRequest;
+import com.salmalteam.salmal.dto.request.LogoutRequest;
 import com.salmalteam.salmal.dto.request.SignUpRequest;
 import com.salmalteam.salmal.dto.response.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @Slf4j
 @Service
@@ -39,6 +42,15 @@ public class AuthService {
         tokenRepository.saveRefreshToken(RefreshToken.of(refreshToken, refreshTokenExpiry));
 
         return LoginResponse.of(accessToken, refreshToken);
+    }
+
+    @Transactional
+    public void logout(final String accessToken, final LogoutRequest logoutRequest){
+        final String refreshToken = logoutRequest.getRefreshToken();
+        final Long accessTokenExpiry = tokenProvider.getTokenExpiry(accessToken);
+
+        tokenRepository.saveLogoutAccessToken(LogoutAccessToken.of(accessToken, accessTokenExpiry));
+        tokenRepository.deleteRefreshTokenById(refreshToken);
     }
 
 }
