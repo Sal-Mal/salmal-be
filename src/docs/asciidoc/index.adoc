@@ -1,0 +1,48 @@
+= 살말 프로젝트 API DOCS
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs // 문서에 표기되는 코드들의 하이라이팅을 highlightjs를 사용
+:toc: left // toc (Table Of Contents)를 문서의 좌측에 두기
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+== AUTH API
+
+=== 📌 로그인
+==== 기본정보
+- 메서드 : POST
+- URL : `/api/auth/login`
+
+==== 요청
+===== 본문
+include::{snippets}/auth-controller-test/로그인을_한다/request-fields.adoc[]
+==== 응답
+===== 본문
+include::{snippets}/auth-controller-test/로그인을_한다/response-fields.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/auth-controller-test/로그인을_한다/http-request.adoc[]
+===== 응답
+include::{snippets}/auth-controller-test/로그인을_한다/http-response.adoc[]
+
+---
+
+=== 📌 회원가입
+==== 기본정보
+- 메서드 : POST
+- URL : `/api/auth/signup/{provider}`
+
+==== 요청
+===== 경로 변수
+include::{snippets}/auth-controller-test/회원가입을_한다/path-parameters.adoc[]
+===== 본문
+include::{snippets}/auth-controller-test/회원가입을_한다/request-fields.adoc[]
+==== 응답
+===== 본문
+include::{snippets}/auth-controller-test/회원가입을_한다/response-fields.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/auth-controller-test/회원가입을_한다/http-request.adoc[]
+===== 응답
+include::{snippets}/auth-controller-test/회원가입을_한다/http-response.adoc[]
