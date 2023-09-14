@@ -16,15 +16,15 @@
 
 ==== 요청
 ===== 본문
-include::{snippets}/auth-controller-test/로그인을_한다/request-fields.adoc[]
+include::{snippets}/auth-controller-test/로그인/request-fields.adoc[]
 ==== 응답
 ===== 본문
-include::{snippets}/auth-controller-test/로그인을_한다/response-fields.adoc[]
+include::{snippets}/auth-controller-test/로그인/response-fields.adoc[]
 ==== 예시
 ===== 요청
-include::{snippets}/auth-controller-test/로그인을_한다/http-request.adoc[]
+include::{snippets}/auth-controller-test/로그인/http-request.adoc[]
 ===== 응답
-include::{snippets}/auth-controller-test/로그인을_한다/http-response.adoc[]
+include::{snippets}/auth-controller-test/로그인/http-response.adoc[]
 
 ---
 
@@ -35,14 +35,34 @@ include::{snippets}/auth-controller-test/로그인을_한다/http-response.adoc[
 
 ==== 요청
 ===== 경로 변수
-include::{snippets}/auth-controller-test/회원가입을_한다/path-parameters.adoc[]
+include::{snippets}/auth-controller-test/회원가입/path-parameters.adoc[]
 ===== 본문
-include::{snippets}/auth-controller-test/회원가입을_한다/request-fields.adoc[]
+include::{snippets}/../
+include::{snippets}/auth-controller-test/회원가입/request-fields.adoc[]
 ==== 응답
 ===== 본문
-include::{snippets}/auth-controller-test/회원가입을_한다/response-fields.adoc[]
+include::{snippets}/auth-controller-test/회원가입/response-fields.adoc[]
 ==== 예시
 ===== 요청
-include::{snippets}/auth-controller-test/회원가입을_한다/http-request.adoc[]
+include::{snippets}/auth-controller-test/회원가입/http-request.adoc[]
 ===== 응답
-include::{snippets}/auth-controller-test/회원가입을_한다/http-response.adoc[]
+include::{snippets}/auth-controller-test/회원가입/http-response.adoc[]
+
+---
+
+=== 📌 로그아웃
+==== 기본정보
+- 메서드 : POST
+- URL : `/api/auth/logout`
+
+==== 요청
+===== 헤더
+include::{snippets}/auth-controller-test/로그아웃/request-headers.adoc[]
+===== 본문
+include::{snippets}/auth-controller-test/로그아웃/request-fields.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/auth-controller-test/로그아웃/http-request.adoc[]
+===== 응답
+include::{snippets}/auth-controller-test/로그아웃/http-response.adoc[]
+
