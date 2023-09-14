@@ -17,6 +17,11 @@ jobs:
       - name: 체크아웃
         uses: actions/checkout@v3
 
+      - name: Start Redis (레디스 시작)
+        uses: supercharge/redis-github-action@1.5.0
+        with:
+          redis-version: 7.0.7
+
       - name: 서브모듈 레파지토리 가져오기
         uses: actions/checkout@v3
         with:
