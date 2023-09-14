@@ -25,7 +25,7 @@ public class NickName {
         this.value = value;
     }
 
-    public static NickName of(final String value) {
+    public static NickName from(final String value) {
         return new NickName(value);
     }
 

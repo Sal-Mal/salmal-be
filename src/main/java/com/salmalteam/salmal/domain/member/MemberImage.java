@@ -9,8 +9,8 @@ import javax.persistence.Embeddable;
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberImage {
-
-    @Column(name = "image_url")
+    private static final String MEMBER_IMAGE_URL = "https://salmal-image.s3.ap-northeast-2.amazonaws.com/member/default.JPG";
+    @Column(name = "image_url", nullable = false)
     private String imageUrl;
 
     private MemberImage(String imageUrl){
@@ -19,6 +19,10 @@ public class MemberImage {
 
     public static MemberImage of(String imageURL){
         return new MemberImage(imageURL);
+    }
+
+    public static MemberImage initMemberImage(){
+        return new MemberImage(MEMBER_IMAGE_URL);
     }
 
 }

@@ -1,0 +1,28 @@
+# DB
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MYSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+---
+# JPA
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+
+---
+#JWT
+
+jwt:
+  secret-key: secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret
+  access-token-expiry: 10800000 # 3시간(ms)
+  refresh-token-expiry: 1209600033 # 2주
