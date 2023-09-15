@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.dto.request;
+package com.salmalteam.salmal.dto.request.auth;
 
 import lombok.AccessLevel;
 import lombok.Getter;

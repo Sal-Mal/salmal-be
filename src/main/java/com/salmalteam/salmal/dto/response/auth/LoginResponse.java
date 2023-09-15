@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.dto.response;
+package com.salmalteam.salmal.dto.response.auth;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

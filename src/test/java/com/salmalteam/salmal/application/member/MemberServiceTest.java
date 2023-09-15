@@ -1,7 +1,7 @@
 package com.salmalteam.salmal.application.member;
 
 import com.salmalteam.salmal.domain.member.MemberRepository;
-import com.salmalteam.salmal.dto.request.SignUpRequest;
+import com.salmalteam.salmal.dto.request.auth.SignUpRequest;
 import com.salmalteam.salmal.exception.member.MemberException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

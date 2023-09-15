@@ -1,13 +1,13 @@
 package com.salmalteam.salmal.presentation.auth;
 
-import com.salmalteam.salmal.dto.request.LoginRequest;
-import com.salmalteam.salmal.dto.request.LogoutRequest;
-import com.salmalteam.salmal.dto.request.SignUpRequest;
-import com.salmalteam.salmal.dto.response.LoginResponse;
+import com.salmalteam.salmal.dto.request.auth.LoginRequest;
+import com.salmalteam.salmal.dto.request.auth.LogoutRequest;
+import com.salmalteam.salmal.dto.request.auth.ReissueTokenRequest;
+import com.salmalteam.salmal.dto.request.auth.SignUpRequest;
+import com.salmalteam.salmal.dto.response.auth.LoginResponse;
+import com.salmalteam.salmal.dto.response.auth.TokenResponse;
 import com.salmalteam.salmal.support.PresentationTest;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -123,6 +123,34 @@ class AuthControllerTest extends PresentationTest {
                 )
         ));
 
+    }
+
+    @Test
+    void 접근_토큰_재발급() throws Exception{
+
+        // given
+        final String accessToken = "accessToken";
+        final String refreshToken = "refreshToken";
+        final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(refreshToken);
+        final TokenResponse tokenResponse = TokenResponse.from(accessToken);
+        given(authService.reissueAccessToken(any())).willReturn(tokenResponse);
+
+        final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "/reissue")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createJson(reissueTokenRequest))
+                        .characterEncoding(StandardCharsets.UTF_8))
+                .andExpect(status().isOk());
+
+
+        // when & then
+        resultActions.andDo(restDocs.document(
+                requestFields(
+                        fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("접근 토큰의 재발급에 사용될 재토큰")
+                ),
+                responseFields(
+                        fieldWithPath("accessToken").type(JsonFieldType.STRING).description("재발급한 접근 토큰")
+                )
+        ));
     }
 
 }

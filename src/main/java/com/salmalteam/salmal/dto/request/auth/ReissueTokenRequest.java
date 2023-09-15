@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.dto.request;
+package com.salmalteam.salmal.dto.request.auth;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class LogoutRequest {
+public class ReissueTokenRequest {
     private String refreshToken;
-    public LogoutRequest(final String refreshToken){
+    public ReissueTokenRequest(final String refreshToken){
         this.refreshToken = refreshToken;
     }
 }

@@ -1,10 +1,12 @@
 package com.salmalteam.salmal.presentation.auth;
 
 import com.salmalteam.salmal.application.auth.AuthService;
-import com.salmalteam.salmal.dto.request.LoginRequest;
-import com.salmalteam.salmal.dto.request.LogoutRequest;
-import com.salmalteam.salmal.dto.request.SignUpRequest;
-import com.salmalteam.salmal.dto.response.LoginResponse;
+import com.salmalteam.salmal.dto.request.auth.LoginRequest;
+import com.salmalteam.salmal.dto.request.auth.LogoutRequest;
+import com.salmalteam.salmal.dto.request.auth.ReissueTokenRequest;
+import com.salmalteam.salmal.dto.request.auth.SignUpRequest;
+import com.salmalteam.salmal.dto.response.auth.LoginResponse;
+import com.salmalteam.salmal.dto.response.auth.TokenResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,13 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     public LoginResponse signUp(@PathVariable final String provider,@Valid @RequestBody final SignUpRequest signUpRequest){
         return authService.signUp(provider, signUpRequest);
+    }
+
+    @PostMapping("/reissue")
+    @ResponseStatus(HttpStatus.OK)
+    public TokenResponse reissue(@RequestBody final ReissueTokenRequest reissueTokenRequest){
+        final String refreshToken = reissueTokenRequest.getRefreshToken();
+        return authService.reissueAccessToken(refreshToken);
     }
 
     @PostMapping("/logout")
