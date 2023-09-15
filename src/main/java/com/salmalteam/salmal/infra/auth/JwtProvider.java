@@ -2,6 +2,7 @@ package com.salmalteam.salmal.infra.auth;
 
 import com.salmalteam.salmal.application.auth.TokenProvider;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -54,11 +55,37 @@ public class JwtProvider implements TokenProvider {
     }
 
     @Override
+    public Long getMemberIdFromToken(String token) {
+        final Claims claims = getClaims(token);
+        return claims.get(ID, Long.class);
+    }
+
+
+    @Override
     public Long getTokenExpiry(final String token) {
         final Claims claims = getClaims(token);
         final Date expiry = claims.getExpiration();
         return expiry.getTime() - (new Date().getTime());
     }
+
+    @Override
+    public boolean isValidRefreshToken(final String refreshToken) {
+        try{
+            final Claims claims = getClaims(refreshToken);
+            return isRefreshToken(claims) && isNotExpired(claims);
+        }catch (JwtException | IllegalArgumentException e){
+            return false;
+        }
+    }
+
+    private boolean isRefreshToken(final Claims claims){
+        return claims.getSubject().equals(REFRESH_TOKEN_SUBJECT);
+    }
+
+    private boolean isNotExpired(Claims claims){
+        return claims.getExpiration().after(new Date());
+    }
+
 
     private Claims getClaims(String token) {
         return Jwts.parserBuilder()
