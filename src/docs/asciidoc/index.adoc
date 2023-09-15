@@ -37,7 +37,6 @@ include::{snippets}/auth-controller-test/로그인/http-response.adoc[]
 ===== 경로 변수
 include::{snippets}/auth-controller-test/회원가입/path-parameters.adoc[]
 ===== 본문
-include::{snippets}/../
 include::{snippets}/auth-controller-test/회원가입/request-fields.adoc[]
 ==== 응답
 ===== 본문
@@ -66,3 +65,21 @@ include::{snippets}/auth-controller-test/로그아웃/http-request.adoc[]
 ===== 응답
 include::{snippets}/auth-controller-test/로그아웃/http-response.adoc[]
 
+---
+
+=== 📌 접근 토큰 재발급
+==== 기본정보
+- 메서드 : POST
+- URL : `/api/auth/reissue`
+
+==== 요청
+===== 본문
+include::{snippets}/auth-controller-test/접근_토큰_재발급/request-fields.adoc[]
+==== 응답
+===== 본문
+include::{snippets}/auth-controller-test/접근_토큰_재발급/response-fields.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/auth-controller-test/접근_토큰_재발급/http-request.adoc[]
+===== 응답
+include::{snippets}/auth-controller-test/접근_토큰_재발급/http-response.adoc[]
