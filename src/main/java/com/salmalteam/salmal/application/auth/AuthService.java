@@ -72,7 +72,7 @@ public class AuthService {
 
     private void validateRefreshTokenExists(final String refreshToken){
         if(!tokenRepository.existsRefreshTokenById(refreshToken)){
-            throw new AuthException(AuthExceptionType.NOT_FOUND);
+            throw new AuthException(AuthExceptionType.NOT_FOUND_REFRESH_TOKEN);
         }
     }
 

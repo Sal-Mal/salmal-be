@@ -26,8 +26,8 @@ public class ExceptionHandlerAdvice {
                 .body(ExceptionResponse.of(exceptionType.getClientMessage(), exceptionType.getCode()));
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<List<ExceptionResponse>> handleBindException(final MethodArgumentNotValidException e){
+    @ExceptionHandler({BindException.class})
+    public ResponseEntity<List<ExceptionResponse>> handleBindException(final BindException e){
         log.warn(e.getMessage(), e);
 
         final List<ExceptionResponse> exceptionResponses = createExceptionResponses(e);
@@ -35,7 +35,7 @@ public class ExceptionHandlerAdvice {
                 .body(exceptionResponses);
     }
 
-    private List<ExceptionResponse> createExceptionResponses(final MethodArgumentNotValidException e){
+    private List<ExceptionResponse> createExceptionResponses(final BindException e){
         return e.getFieldErrors()
                 .stream()
                 .map(it -> ExceptionResponse.of(it.getDefaultMessage(), 0000))

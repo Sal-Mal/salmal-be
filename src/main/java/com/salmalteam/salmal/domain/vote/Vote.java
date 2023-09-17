@@ -28,12 +28,12 @@ public class Vote {
     @Column
     private int viewCount;
 
-    private Vote(final VoteImage voteImage, final Member member){
-        this.voteImage = voteImage;
+    private Vote(final String imageUrl, final Member member){
+        this.voteImage = VoteImage.of(imageUrl);
         this.member = member;
     }
 
-    public static Vote of(final VoteImage voteImage, final Member member){
-        return new Vote(voteImage, member);
+    public static Vote of(final String imageUrl, final Member member){
+        return new Vote(imageUrl, member);
     }
 }
