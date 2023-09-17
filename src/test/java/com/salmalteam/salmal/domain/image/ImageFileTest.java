@@ -2,7 +2,6 @@ package com.salmalteam.salmal.domain.image;
 
 import com.salmalteam.salmal.exception.image.ImageException;
 import com.salmalteam.salmal.exception.image.ImageExceptionType;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -12,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ImageFileTest {
 
