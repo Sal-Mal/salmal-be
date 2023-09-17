@@ -31,7 +31,21 @@ class ImageFileTest {
                 .hasFieldOrPropertyWithValue("exceptionType", ImageExceptionType.NOT_SUPPORT_FILE_EXTENSION);
     }
 
-    @Test
+    @ParameterizedTest
+    @CsvSource(value = {"testImage.jpg", "testImage.jpeg"})
+    void 지원하는_형식의_경우_문제없이_작동한다(final String fileName) throws IOException {
+        // given
+        final String path = "vote";
+        final String name = "image";
+        final String filePath = "src/test/resources/testImages/" + fileName;
+        final FileInputStream fileInputStream = new FileInputStream(filePath);
+        final String contentType = "image/gif";
+        final MockMultipartFile multipartFile = new MockMultipartFile(name, fileName, contentType, fileInputStream);
+
+        ImageFile.of(multipartFile, path);
+    }
+
+        @Test
     void 확장자가_존재하지_않으면_예외를_발생시킨다() throws Exception{
         // given
         final String path = "vote";
