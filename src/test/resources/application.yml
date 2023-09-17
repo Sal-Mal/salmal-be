@@ -26,3 +26,25 @@ jwt:
   secret-key: secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret
   access-token-expiry: 10800000 # 3시간(ms)
   refresh-token-expiry: 1209600033 # 2주
+
+---
+# AWS
+
+cloud:
+  aws:
+    credentials:
+      access-key: access-key
+      secret-key: secret-key
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    s3:
+      bucket-name: s3-bucket-name
+      bucket-path: xxx.bucketpath.com/
+
+
+image:
+  path:
+    vote: vote
+    member: member

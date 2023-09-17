@@ -37,4 +37,11 @@ public class MemberService {
             throw new MemberException(MemberExceptionType.DUPLICATED_NICKNAME);
         }
     }
+
+    @Transactional(readOnly = true)
+    public Member findMemberById(final Long memberId){
+        final Member member = memberRepository.findById(memberId)
+                .orElseThrow(() ->  new MemberException(MemberExceptionType.NOT_FOUND));
+        return member;
+    }
 }

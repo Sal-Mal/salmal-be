@@ -55,4 +55,17 @@ class MemberServiceTest {
             assertThatThrownBy(() -> memberService.findMemberIdByProviderId(providerId)).isInstanceOf(MemberException.class);
         }
     }
+
+    @Nested
+    class Id_로_회원_조회_테스트{
+        @Test
+        void 회원이_존재하지_않으면_예외가_발생한다(){
+            // given
+            final Long id = 1L;
+            given(memberRepository.findById(eq(id))).willReturn(Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() -> memberService.findMemberById(id)).isInstanceOf(MemberException.class);
+        }
+    }
 }

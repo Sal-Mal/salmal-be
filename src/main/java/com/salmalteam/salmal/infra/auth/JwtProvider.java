@@ -1,10 +1,10 @@
 package com.salmalteam.salmal.infra.auth;
 
 import com.salmalteam.salmal.application.auth.TokenProvider;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.salmalteam.salmal.exception.auth.AuthException;
+import com.salmalteam.salmal.exception.auth.AuthExceptionType;
+import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -55,9 +55,25 @@ public class JwtProvider implements TokenProvider {
     }
 
     @Override
-    public Long getMemberIdFromToken(String token) {
+    public Long getMemberIdFromToken(final String token) {
         final Claims claims = getClaims(token);
         return claims.get(ID, Long.class);
+    }
+
+    @Override
+    public String getTokenType() {
+        return TOKEN_TYPE;
+    }
+
+    @Override
+    public MemberPayLoad getPayLoad(final String accessToken) {
+        final Claims claims = getClaims(accessToken);
+        try{
+            final Long memberId = claims.get(ID, Long.class);
+            return MemberPayLoad.from(memberId);
+        }catch (RequiredTypeException | NullPointerException | IllegalArgumentException e){
+            throw new AuthException(AuthExceptionType.NOT_VALID_ACCESS_TOKEN);
+        }
     }
 
 
@@ -78,11 +94,24 @@ public class JwtProvider implements TokenProvider {
         }
     }
 
+    @Override
+    public boolean isValidAccessToken(final String accessToken) {
+        try{
+            final Claims claims = getClaims(accessToken);
+            return isAccessToken(claims) && isNotExpired(claims);
+        }catch (JwtException | IllegalArgumentException e){
+            return false;
+        }
+    }
+
+    private boolean isAccessToken(final Claims claims) {
+        return claims.getSubject().equals(ACCESS_TOKEN_SUBJECT);
+    }
     private boolean isRefreshToken(final Claims claims){
         return claims.getSubject().equals(REFRESH_TOKEN_SUBJECT);
     }
 
-    private boolean isNotExpired(Claims claims){
+    private boolean isNotExpired(final Claims claims){
         return claims.getExpiration().after(new Date());
     }
 
