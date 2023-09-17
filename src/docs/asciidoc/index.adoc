@@ -83,3 +83,34 @@ include::{snippets}/auth-controller-test/접근_토큰_재발급/response-fields
 include::{snippets}/auth-controller-test/접근_토큰_재발급/http-request.adoc[]
 ===== 응답
 include::{snippets}/auth-controller-test/접근_토큰_재발급/http-response.adoc[]
+
+---
+
+== VOTE API
+
+=== 📌 투표 등록
+==== 기본정보
+- 메서드 : POST
+- URL : `/api/votes`
+
+==== 요청
+===== 혜더
+include::{snippets}/투표_등록_테스트/투표_등록_성공/request-headers.adoc[]
+===== 본문
+include::{snippets}/투표_등록_테스트/투표_등록_성공/request-parts.adoc[]
+==== 예시
+===== 요청
+
+[source]
+---
+POST /api/votes HTTP/1.1
+Content-Type: application/json;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
+Authorization: Bearer accessToken
+Host: localhost:8080
+--6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
+Content-Disposition: form-data; name=imageFile; filename=testImage.jpg
+Content-Type: image/jpeg
+---
+
+===== 응답
+include::{snippets}/투표_등록_테스트/투표_등록_성공/http-response.adoc[]
