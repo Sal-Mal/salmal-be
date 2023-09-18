@@ -5,7 +5,9 @@ import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.vote.Vote;
 import com.salmalteam.salmal.domain.vote.VoteRepository;
+import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluation;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
+import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
 import com.salmalteam.salmal.exception.vote.VoteException;
@@ -78,13 +80,13 @@ class VoteServiceTest {
             final Long memberId = 1L;
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
             final Long voteId = 1L;
-            final String voteEvaluationType = "LIKE";
-            final VoteEvaluateRequest voteEvaluateRequest = new VoteEvaluateRequest(voteEvaluationType);
+            final String voteEvaluationTypeStr = "LIKE";
+            final VoteEvaluationType voteEvaluationType = VoteEvaluationType.from(voteEvaluationTypeStr);
             given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
             given(voteRepository.findById(eq(voteId))).willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> voteService.evaluate(memberPayLoad, voteId, voteEvaluateRequest))
+            assertThatThrownBy(() -> voteService.evaluate(memberPayLoad, voteId, voteEvaluationType))
                     .isInstanceOf(VoteException.class);
         }
 
@@ -94,15 +96,15 @@ class VoteServiceTest {
             final Long memberId = 1L;
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
             final Long voteId = 1L;
-            final String voteEvaluationType = "LIKE";
-            final VoteEvaluateRequest voteEvaluateRequest = new VoteEvaluateRequest(voteEvaluationType);
+            final String voteEvaluationTypeStr = "LIKE";
+            final VoteEvaluationType voteEvaluationType = VoteEvaluationType.from(voteEvaluationTypeStr);
 
             given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
             given(voteRepository.findById(eq(voteId))).willReturn(Optional.ofNullable(Vote.of("imageUrl", Member.of("LLLLLLL", "닉네임", "KAKAO", true))));
             given(voteEvaluationRepository.existsByEvaluatorAndVoteAndVoteEvaluationType(any(), any(), any())).willReturn(true);
 
             // when & then
-            assertThatThrownBy(() -> voteService.evaluate(memberPayLoad, voteId, voteEvaluateRequest))
+            assertThatThrownBy(() -> voteService.evaluate(memberPayLoad, voteId, voteEvaluationType))
                     .isInstanceOf(VoteException.class);
         }
     }

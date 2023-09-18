@@ -1,6 +1,7 @@
 package com.salmalteam.salmal.presentation.vote;
 
 import com.salmalteam.salmal.application.vote.VoteService;
+import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
@@ -32,7 +33,8 @@ public class VoteController {
     public void evaluateVote(@LoginMember MemberPayLoad memberPayLoad,
                              @PathVariable(name = "vote-id") final Long voteId,
                              @RequestBody @Valid final VoteEvaluateRequest voteEvaluateRequest){
-        voteService.evaluate(memberPayLoad, voteId, voteEvaluateRequest);
+        final VoteEvaluationType voteEvaluationType = VoteEvaluationType.from(voteEvaluateRequest.getVoteEvaluationType());
+        voteService.evaluate(memberPayLoad, voteId, voteEvaluationType);
     }
 
 }

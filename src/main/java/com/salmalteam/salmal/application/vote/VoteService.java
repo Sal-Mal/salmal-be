@@ -49,11 +49,10 @@ public class VoteService {
     }
 
     @Transactional
-    public void evaluate(final MemberPayLoad memberPayLoad, final Long voteId, final VoteEvaluateRequest voteEvaluateRequest){
+    public void evaluate(final MemberPayLoad memberPayLoad, final Long voteId, final VoteEvaluationType voteEvaluationType){
 
         final Member member = memberService.findMemberById(memberPayLoad.getId());
         final Vote vote = getVoteById(voteId);
-        final VoteEvaluationType voteEvaluationType = voteEvaluateRequest.getVoteEvaluationType();
 
         validateEvaluationVoteDuplicated(member, vote, voteEvaluationType);
 

@@ -1,6 +1,7 @@
 package com.salmalteam.salmal.domain.vote.evaluation;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.salmalteam.salmal.exception.vote.VoteException;
+import com.salmalteam.salmal.exception.vote.VoteExceptionType;
 
 import java.util.Arrays;
 
@@ -8,11 +9,10 @@ public enum VoteEvaluationType {
     LIKE,
     DISLIKE;
 
-    @JsonCreator
     public static VoteEvaluationType from(final String voteEvaluationType){
         return Arrays.stream(VoteEvaluationType.values())
                 .filter(it -> it.name().equalsIgnoreCase(voteEvaluationType))
-                .findFirst()
-                .orElse(null);
+                .findAny()
+                .orElseThrow(() -> new VoteException(VoteExceptionType.INVALID_VOTE_EVALUATION_TYPE));
     }
 }
