@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.domain.member.evaluation;
+package com.salmalteam.salmal.domain.vote.evaluation;
 
 import com.salmalteam.salmal.domain.BaseCreatedTimeEntity;
 import com.salmalteam.salmal.domain.member.Member;
@@ -11,9 +11,9 @@ import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of = {"id"})
-@Table(name = "evaluation_vote")
-public class EvaluationVote extends BaseCreatedTimeEntity {
+@EqualsAndHashCode(of = {"id"}, callSuper = true)
+@Table(name = "vote_evaluation")
+public class VoteEvaluation extends BaseCreatedTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +27,16 @@ public class EvaluationVote extends BaseCreatedTimeEntity {
     @JoinColumn(name = "evaluator_id")
     private Member evaluator;
 
-    private EvaluationVote(final Vote vote, final Member member) {
+    @Enumerated(EnumType.STRING)
+    private VoteEvaluationType voteEvaluationType;
+
+    private VoteEvaluation(final Vote vote, final Member member, final VoteEvaluationType voteEvaluationType) {
         this.vote = vote;
         this.evaluator = member;
+        this.voteEvaluationType = voteEvaluationType;
     }
 
-    public static EvaluationVote of(final Vote vote, final Member member) {
-        return new EvaluationVote(vote, member);
+    public static VoteEvaluation of(final Vote vote, final Member member, final VoteEvaluationType voteEvaluationType) {
+        return new VoteEvaluation(vote, member, voteEvaluationType);
     }
 }

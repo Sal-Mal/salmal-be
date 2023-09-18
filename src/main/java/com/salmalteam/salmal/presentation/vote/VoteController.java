@@ -1,7 +1,9 @@
 package com.salmalteam.salmal.presentation.vote;
 
 import com.salmalteam.salmal.application.vote.VoteService;
+import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
+import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import com.salmalteam.salmal.presentation.Login;
 import com.salmalteam.salmal.presentation.LoginMember;
@@ -20,8 +22,19 @@ public class VoteController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Login
-    public void registerVote(@LoginMember MemberPayLoad memberPayLoad, @ModelAttribute @Valid final VoteCreateRequest voteCreateRequest){
+    public void registerVote(@LoginMember MemberPayLoad memberPayLoad,
+                             @ModelAttribute @Valid final VoteCreateRequest voteCreateRequest){
         voteService.register(memberPayLoad, voteCreateRequest);
+    }
+
+    @PostMapping("/{vote-id}/evaluations")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Login
+    public void evaluateVote(@LoginMember MemberPayLoad memberPayLoad,
+                             @PathVariable(name = "vote-id") final Long voteId,
+                             @RequestBody @Valid final VoteEvaluateRequest voteEvaluateRequest){
+        final VoteEvaluationType voteEvaluationType = VoteEvaluationType.from(voteEvaluateRequest.getVoteEvaluationType());
+        voteService.evaluate(memberPayLoad, voteId, voteEvaluationType);
     }
 
 }

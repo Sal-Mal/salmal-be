@@ -3,8 +3,14 @@ package com.salmalteam.salmal.application.vote;
 import com.salmalteam.salmal.application.ImageUploader;
 import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.domain.member.Member;
+import com.salmalteam.salmal.domain.vote.Vote;
 import com.salmalteam.salmal.domain.vote.VoteRepository;
+import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluation;
+import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
+import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
+import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
+import com.salmalteam.salmal.exception.vote.VoteException;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,9 +22,12 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -33,10 +42,12 @@ class VoteServiceTest {
     @Mock
     VoteRepository voteRepository;
     @Mock
+    VoteEvaluationRepository voteEvaluationRepository;
+    @Mock
     ImageUploader imageUploader;
 
     @Nested
-    class 투표_업로드_테스트{
+    class 투표_업로드_테스트 {
         @Test
         void 이미지_업로더를_통해_업로드후_요청에_해당하는_회원을_찾은_뒤_저장한다() throws IOException {
             // given
@@ -57,6 +68,44 @@ class VoteServiceTest {
             verify(imageUploader, times(1)).uploadImage(any());
             verify(memberService, times(1)).findMemberById(any());
             verify(voteRepository, times(1)).save(any());
+        }
+    }
+
+    @Nested
+    class 투표_평가_테스트 {
+
+        @Test
+        void 평가를_할_투표가_존재하지_않는다면_에러를_발생시킨다() {
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final Long voteId = 1L;
+            final String voteEvaluationTypeStr = "LIKE";
+            final VoteEvaluationType voteEvaluationType = VoteEvaluationType.from(voteEvaluationTypeStr);
+            given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
+            given(voteRepository.findById(eq(voteId))).willReturn(Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() -> voteService.evaluate(memberPayLoad, voteId, voteEvaluationType))
+                    .isInstanceOf(VoteException.class);
+        }
+
+        @Test
+        void 이미_동일한_타입의_투표를_이행한_적이_있다면_에러를_발생시킨다() {
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final Long voteId = 1L;
+            final String voteEvaluationTypeStr = "LIKE";
+            final VoteEvaluationType voteEvaluationType = VoteEvaluationType.from(voteEvaluationTypeStr);
+
+            given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
+            given(voteRepository.findById(eq(voteId))).willReturn(Optional.ofNullable(Vote.of("imageUrl", Member.of("LLLLLLL", "닉네임", "KAKAO", true))));
+            given(voteEvaluationRepository.existsByEvaluatorAndVoteAndVoteEvaluationType(any(), any(), any())).willReturn(true);
+
+            // when & then
+            assertThatThrownBy(() -> voteService.evaluate(memberPayLoad, voteId, voteEvaluationType))
+                    .isInstanceOf(VoteException.class);
         }
     }
 
