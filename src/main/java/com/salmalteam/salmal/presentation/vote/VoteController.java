@@ -3,6 +3,7 @@ package com.salmalteam.salmal.presentation.vote;
 import com.salmalteam.salmal.application.vote.VoteService;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
 import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
+import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
@@ -53,6 +54,15 @@ public class VoteController {
     public void reportVote(@LoginMember final MemberPayLoad memberPayLoad,
                            @PathVariable(name = "vote-id") final Long voteId){
         voteService.report(memberPayLoad, voteId);
+    }
+
+    @PostMapping("/{vote-id}/comments")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Login
+    public void commentVote(@LoginMember final MemberPayLoad memberPayLoad,
+                            @PathVariable(name = "vote-id") final Long voteId,
+                            @RequestBody @Valid final VoteCommentCreateRequest voteCommentCreateRequest){
+        voteService.comment(memberPayLoad, voteId, voteCommentCreateRequest);
     }
 
 }

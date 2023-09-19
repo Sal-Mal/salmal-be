@@ -5,13 +5,12 @@ import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.vote.Vote;
 import com.salmalteam.salmal.domain.vote.VoteRepository;
-import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluation;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
 import com.salmalteam.salmal.domain.vote.report.VoteReportRepository;
 import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
+import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
-import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
 import com.salmalteam.salmal.exception.member.MemberException;
 import com.salmalteam.salmal.exception.member.MemberExceptionType;
 import com.salmalteam.salmal.exception.vote.VoteException;
@@ -29,7 +28,6 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -184,6 +182,44 @@ class VoteServiceTest {
             assertThatThrownBy(() -> voteService.report(memberPayLoad, voteId))
                     .isInstanceOf(VoteException.class);
         }
+    }
+
+    @Nested
+    class 투표_댓글_생성_테스트{
+
+        @Test
+        void 존재하지_않는_회원의_요청일경우_예외를_발생시킨다(){
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final Long voteId = 1L;
+            final String content = "댓글입니다";
+            final VoteCommentCreateRequest voteCommentCreateRequest = new VoteCommentCreateRequest(content);
+
+            given(memberService.findMemberById(eq(memberId))).willThrow(new MemberException(MemberExceptionType.NOT_FOUND));
+
+            // when & then
+            assertThatThrownBy(() -> voteService.comment(memberPayLoad, voteId, voteCommentCreateRequest))
+                    .isInstanceOf(MemberException.class);
+        }
+
+        @Test
+        void 댓글을_추가할_투표가_존재하지_않는다면_예외를_발생시킨다(){
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final Long voteId = 1L;
+            final String content = "댓글입니다";
+            final VoteCommentCreateRequest voteCommentCreateRequest = new VoteCommentCreateRequest(content);
+
+            given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
+            given(voteRepository.findById(eq(voteId))).willReturn(Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() -> voteService.comment(memberPayLoad, voteId, voteCommentCreateRequest))
+                    .isInstanceOf(VoteException.class);
+        }
+
     }
 
 }

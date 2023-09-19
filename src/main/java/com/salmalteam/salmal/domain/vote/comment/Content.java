@@ -1,7 +1,7 @@
-package com.salmalteam.salmal.domain.review;
+package com.salmalteam.salmal.domain.vote.comment;
 
-import com.salmalteam.salmal.exception.review.ReviewException;
-import com.salmalteam.salmal.exception.review.ReviewExceptionType;
+import com.salmalteam.salmal.exception.comment.CommentException;
+import com.salmalteam.salmal.exception.comment.CommentExceptionType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -29,7 +29,7 @@ public class Content {
 
     private void validateContent(final String value){
         if(isNotValidLength(value)){
-            throw new ReviewException(ReviewExceptionType.INVALID_REVIEW_LENGTH);
+            throw new CommentException(CommentExceptionType.INVALID_COMMENT_LENGTH);
         }
     }
 
