@@ -136,3 +136,21 @@ include::{snippets}/투표_평가_테스트/투표_평가_성공/http-request.ad
 include::{snippets}/투표_평가_테스트/투표_평가_성공/http-response.adoc[]
 
 ---
+
+=== 📌 투표 북마킹
+==== 기본정보
+- 메서드 : POST
+- URL : `/api/votes/{vote-id}/bookmarks`
+
+==== 요청
+===== 헤더
+include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/request-headers.adoc[]
+===== 경로 변수
+include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/path-parameters.adoc[]
+===== 본문
+include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/request-fields.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/http-request.adoc[]
+===== 응답
+include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/http-response.adoc[]
