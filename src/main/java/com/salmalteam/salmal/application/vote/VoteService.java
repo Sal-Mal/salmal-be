@@ -11,6 +11,8 @@ import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMarkRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluation;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
+import com.salmalteam.salmal.domain.vote.report.VoteReport;
+import com.salmalteam.salmal.domain.vote.report.VoteReportRepository;
 import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
@@ -31,6 +33,7 @@ public class VoteService {
     private final VoteRepository voteRepository;
     private final VoteEvaluationRepository voteEvaluationRepository;
     private final VoteBookMarkRepository voteBookMarkRepository;
+    private final VoteReportRepository voteReportRepository;
     private final ImageUploader imageUploader;
     private final String voteImagePath;
 
@@ -38,12 +41,14 @@ public class VoteService {
                        final VoteRepository voteRepository,
                        final VoteEvaluationRepository voteEvaluationRepository,
                        final VoteBookMarkRepository voteBookMarkRepository,
+                       final VoteReportRepository voteReportRepository,
                        final ImageUploader imageUploader,
                        @Value("${image.path.vote}") String voteImagePath){
         this.memberService = memberService;
         this.voteRepository = voteRepository;
         this.voteEvaluationRepository = voteEvaluationRepository;
         this.voteBookMarkRepository = voteBookMarkRepository;
+        this.voteReportRepository = voteReportRepository;
         this.imageUploader = imageUploader;
         this.voteImagePath = voteImagePath;
     }
@@ -86,6 +91,24 @@ public class VoteService {
 
         voteBookMark.updateBookmark(isBookmarked);
         voteBookMarkRepository.save(voteBookMark);
+    }
+
+    @Transactional
+    public void report(final MemberPayLoad memberPayLoad, final Long voteId){
+
+        final Member member = memberService.findMemberById(memberPayLoad.getId());
+        final Vote vote = getVoteById(voteId);
+
+        validateVoteReportDuplicated(vote, member);
+        final VoteReport voteReport = VoteReport.of(vote, member);
+
+        voteReportRepository.save(voteReport);
+    }
+
+    private void validateVoteReportDuplicated(final Vote vote, final Member member){
+        if(voteReportRepository.existsByVoteAndReporter(vote, member)){
+            throw new VoteException(VoteExceptionType.DUPLICATED_VOTE_REPORT);
+        }
     }
 
     private Vote getVoteById(final Long voteId){

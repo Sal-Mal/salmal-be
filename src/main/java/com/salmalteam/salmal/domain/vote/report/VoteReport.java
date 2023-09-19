@@ -4,14 +4,16 @@ import com.salmalteam.salmal.domain.BaseCreatedTimeEntity;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.vote.Vote;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(of = {"id"}, callSuper = true)
+@Table(name = "vote_report")
 public class VoteReport extends BaseCreatedTimeEntity {
 
     @Id

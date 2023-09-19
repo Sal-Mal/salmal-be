@@ -47,4 +47,12 @@ public class VoteController {
         voteService.bookmark(memberPayLoad, voteId, voteBookmarkRequest);
     }
 
+    @PostMapping("/{vote-id}/reports")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Login
+    public void reportVote(@LoginMember final MemberPayLoad memberPayLoad,
+                           @PathVariable(name = "vote-id") final Long voteId){
+        voteService.report(memberPayLoad, voteId);
+    }
+
 }

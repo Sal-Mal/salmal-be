@@ -8,9 +8,12 @@ import com.salmalteam.salmal.domain.vote.VoteRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluation;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
+import com.salmalteam.salmal.domain.vote.report.VoteReportRepository;
 import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
+import com.salmalteam.salmal.exception.member.MemberException;
+import com.salmalteam.salmal.exception.member.MemberExceptionType;
 import com.salmalteam.salmal.exception.vote.VoteException;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import org.junit.jupiter.api.Nested;
@@ -44,6 +47,8 @@ class VoteServiceTest {
     VoteRepository voteRepository;
     @Mock
     VoteEvaluationRepository voteEvaluationRepository;
+    @Mock
+    VoteReportRepository voteReportRepository;
     @Mock
     ImageUploader imageUploader;
 
@@ -130,6 +135,55 @@ class VoteServiceTest {
                     .isInstanceOf(VoteException.class);
         }
 
+    }
+
+    @Nested
+    class 투표_신고_테스트{
+
+        @Test
+        void 존재하지_않는_회원의_요청일경우_예외를_발생시킨다(){
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final Long voteId = 1L;
+
+            given(memberService.findMemberById(eq(memberId))).willThrow(new MemberException(MemberExceptionType.NOT_FOUND));
+
+            // when & then
+            assertThatThrownBy(() -> voteService.report(memberPayLoad, voteId))
+                    .isInstanceOf(MemberException.class);
+        }
+
+        @Test
+        void 신고할_투표가_존재하지_않는다면_예외를_발생시킨다(){
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final Long voteId = 1L;
+
+            given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
+            given(voteRepository.findById(eq(voteId))).willReturn(Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() -> voteService.report(memberPayLoad, voteId))
+                    .isInstanceOf(VoteException.class);
+        }
+
+        @Test
+        void 이미_해당_투표를_신고했을_경우_예외를_발생시킨다(){
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final Long voteId = 1L;
+
+            given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
+            given(voteRepository.findById(eq(voteId))).willReturn(Optional.ofNullable(Vote.of("imageUrl", Member.of("LLLLLLL", "닉네임", "KAKAO", true))));
+            given(voteReportRepository.existsByVoteAndReporter(any(), any())).willReturn(true);
+
+            // when & then
+            assertThatThrownBy(() -> voteService.report(memberPayLoad, voteId))
+                    .isInstanceOf(VoteException.class);
+        }
     }
 
 }
