@@ -8,7 +8,8 @@ public enum VoteExceptionType implements ExceptionType {
     FORBIDDEN_DELETE(Status.FORBIDDEN, 3002, "투표를 삭제할 권한이 없습니다.", "권한이 없는 투표 삭제 요청"),
     FORBIDDEN_UPDATE(Status.FORBIDDEN, 3003, "투표를 수정할 권한이 없습니다.", "권한이 없는 투표 수정 요청"),
     DUPLICATED_VOTE_EVALUATION(Status.BAD_REQUEST, 3004, "이미 평가를 한 투표입니다.", "중복된 투표 평가 요청"),
-    INVALID_VOTE_EVALUATION_TYPE(Status.BAD_REQUEST, 3005, "투표타입은 LIKE 또는 DISLIKE 입니다.", "적절하지 않은 투표 타입 요청");
+    INVALID_VOTE_EVALUATION_TYPE(Status.BAD_REQUEST, 3005, "투표타입은 LIKE 또는 DISLIKE 입니다.", "적절하지 않은 투표 타입 요청"),
+    DUPLICATED_VOTE_REPORT(Status.BAD_REQUEST, 3006, "이미 신고한 투표입니다.", "중복 투표 신고 요청")
     ;
 
     private final Status status;

@@ -154,3 +154,22 @@ include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/request-f
 include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/http-request.adoc[]
 ===== 응답
 include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/http-response.adoc[]
+
+
+---
+
+=== 📌 투표 북마킹
+==== 기본정보
+- 메서드 : POST
+- URL : `/api/votes/{vote-id}/reports`
+
+==== 요청
+===== 헤더
+include::{snippets}/투표_신고_테스트/투표_신고_성공/request-headers.adoc[]
+===== 경로 변수
+include::{snippets}/투표_신고_테스트/투표_신고_성공/path-parameters.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/투표_신고_테스트/투표_신고_성공/http-request.adoc[]
+===== 응답
+include::{snippets}/투표_신고_테스트/투표_신고_성공/http-response.adoc[]
