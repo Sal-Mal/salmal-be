@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.domain.member.bookmark;
+package com.salmalteam.salmal.domain.vote.bookmark;
 
 import com.salmalteam.salmal.domain.BaseCreatedTimeEntity;
 import com.salmalteam.salmal.domain.member.Member;
@@ -13,9 +13,9 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of = {"id"})
-@Table(name = "bookmark_vote")
-public class BookMarkVote extends BaseCreatedTimeEntity {
+@EqualsAndHashCode(of = {"id"}, callSuper = true)
+@Table(name = "vote_bookmark")
+public class VoteBookMark extends BaseCreatedTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,12 +29,20 @@ public class BookMarkVote extends BaseCreatedTimeEntity {
     @JoinColumn(name = "vote_id")
     private Vote vote;
 
-    private BookMarkVote(final Member member, final Vote vote) {
+    @Column
+    private Boolean isBookmarked;
+
+    private VoteBookMark(final Member member, final Vote vote, final Boolean isBookmarked) {
         this.vote = vote;
         this.bookmaker = member;
+        this.isBookmarked = isBookmarked;
     }
 
-    public static BookMarkVote of(final Member member, final Vote vote) {
-        return new BookMarkVote(member, vote);
+    public static VoteBookMark of(final Member member, final Vote vote, final Boolean isBookmarked) {
+        return new VoteBookMark(member, vote, isBookmarked);
+    }
+
+    public void updateBookmark(final Boolean isBookmarked){
+        this.isBookmarked = isBookmarked;
     }
 }

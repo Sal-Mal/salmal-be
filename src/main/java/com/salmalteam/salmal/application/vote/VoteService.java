@@ -6,9 +6,12 @@ import com.salmalteam.salmal.domain.image.ImageFile;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.vote.Vote;
 import com.salmalteam.salmal.domain.vote.VoteRepository;
+import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMark;
+import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMarkRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluation;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
+import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
 import com.salmalteam.salmal.exception.vote.VoteException;
@@ -19,23 +22,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 @Service
 public class VoteService {
 
     private final MemberService memberService;
     private final VoteRepository voteRepository;
     private final VoteEvaluationRepository voteEvaluationRepository;
+    private final VoteBookMarkRepository voteBookMarkRepository;
     private final ImageUploader imageUploader;
     private final String voteImagePath;
 
     public VoteService(final MemberService memberService,
                        final VoteRepository voteRepository,
                        final VoteEvaluationRepository voteEvaluationRepository,
+                       final VoteBookMarkRepository voteBookMarkRepository,
                        final ImageUploader imageUploader,
                        @Value("${image.path.vote}") String voteImagePath){
         this.memberService = memberService;
         this.voteRepository = voteRepository;
         this.voteEvaluationRepository = voteEvaluationRepository;
+        this.voteBookMarkRepository = voteBookMarkRepository;
         this.imageUploader = imageUploader;
         this.voteImagePath = voteImagePath;
     }
@@ -59,14 +67,29 @@ public class VoteService {
         voteEvaluationRepository.save(VoteEvaluation.of(vote, member, voteEvaluationType));
     }
 
-    private Vote getVoteById(final Long voteId){
-        return voteRepository.findById(voteId)
-                .orElseThrow(() -> new VoteException(VoteExceptionType.NOT_FOUND));
-    }
 
     private void validateEvaluationVoteDuplicated(final Member member,final Vote vote, final VoteEvaluationType voteEvaluationType) {
         if(voteEvaluationRepository.existsByEvaluatorAndVoteAndVoteEvaluationType(member, vote, voteEvaluationType)){
             throw new VoteException(VoteExceptionType.DUPLICATED_VOTE_EVALUATION);
         }
+    }
+
+    @Transactional
+    public void bookmark(final MemberPayLoad memberPayLoad, final Long voteId, final VoteBookmarkRequest voteBookmarkRequest){
+
+        final Member member = memberService.findMemberById(memberPayLoad.getId());
+        final Vote vote = getVoteById(voteId);
+        final Boolean isBookmarked = voteBookmarkRequest.getIsBookmarked();
+
+        final VoteBookMark voteBookMark = voteBookMarkRepository.findByVoteAndBookmaker(vote, member)
+                .orElse(VoteBookMark.of(member, vote, isBookmarked));
+
+        voteBookMark.updateBookmark(isBookmarked);
+        voteBookMarkRepository.save(voteBookMark);
+    }
+
+    private Vote getVoteById(final Long voteId){
+        return voteRepository.findById(voteId)
+                .orElseThrow(() -> new VoteException(VoteExceptionType.NOT_FOUND));
     }
 }
