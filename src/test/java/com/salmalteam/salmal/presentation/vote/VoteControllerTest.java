@@ -1,6 +1,7 @@
 package com.salmalteam.salmal.presentation.vote;
 
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
+import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
 import com.salmalteam.salmal.support.PresentationTest;
 import org.junit.jupiter.api.Nested;
@@ -166,4 +167,76 @@ class VoteControllerTest extends PresentationTest {
         }
 
     }
+
+    @Nested
+    class 투표_북마크_테스트{
+
+        private final static String URL = "/{vote-id}/bookmarks";
+        @Test
+        void 투표_북마킹_성공() throws Exception{
+            // given
+            final Long voteId = 1L;
+            final Boolean isBookmarked = true;
+            final VoteBookmarkRequest voteBookmarkRequest = new VoteBookmarkRequest(isBookmarked);
+            mockingForAuthorization();
+
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL+URL, voteId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .content(createJson(voteBookmarkRequest))
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isCreated());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("vote-id").description("북마크할 투표 ID")
+                    ),
+                    requestFields(
+                            fieldWithPath("isBookmarked").type(JsonFieldType.BOOLEAN).description("북마크 여부 ( true, false )")
+                    )
+            ));
+
+            verify(voteService, times(1)).bookmark(any(), any(),any());
+
+        }
+
+        @Test
+        void 미인증_사용자일_경우_401_응답() throws Exception{
+
+            // given
+            final Long voteId = 1L;
+
+            // when & then
+            mockMvc.perform(post(BASE_URL + URL, voteId)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        void 북마크_여부가_전달이_안된_경우_400_응답() throws Exception{
+
+            // given
+            final Long voteId = 1L;
+            final Boolean isBookmarked = null;
+            final VoteBookmarkRequest voteBookmarkRequest = new VoteBookmarkRequest(isBookmarked);
+            mockingForAuthorization();
+
+            // when & then
+            mockMvc.perform(post(BASE_URL + URL, voteId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .content(createJson(voteBookmarkRequest))
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest());
+        }
+
+    }
+
+
 }

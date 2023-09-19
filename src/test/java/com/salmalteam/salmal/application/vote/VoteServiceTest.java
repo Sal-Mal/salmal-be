@@ -8,6 +8,7 @@ import com.salmalteam.salmal.domain.vote.VoteRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluation;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
+import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
 import com.salmalteam.salmal.exception.vote.VoteException;
@@ -75,7 +76,7 @@ class VoteServiceTest {
     class 투표_평가_테스트 {
 
         @Test
-        void 평가를_할_투표가_존재하지_않는다면_에러를_발생시킨다() {
+        void 평가를_할_투표가_존재하지_않는다면_예외를_발생시킨다() {
             // given
             final Long memberId = 1L;
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
@@ -91,7 +92,7 @@ class VoteServiceTest {
         }
 
         @Test
-        void 이미_동일한_타입의_투표를_이행한_적이_있다면_에러를_발생시킨다() {
+        void 이미_동일한_타입의_투표를_이행한_적이_있다면_예외를_발생시킨다() {
             // given
             final Long memberId = 1L;
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
@@ -107,6 +108,28 @@ class VoteServiceTest {
             assertThatThrownBy(() -> voteService.evaluate(memberPayLoad, voteId, voteEvaluationType))
                     .isInstanceOf(VoteException.class);
         }
+    }
+
+    @Nested
+    class 투표_북마킹_테스트 {
+
+        @Test
+        void 북마크_할_투표가_존재하지_않는다면_예외를_발생시킨다() {
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final Long voteId = 1L;
+            final Boolean isBookmarked = true;
+            final VoteBookmarkRequest voteBookmarkRequest = new VoteBookmarkRequest(isBookmarked);
+
+            given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
+            given(voteRepository.findById(eq(voteId))).willReturn(Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() -> voteService.bookmark(memberPayLoad, voteId, voteBookmarkRequest))
+                    .isInstanceOf(VoteException.class);
+        }
+
     }
 
 }

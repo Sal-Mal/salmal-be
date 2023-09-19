@@ -2,6 +2,7 @@ package com.salmalteam.salmal.presentation.vote;
 
 import com.salmalteam.salmal.application.vote.VoteService;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
+import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
@@ -22,7 +23,7 @@ public class VoteController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Login
-    public void registerVote(@LoginMember MemberPayLoad memberPayLoad,
+    public void registerVote(@LoginMember final MemberPayLoad memberPayLoad,
                              @ModelAttribute @Valid final VoteCreateRequest voteCreateRequest){
         voteService.register(memberPayLoad, voteCreateRequest);
     }
@@ -30,11 +31,20 @@ public class VoteController {
     @PostMapping("/{vote-id}/evaluations")
     @ResponseStatus(HttpStatus.CREATED)
     @Login
-    public void evaluateVote(@LoginMember MemberPayLoad memberPayLoad,
+    public void evaluateVote(@LoginMember final MemberPayLoad memberPayLoad,
                              @PathVariable(name = "vote-id") final Long voteId,
                              @RequestBody @Valid final VoteEvaluateRequest voteEvaluateRequest){
         final VoteEvaluationType voteEvaluationType = VoteEvaluationType.from(voteEvaluateRequest.getVoteEvaluationType());
         voteService.evaluate(memberPayLoad, voteId, voteEvaluationType);
+    }
+
+    @PostMapping("/{vote-id}/bookmarks")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Login
+    public void bookmarkVote(@LoginMember final MemberPayLoad memberPayLoad,
+                             @PathVariable(name = "vote-id") final Long voteId,
+                             @RequestBody @Valid final VoteBookmarkRequest voteBookmarkRequest){
+        voteService.bookmark(memberPayLoad, voteId, voteBookmarkRequest);
     }
 
 }
