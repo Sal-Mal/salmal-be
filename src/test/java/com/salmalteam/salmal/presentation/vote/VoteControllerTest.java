@@ -1,7 +1,7 @@
 package com.salmalteam.salmal.presentation.vote;
 
-import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
 import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
+import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
 import com.salmalteam.salmal.support.PresentationTest;
 import org.junit.jupiter.api.Nested;
@@ -21,17 +21,15 @@ import java.nio.charset.StandardCharsets;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class VoteControllerTest extends PresentationTest {
@@ -267,6 +265,73 @@ class VoteControllerTest extends PresentationTest {
             ));
 
             verify(voteService, times(1)).report(any(), eq(voteId));
+
+        }
+
+        @Test
+        void 미인증_사용자일_경우_401_응답() throws Exception{
+
+            // given
+            final Long voteId = 1L;
+
+            // when & then
+            mockMvc.perform(post(BASE_URL + URL, voteId)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isUnauthorized());
+        }
+    }
+
+    @Nested
+    class 투표_댓글_생성_테스트{
+        private final static String URL = "/{vote-id}/comments";
+        @Test
+        void 댓글_생성_성공() throws Exception{
+            // given
+            final Long voteId = 1L;
+            final String content = "이 옷 정말 멋져요!";
+            final VoteCommentCreateRequest voteCommentCreateRequest = new VoteCommentCreateRequest(content);
+            mockingForAuthorization();
+
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL+URL, voteId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .content(createJson(voteCommentCreateRequest))
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isCreated());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("vote-id").description("댓글을 추가할 투표 ID")
+                    ),
+                    requestFields(
+                            fieldWithPath("content").type(JsonFieldType.STRING).description("댓글 내용 ( 최소 1글자 ~ 최대 100글자 ) ")
+                    )
+            ));
+
+            verify(voteService, times(1)).comment(any(),any(),any());
+        }
+
+        @Test
+        void 댓글을_입력하지_않은_경우_400응답() throws Exception{
+            // given
+            final Long voteId = 1L;
+            final String content = "";
+            final VoteCommentCreateRequest voteCommentCreateRequest = new VoteCommentCreateRequest(content);
+            mockingForAuthorization();
+
+            // when & then
+            mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL+URL, voteId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .content(createJson(voteCommentCreateRequest))
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
         }
 

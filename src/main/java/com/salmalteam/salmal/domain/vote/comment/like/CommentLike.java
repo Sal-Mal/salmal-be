@@ -1,7 +1,7 @@
-package com.salmalteam.salmal.domain.review.like;
+package com.salmalteam.salmal.domain.vote.comment.like;
 
 import com.salmalteam.salmal.domain.member.Member;
-import com.salmalteam.salmal.domain.review.Review;
+import com.salmalteam.salmal.domain.vote.comment.Comment;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReviewLike {
+public class CommentLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,19 +19,19 @@ public class ReviewLike {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
-    private Review review;
+    private Comment comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "liker_id")
     private Member liker;
 
-    private ReviewLike(final Review review, final Member member){
-        this.review = review;
+    private CommentLike(final Comment comment, final Member member){
+        this.comment = comment;
         this.liker = member;
     }
 
-    public static ReviewLike of(final Review review, final Member member){
-        return new ReviewLike(review, member);
+    public static CommentLike of(final Comment comment, final Member member){
+        return new CommentLike(comment, member);
     }
 
 }

@@ -8,14 +8,16 @@ import com.salmalteam.salmal.domain.vote.Vote;
 import com.salmalteam.salmal.domain.vote.VoteRepository;
 import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMark;
 import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMarkRepository;
+import com.salmalteam.salmal.domain.vote.comment.Comment;
+import com.salmalteam.salmal.domain.vote.comment.CommentRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluation;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
 import com.salmalteam.salmal.domain.vote.report.VoteReport;
 import com.salmalteam.salmal.domain.vote.report.VoteReportRepository;
 import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
+import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
-import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
 import com.salmalteam.salmal.exception.vote.VoteException;
 import com.salmalteam.salmal.exception.vote.VoteExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
@@ -23,8 +25,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Optional;
 
 @Service
 public class VoteService {
@@ -34,6 +34,7 @@ public class VoteService {
     private final VoteEvaluationRepository voteEvaluationRepository;
     private final VoteBookMarkRepository voteBookMarkRepository;
     private final VoteReportRepository voteReportRepository;
+    private final CommentRepository commentRepository;
     private final ImageUploader imageUploader;
     private final String voteImagePath;
 
@@ -42,6 +43,7 @@ public class VoteService {
                        final VoteEvaluationRepository voteEvaluationRepository,
                        final VoteBookMarkRepository voteBookMarkRepository,
                        final VoteReportRepository voteReportRepository,
+                       final CommentRepository commentRepository,
                        final ImageUploader imageUploader,
                        @Value("${image.path.vote}") String voteImagePath){
         this.memberService = memberService;
@@ -49,6 +51,7 @@ public class VoteService {
         this.voteEvaluationRepository = voteEvaluationRepository;
         this.voteBookMarkRepository = voteBookMarkRepository;
         this.voteReportRepository = voteReportRepository;
+        this.commentRepository = commentRepository;
         this.imageUploader = imageUploader;
         this.voteImagePath = voteImagePath;
     }
@@ -109,6 +112,16 @@ public class VoteService {
         if(voteReportRepository.existsByVoteAndReporter(vote, member)){
             throw new VoteException(VoteExceptionType.DUPLICATED_VOTE_REPORT);
         }
+    }
+
+    @Transactional
+    public void comment(final MemberPayLoad memberPayLoad, final Long voteId, final VoteCommentCreateRequest voteCommentCreateRequest){
+
+        final Member member = memberService.findMemberById(memberPayLoad.getId());
+        final Vote vote = getVoteById(voteId);
+        final String content = voteCommentCreateRequest.getContent();
+
+        commentRepository.save(Comment.of(content, vote, member));
     }
 
     private Vote getVoteById(final Long voteId){
