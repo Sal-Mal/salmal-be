@@ -198,7 +198,7 @@ include::{snippets}/투표_댓글_생성_테스트/댓글_생성_성공/http-res
 
 === 📌 투표 댓글 수정
 ==== 기본정보
-- 메서드 : POST
+- 메서드 : PUT
 - URL : `/api/comments/{comment-id}`
 
 ==== 요청
