@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.salmalteam.salmal.application.auth.AuthService;
 import com.salmalteam.salmal.application.auth.TokenExtractor;
 import com.salmalteam.salmal.application.auth.TokenProvider;
+import com.salmalteam.salmal.application.comment.CommentService;
 import com.salmalteam.salmal.application.vote.VoteService;
 import com.salmalteam.salmal.config.RestDocsConfig;
 import com.salmalteam.salmal.domain.auth.TokenRepository;
@@ -47,6 +48,9 @@ public class PresentationTest {
 
     @MockBean
     protected VoteService voteService;
+
+    @MockBean
+    protected CommentService commentService;
 
     @MockBean
     protected TokenProvider tokenProvider;
