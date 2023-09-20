@@ -193,3 +193,23 @@ include::{snippets}/투표_댓글_생성_테스트/댓글_생성_성공/request-
 include::{snippets}/투표_댓글_생성_테스트/댓글_생성_성공/http-request.adoc[]
 ===== 응답
 include::{snippets}/투표_댓글_생성_테스트/댓글_생성_성공/http-response.adoc[]
+
+---
+
+=== 📌 투표 댓글 수정
+==== 기본정보
+- 메서드 : POST
+- URL : `/api/comments/{comment-id}`
+
+==== 요청
+===== 헤더
+include::{snippets}/댓글_수정_테스트/댓글_수정_성공/request-headers.adoc[]
+===== 경로 변수
+include::{snippets}/댓글_수정_테스트/댓글_수정_성공/path-parameters.adoc[]
+===== 본문
+include::{snippets}/댓글_수정_테스트/댓글_수정_성공/request-fields.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/댓글_수정_테스트/댓글_수정_성공/http-request.adoc[]
+===== 응답
+include::{snippets}/댓글_수정_테스트/댓글_수정_성공/http-response.adoc[]

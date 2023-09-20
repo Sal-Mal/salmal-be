@@ -1,6 +1,7 @@
 package com.salmalteam.salmal.application.vote;
 
 import com.salmalteam.salmal.application.ImageUploader;
+import com.salmalteam.salmal.application.comment.CommentService;
 import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.domain.image.ImageFile;
 import com.salmalteam.salmal.domain.member.Member;
@@ -17,7 +18,10 @@ import com.salmalteam.salmal.domain.vote.report.VoteReport;
 import com.salmalteam.salmal.domain.vote.report.VoteReportRepository;
 import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
+import com.salmalteam.salmal.dto.request.vote.VoteCommentUpdateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
+import com.salmalteam.salmal.exception.comment.CommentException;
+import com.salmalteam.salmal.exception.comment.CommentExceptionType;
 import com.salmalteam.salmal.exception.vote.VoteException;
 import com.salmalteam.salmal.exception.vote.VoteExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
@@ -34,7 +38,7 @@ public class VoteService {
     private final VoteEvaluationRepository voteEvaluationRepository;
     private final VoteBookMarkRepository voteBookMarkRepository;
     private final VoteReportRepository voteReportRepository;
-    private final CommentRepository commentRepository;
+    private final CommentService commentService;
     private final ImageUploader imageUploader;
     private final String voteImagePath;
 
@@ -43,7 +47,7 @@ public class VoteService {
                        final VoteEvaluationRepository voteEvaluationRepository,
                        final VoteBookMarkRepository voteBookMarkRepository,
                        final VoteReportRepository voteReportRepository,
-                       final CommentRepository commentRepository,
+                       final CommentService commentService,
                        final ImageUploader imageUploader,
                        @Value("${image.path.vote}") String voteImagePath){
         this.memberService = memberService;
@@ -51,7 +55,7 @@ public class VoteService {
         this.voteEvaluationRepository = voteEvaluationRepository;
         this.voteBookMarkRepository = voteBookMarkRepository;
         this.voteReportRepository = voteReportRepository;
-        this.commentRepository = commentRepository;
+        this.commentService = commentService;
         this.imageUploader = imageUploader;
         this.voteImagePath = voteImagePath;
     }
@@ -121,11 +125,12 @@ public class VoteService {
         final Vote vote = getVoteById(voteId);
         final String content = voteCommentCreateRequest.getContent();
 
-        commentRepository.save(Comment.of(content, vote, member));
+        commentService.save(content, vote, member);
     }
 
     private Vote getVoteById(final Long voteId){
         return voteRepository.findById(voteId)
                 .orElseThrow(() -> new VoteException(VoteExceptionType.NOT_FOUND));
     }
+
 }

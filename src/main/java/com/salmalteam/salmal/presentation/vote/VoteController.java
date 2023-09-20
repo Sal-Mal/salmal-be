@@ -2,10 +2,7 @@ package com.salmalteam.salmal.presentation.vote;
 
 import com.salmalteam.salmal.application.vote.VoteService;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
-import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
-import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
-import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
-import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
+import com.salmalteam.salmal.dto.request.vote.*;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import com.salmalteam.salmal.presentation.Login;
 import com.salmalteam.salmal.presentation.LoginMember;
