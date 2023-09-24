@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.domain.vote.comment.like;
+package com.salmalteam.salmal.domain.comment.like;
 
 import org.springframework.data.repository.Repository;
 

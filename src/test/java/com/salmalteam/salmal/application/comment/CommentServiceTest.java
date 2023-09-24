@@ -2,7 +2,7 @@ package com.salmalteam.salmal.application.comment;
 
 import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.domain.member.Member;
-import com.salmalteam.salmal.domain.vote.comment.CommentRepository;
+import com.salmalteam.salmal.domain.comment.CommentRepository;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentUpdateRequest;
 import com.salmalteam.salmal.exception.comment.CommentException;
 import com.salmalteam.salmal.exception.member.MemberException;

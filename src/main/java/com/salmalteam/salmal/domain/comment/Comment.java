@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.domain.vote.comment;
+package com.salmalteam.salmal.domain.comment;
 
 import com.salmalteam.salmal.domain.BaseEntity;
 import com.salmalteam.salmal.domain.member.Member;
