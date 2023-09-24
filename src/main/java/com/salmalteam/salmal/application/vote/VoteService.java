@@ -9,8 +9,6 @@ import com.salmalteam.salmal.domain.vote.Vote;
 import com.salmalteam.salmal.domain.vote.VoteRepository;
 import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMark;
 import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMarkRepository;
-import com.salmalteam.salmal.domain.vote.comment.Comment;
-import com.salmalteam.salmal.domain.vote.comment.CommentRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluation;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
@@ -18,10 +16,8 @@ import com.salmalteam.salmal.domain.vote.report.VoteReport;
 import com.salmalteam.salmal.domain.vote.report.VoteReportRepository;
 import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
-import com.salmalteam.salmal.dto.request.vote.VoteCommentUpdateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
-import com.salmalteam.salmal.exception.comment.CommentException;
-import com.salmalteam.salmal.exception.comment.CommentExceptionType;
+import com.salmalteam.salmal.dto.response.vote.VoteResponse;
 import com.salmalteam.salmal.exception.vote.VoteException;
 import com.salmalteam.salmal.exception.vote.VoteExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
@@ -29,6 +25,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
 
 @Service
 public class VoteService {
@@ -75,10 +73,38 @@ public class VoteService {
         final Vote vote = getVoteById(voteId);
 
         validateEvaluationVoteDuplicated(member, vote, voteEvaluationType);
+        deleteExistsEvaluation(member, vote);
+
+        switch (voteEvaluationType){
+            case LIKE:
+                voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(voteId);
+                break;
+            case DISLIKE:
+                voteRepository.updateVoteEvaluationStatisticsForEvaluationDisLikeInsert(voteId);
+                break;
+        }
 
         voteEvaluationRepository.save(VoteEvaluation.of(vote, member, voteEvaluationType));
     }
 
+    private void deleteExistsEvaluation(final Member member, final Vote vote){
+
+        final Optional<VoteEvaluation> evaluationOptional = voteEvaluationRepository.findByEvaluatorAndVote(member, vote);
+        if(evaluationOptional.isPresent()){
+            final VoteEvaluation voteEvaluation = evaluationOptional.get();
+            final VoteEvaluationType voteEvaluationType = voteEvaluation.getVoteEvaluationType();
+            final Long voteId = vote.getId();
+            switch(voteEvaluationType){
+                case LIKE:
+                    voteRepository.updateVoteEvaluationsStatisticsForEvaluationLikeDelete(voteId);
+                    break;
+                case DISLIKE:
+                    voteRepository.updateVoteEvaluationsStatisticsForEvaluationDisLikeDelete(voteId);
+                    break;
+            }
+            voteEvaluationRepository.deleteByEvaluatorAndVote(member, vote);
+        }
+    }
 
     private void validateEvaluationVoteDuplicated(final Member member,final Vote vote, final VoteEvaluationType voteEvaluationType) {
         if(voteEvaluationRepository.existsByEvaluatorAndVoteAndVoteEvaluationType(member, vote, voteEvaluationType)){
@@ -125,12 +151,29 @@ public class VoteService {
         final Vote vote = getVoteById(voteId);
         final String content = voteCommentCreateRequest.getContent();
 
+        voteRepository.increaseCommentCount(voteId);
         commentService.save(content, vote, member);
+    }
+
+    @Transactional(readOnly = true)
+    public VoteResponse search(final MemberPayLoad memberPayLoad, final Long voteId){
+
+        final Long memberId = memberPayLoad.getId();
+        validateVoteExist(voteId);
+
+        return voteRepository.search(voteId, memberId);
+    }
+
+    private void validateVoteExist(final Long voteId){
+        if(!voteRepository.existsById(voteId)){
+            throw new VoteException(VoteExceptionType.NOT_FOUND);
+        }
     }
 
     private Vote getVoteById(final Long voteId){
         return voteRepository.findById(voteId)
                 .orElseThrow(() -> new VoteException(VoteExceptionType.NOT_FOUND));
     }
+
 
 }

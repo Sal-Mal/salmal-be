@@ -1,0 +1,105 @@
+package com.salmalteam.salmal.domain.vote;
+
+import com.salmalteam.salmal.domain.comment.CommentRepository;
+import com.salmalteam.salmal.domain.member.Member;
+import com.salmalteam.salmal.domain.member.MemberRepository;
+import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMark;
+import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMarkRepository;
+import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluation;
+import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
+import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
+import com.salmalteam.salmal.dto.response.vote.VoteResponse;
+import com.salmalteam.salmal.support.RepositoryTest;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+
+import javax.persistence.EntityManager;
+import java.math.BigDecimal;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class VoteRepositoryTest extends RepositoryTest {
+
+    @Autowired
+    VoteRepository voteRepository;
+
+    @Autowired
+    VoteBookMarkRepository voteBookMarkRepository;
+
+    @Autowired
+    VoteEvaluationRepository voteEvaluationRepository;
+
+    @Autowired
+    CommentRepository commentRepository;
+
+    @Autowired
+    MemberRepository memberRepository;
+
+    @Autowired
+    EntityManager em;
+
+    @Test
+    @DirtiesContext
+    void 투표_조회_테스트(){
+
+        // given
+        final Long voteId = 1L;
+        final Long memberId = 1L;
+        final Member member = Member.of("pro", "닉네임1", "kakao", true);
+        final Vote vote = Vote.of("imageUrl", member);
+        final VoteEvaluation voteEvaluation = VoteEvaluation.of(vote, member, VoteEvaluationType.LIKE);
+        final VoteBookMark voteBookMark = VoteBookMark.of(member, vote, true);
+
+        memberRepository.save(member);
+        voteRepository.save(vote);
+        voteEvaluationRepository.save(voteEvaluation);
+        voteBookMarkRepository.save(voteBookMark);
+
+        // when
+        final VoteResponse voteResponse = voteRepository.search(voteId, memberId);
+
+        // then
+        Assertions.assertAll(
+                () -> assertThat(voteResponse.getId()).isEqualTo(voteId),
+                () -> assertThat(voteResponse.getCommentCount()).isEqualTo(0),
+                () -> assertThat(voteResponse.getMemberId()).isEqualTo(memberId),
+                () -> assertThat(voteResponse.getStatus()).isEqualTo("LIKE"),
+                () -> assertThat(voteResponse.isBookmarked()).isEqualTo(true)
+        );
+
+    }
+
+    @Nested
+    class 평가_테스트{
+        @Test
+        @DirtiesContext
+        void 싫어요_1_좋아요_1인_상태에서_좋아요를_추가(){
+            // given
+            final Long voteId = 1L;
+            final Member member = Member.of("pro", "닉네임1", "kakao", true);
+            final Vote vote = Vote.of("imageUrl", member);
+
+            memberRepository.save(member);
+            voteRepository.save(vote);
+            voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(voteId);
+            voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(voteId);
+
+            // when
+            voteRepository.updateVoteEvaluationStatisticsForEvaluationDisLikeInsert(voteId);
+
+            // then
+            final Vote findVote = voteRepository.findById(voteId).orElseThrow();
+
+            Assertions.assertAll(
+                    () -> assertThat(findVote.getEvaluationCount()).isEqualTo(3),
+                    () -> assertThat(findVote.getDislikeCount()).isEqualTo(1),
+                    () -> assertThat(findVote.getLikeCount()).isEqualTo(2),
+                    () -> assertThat(findVote.getLikeRatio()).isEqualTo(BigDecimal.valueOf(0.67)),
+                    () -> assertThat(findVote.getDislikeRatio()).isEqualTo(BigDecimal.valueOf(0.33))
+            );
+        }
+    }
+}

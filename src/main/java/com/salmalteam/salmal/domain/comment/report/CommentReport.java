@@ -1,7 +1,7 @@
-package com.salmalteam.salmal.domain.vote.comment.report;
+package com.salmalteam.salmal.domain.comment.report;
 
 import com.salmalteam.salmal.domain.member.Member;
-import com.salmalteam.salmal.domain.vote.comment.Comment;
+import com.salmalteam.salmal.domain.comment.Comment;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
