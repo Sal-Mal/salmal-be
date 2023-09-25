@@ -234,3 +234,28 @@ include::{snippets}/투표_조회/투표_조회_성공/response-fields.adoc[]
 include::{snippets}/투표_조회/투표_조회_성공/http-request.adoc[]
 ===== 응답
 include::{snippets}/투표_조회/투표_조회_성공/http-response.adoc[]
+
+
+---
+
+
+=== 📌 투표 목록 조회
+==== 기본정보
+- 메서드 : GET
+- URL : `/api/votes`
+
+==== 요청
+===== 헤더
+include::{snippets}/투표_목록_조회/투표_조회_성공/request-headers.adoc[]
+===== 쿼리 변수
+include::{snippets}/투표_목록_조회/투표_조회_성공/request-parameters.adoc[]
+==== 응답
+===== 본문
+include::{snippets}/투표_목록_조회/투표_조회_성공/response-fields.adoc[]
+===== votes
+include::{snippets}/투표_목록_조회/투표_조회_성공/response-fields-votes.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/투표_목록_조회/투표_조회_성공/http-request.adoc[]
+===== 응답
+include::{snippets}/투표_목록_조회/투표_조회_성공/http-response.adoc[]
