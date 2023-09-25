@@ -17,10 +17,13 @@ import com.salmalteam.salmal.domain.vote.report.VoteReportRepository;
 import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
+import com.salmalteam.salmal.dto.request.vote.VotePageRequest;
+import com.salmalteam.salmal.dto.response.vote.VotePageResponse;
 import com.salmalteam.salmal.dto.response.vote.VoteResponse;
 import com.salmalteam.salmal.exception.vote.VoteException;
 import com.salmalteam.salmal.exception.vote.VoteExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
+import com.salmalteam.salmal.presentation.vote.SearchTypeConstant;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -173,6 +176,13 @@ public class VoteService {
     private Vote getVoteById(final Long voteId){
         return voteRepository.findById(voteId)
                 .orElseThrow(() -> new VoteException(VoteExceptionType.NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public VotePageResponse searchList(final MemberPayLoad memberPayLoad, final VotePageRequest votePageRequest, final SearchTypeConstant searchTypeConstant){
+
+        final Long memberId = memberPayLoad.getId();
+        return voteRepository.searchList(memberId, votePageRequest, searchTypeConstant);
     }
 
 
