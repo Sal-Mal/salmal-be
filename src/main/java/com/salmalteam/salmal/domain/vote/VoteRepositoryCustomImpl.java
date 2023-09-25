@@ -128,15 +128,6 @@ public class VoteRepositoryCustomImpl implements VoteRepositoryCustom {
                 .and(vote.id.lt(cursorId))
                 .or(vote.likeCount.loe(cursorLikeCount));
     }
-
-    private BooleanExpression ltLikeCount(final Integer cursorLikeCount){
-        return cursorLikeCount == null ? null : vote.likeCount.loe(cursorLikeCount);
-    }
-
-    private BooleanExpression ltId(final Long id){
-        return id == null ? null : vote.id.lt(id);
-    }
-
     private OrderSpecifier[] orderSpecifiers(final SearchTypeConstant searchTypeConstant){
         final List<OrderSpecifier> orderSpecifierList = new ArrayList<>();
 
