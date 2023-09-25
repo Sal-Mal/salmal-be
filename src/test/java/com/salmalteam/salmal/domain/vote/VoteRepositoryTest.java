@@ -8,7 +8,10 @@ import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMarkRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluation;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
+import com.salmalteam.salmal.dto.request.vote.VotePageRequest;
+import com.salmalteam.salmal.dto.response.vote.VotePageResponse;
 import com.salmalteam.salmal.dto.response.vote.VoteResponse;
+import com.salmalteam.salmal.presentation.vote.SearchTypeConstant;
 import com.salmalteam.salmal.support.RepositoryTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
@@ -18,6 +21,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -99,6 +103,83 @@ class VoteRepositoryTest extends RepositoryTest {
                     () -> assertThat(findVote.getLikeCount()).isEqualTo(2),
                     () -> assertThat(findVote.getLikeRatio()).isEqualTo(BigDecimal.valueOf(0.67)),
                     () -> assertThat(findVote.getDislikeRatio()).isEqualTo(BigDecimal.valueOf(0.33))
+            );
+        }
+    }
+
+    @Nested
+    class 투표_목록_조회_테스트{
+
+        @Test
+        @DirtiesContext
+        void 좋아요_평가_목록_조회_테스트(){
+            // given
+            final Long memberId = 1L;
+            final Member memberA = Member.of("pro1", "닉네임1", "kakao", true);
+            final Member memberB = Member.of("pro2", "닉네임2", "kakao", true);
+            final Member memberC = Member.of("pro3", "닉네임3", "kakao", true);
+
+            final Vote voteA = Vote.of("imageUrl", memberA);
+            final Vote voteB = Vote.of("imageUrl", memberA);
+            final Vote voteC = Vote.of("imageUrl", memberA);
+            final Vote voteD = Vote.of("imageUrl", memberA);
+            VoteEvaluation voteEvaluationA = VoteEvaluation.of(voteA, memberA, VoteEvaluationType.LIKE);
+            VoteEvaluation voteEvaluationB = VoteEvaluation.of(voteB, memberA, VoteEvaluationType.LIKE);
+            VoteEvaluation voteEvaluationC = VoteEvaluation.of(voteC, memberA, VoteEvaluationType.LIKE);
+            VoteEvaluation voteEvaluationD = VoteEvaluation.of(voteD, memberA, VoteEvaluationType.LIKE);
+
+            VoteEvaluation voteEvaluationF = VoteEvaluation.of(voteB, memberB, VoteEvaluationType.LIKE);
+            VoteEvaluation voteEvaluationG = VoteEvaluation.of(voteC, memberB, VoteEvaluationType.LIKE);
+            VoteEvaluation voteEvaluationH = VoteEvaluation.of(voteD, memberB, VoteEvaluationType.LIKE);
+
+            VoteEvaluation voteEvaluationI = VoteEvaluation.of(voteA, memberC, VoteEvaluationType.LIKE);
+            VoteEvaluation voteEvaluationJ = VoteEvaluation.of(voteB, memberC, VoteEvaluationType.LIKE);
+            VoteEvaluation voteEvaluationK = VoteEvaluation.of(voteC, memberC, VoteEvaluationType.LIKE);
+            VoteEvaluation voteEvaluationL = VoteEvaluation.of(voteD, memberC, VoteEvaluationType.LIKE);
+
+            final VotePageRequest votePageRequest = new VotePageRequest(3L, 3, 3, "BEST");
+
+            memberRepository.save(memberA);
+            memberRepository.save(memberB);
+            memberRepository.save(memberC);
+            voteRepository.save(voteA);
+            voteRepository.save(voteB);
+            voteRepository.save(voteC);
+            voteRepository.save(voteD);
+            voteEvaluationRepository.save(voteEvaluationA);
+            voteEvaluationRepository.save(voteEvaluationB);
+            voteEvaluationRepository.save(voteEvaluationC);
+            voteEvaluationRepository.save(voteEvaluationD);
+            voteEvaluationRepository.save(voteEvaluationF);
+            voteEvaluationRepository.save(voteEvaluationG);
+            voteEvaluationRepository.save(voteEvaluationH);
+            voteEvaluationRepository.save(voteEvaluationI);
+            voteEvaluationRepository.save(voteEvaluationJ);
+            voteEvaluationRepository.save(voteEvaluationK);
+            voteEvaluationRepository.save(voteEvaluationL);
+
+            voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(1L);
+            voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(1L);
+            voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(2L);
+            voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(2L);
+            voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(3L);
+            voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(3L);
+            voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(3L);
+            voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(4L);
+            voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(4L);
+            voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(4L);
+
+            // when
+            final VotePageResponse votePageResponse = voteRepository.searchList(memberId, votePageRequest, SearchTypeConstant.BEST);
+
+            // then
+            System.out.println(votePageResponse.isHasNext());
+            System.out.println(votePageResponse.getVotes().size());
+            List<VoteResponse> votes = votePageResponse.getVotes();
+            Assertions.assertAll(
+                    () -> assertThat(votes.size()).isEqualTo(3),
+                    () -> assertThat(votes.get(0).getLikeCount()).isEqualTo(3),
+                    () -> assertThat(votes.get(2).getLikeCount()).isEqualTo(2)
             );
         }
     }
