@@ -4,7 +4,8 @@ import com.salmalteam.salmal.exception.ExceptionType;
 import com.salmalteam.salmal.exception.Status;
 
 public enum CommentLikeExceptionType implements ExceptionType {
-    FORBIDDEN_DELETE(Status.FORBIDDEN, 2101, "좋아요를 취소할 권한이 없습니다. 좋아요 취소는 본인만이 할 수 있습니다.", "권한이 없는 좋아요 취소 요청")
+    NOT_FOUND(Status.NOT_FOUND, 2101, "좋아요를 한 댓글이 아닙니다.", "존재하지 않는 좋아요 요청"),
+    DUPLICATED_LIKE(Status.BAD_REQUEST, 2102, "이미 좋아요한 댓글입니다.", "중복된 좋아요 요청")
     ;
 
     private final Status status;

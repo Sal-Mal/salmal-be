@@ -102,4 +102,68 @@ class CommentControllerTest extends PresentationTest {
                     .andExpect(status().isBadRequest());
         }
     }
+
+    @Nested
+    class 댓글_좋아요_테스트{
+
+        private static final String URL = "/likes";
+        @Test
+        void 댓글_좋아요_성공() throws Exception{
+
+            // given
+            final Long commentId = 1L;
+            mockingForAuthorization();
+
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + URL, commentId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isOk());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("comment-id").description("좋아요할 댓글 ID")
+                    )
+            ));
+
+            verify(commentService, times(1)).likeComment(any(), any());
+        }
+    }
+
+    @Nested
+    class 댓글_좋아요_취소_테스트{
+
+        private static final String URL = "/likes";
+        @Test
+        void 댓글_좋아요_취소_성공() throws Exception{
+            // given
+            final Long commentId = 1L;
+            mockingForAuthorization();
+
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL +URL, commentId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("comment-id").description("좋아요 취소할 댓글 ID")
+                    )
+            ));
+
+            verify(commentService, times(1)).unLikeComment(any(), any());
+        }
+
+    }
 }
