@@ -27,4 +27,21 @@ public class CommentController {
                               @RequestBody @Valid final VoteCommentUpdateRequest voteCommentUpdateRequest){
         commentService.updateComment(memberPayLoad, commentId, voteCommentUpdateRequest);
     }
+    @PostMapping("/{comment-id}/likes")
+    @ResponseStatus(HttpStatus.OK)
+    @Login
+    public void likeComment(@LoginMember final MemberPayLoad memberPayLoad,
+                            @PathVariable(name = "comment-id") final Long commentId){
+        commentService.likeComment(memberPayLoad, commentId);
+    }
+
+    @DeleteMapping("/{comment-id}/likes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Login
+    public void cancelLikeComment(@LoginMember final MemberPayLoad memberPayLoad,
+                                  @PathVariable(name = "comment-id") final Long commentId){
+        commentService.unLikeComment(memberPayLoad, commentId);
+    }
+
+
 }

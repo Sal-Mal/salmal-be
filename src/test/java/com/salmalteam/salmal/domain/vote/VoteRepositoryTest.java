@@ -173,8 +173,6 @@ class VoteRepositoryTest extends RepositoryTest {
             final VotePageResponse votePageResponse = voteRepository.searchList(memberId, votePageRequest, SearchTypeConstant.BEST);
 
             // then
-            System.out.println(votePageResponse.isHasNext());
-            System.out.println(votePageResponse.getVotes().size());
             List<VoteResponse> votes = votePageResponse.getVotes();
             Assertions.assertAll(
                     () -> assertThat(votes.size()).isEqualTo(3),
