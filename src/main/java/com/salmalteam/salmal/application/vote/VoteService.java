@@ -14,10 +14,12 @@ import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
 import com.salmalteam.salmal.domain.vote.report.VoteReport;
 import com.salmalteam.salmal.domain.vote.report.VoteReportRepository;
+import com.salmalteam.salmal.dto.request.comment.CommentPageRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VotePageRequest;
+import com.salmalteam.salmal.dto.response.comment.CommentPageResponse;
 import com.salmalteam.salmal.dto.response.vote.VotePageResponse;
 import com.salmalteam.salmal.dto.response.vote.VoteResponse;
 import com.salmalteam.salmal.exception.vote.VoteException;
@@ -156,6 +158,12 @@ public class VoteService {
 
         voteRepository.increaseCommentCount(voteId);
         commentService.save(content, vote, member);
+    }
+
+    @Transactional(readOnly = true)
+    public CommentPageResponse searchComments(final Long voteId, final MemberPayLoad memberPayLoad, final CommentPageRequest commentPageRequest){
+        validateVoteExist(voteId);
+        return commentService.searchList(voteId, memberPayLoad, commentPageRequest);
     }
 
     @Transactional(readOnly = true)

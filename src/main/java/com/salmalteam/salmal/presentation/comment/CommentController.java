@@ -1,7 +1,9 @@
 package com.salmalteam.salmal.presentation.comment;
 
 import com.salmalteam.salmal.application.comment.CommentService;
+import com.salmalteam.salmal.dto.request.comment.CommentPageRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentUpdateRequest;
+import com.salmalteam.salmal.dto.response.comment.CommentPageResponse;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import com.salmalteam.salmal.presentation.Login;
 import com.salmalteam.salmal.presentation.LoginMember;

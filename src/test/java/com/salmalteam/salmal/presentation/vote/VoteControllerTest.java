@@ -4,6 +4,8 @@ import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
 import com.salmalteam.salmal.dto.request.vote.VotePageRequest;
+import com.salmalteam.salmal.dto.response.comment.CommentPageResponse;
+import com.salmalteam.salmal.dto.response.comment.CommentResponse;
 import com.salmalteam.salmal.dto.response.vote.VotePageResponse;
 import com.salmalteam.salmal.dto.response.vote.VoteResponse;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
@@ -399,8 +401,8 @@ class VoteControllerTest extends PresentationTest {
                             fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("좋아요 개수"),
                             fieldWithPath("disLikeCount").type(JsonFieldType.NUMBER).description("싫어요 개수"),
                             fieldWithPath("totalEvaluationCnt").type(JsonFieldType.NUMBER).description("총 투표 개수"),
-                            fieldWithPath("likeRatio").type(JsonFieldType.NUMBER).description("총 투표 개수"),
-                            fieldWithPath("disLikeRatio").type(JsonFieldType.NUMBER).description("총 투표 개수"),
+                            fieldWithPath("likeRatio").type(JsonFieldType.NUMBER).description("좋아요 비율"),
+                            fieldWithPath("disLikeRatio").type(JsonFieldType.NUMBER).description("싫어요 비율"),
                             fieldWithPath("createdAt").type(JsonFieldType.STRING).description("투표 생성일"),
                             fieldWithPath("bookmarked").type(JsonFieldType.BOOLEAN).description("내가 북마크 했는지 여부 (true, false) "),
                             fieldWithPath("status").type(JsonFieldType.STRING).description("해당 투표에 대한 나의 상태 (NONE, LIKE, DISLIKE)")
@@ -479,8 +481,8 @@ class VoteControllerTest extends PresentationTest {
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("좋아요 개수"),
                                     fieldWithPath("disLikeCount").type(JsonFieldType.NUMBER).description("싫어요 개수"),
                                     fieldWithPath("totalEvaluationCnt").type(JsonFieldType.NUMBER).description("총 투표 개수"),
-                                    fieldWithPath("likeRatio").type(JsonFieldType.NUMBER).description("총 투표 개수"),
-                                    fieldWithPath("disLikeRatio").type(JsonFieldType.NUMBER).description("총 투표 개수"),
+                                    fieldWithPath("likeRatio").type(JsonFieldType.NUMBER).description("좋아요 비율"),
+                                    fieldWithPath("disLikeRatio").type(JsonFieldType.NUMBER).description("싫어요 비율"),
                                     fieldWithPath("createdAt").type(JsonFieldType.STRING).description("투표 생성일"),
                                     fieldWithPath("bookmarked").type(JsonFieldType.BOOLEAN).description("내가 북마크 했는지 여부 (true, false) "),
                                     fieldWithPath("status").type(JsonFieldType.STRING).description("해당 투표에 대한 나의 상태 (NONE, LIKE, DISLIKE)")
@@ -497,6 +499,69 @@ class VoteControllerTest extends PresentationTest {
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isUnauthorized());
+        }
+    }
+
+    @Nested
+    class 투표_댓글_목록_조회_테스트 {
+
+        private final static String URL = "/{vote-id}/comments";
+
+        @Test
+        void 댓글_목록_조회_성공() throws Exception {
+
+            // given
+            final Long voteId = 1L;
+            final Long cursorId = 6L;
+            final int size = 3;
+            final String memberImageURL = "https://.../image.jpg";
+            final CommentResponse commentResponse1 = new CommentResponse(5L, 1L, memberImageURL,false, 33, "이옷 정말 예뻐요~!", LocalDateTime.now(), LocalDateTime.now());
+            final CommentResponse commentResponse2 = new CommentResponse(4L, 2L,memberImageURL, false, 31, "강추 강추!", LocalDateTime.now(), LocalDateTime.now());
+            final CommentResponse commentResponse3 = new CommentResponse(3L, 3L,memberImageURL, false, 22, "좋네요", LocalDateTime.now(), LocalDateTime.now());
+
+            final CommentPageResponse commentPageResponse = CommentPageResponse.of(true, List.of(commentResponse1, commentResponse2, commentResponse3));
+            given(voteService.searchComments(any(), any(), any())).willReturn(commentPageResponse);
+
+            mockingForAuthorization();
+
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + URL, voteId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .param("cursor-id", String.valueOf(cursorId))
+                            .param("size", String.valueOf(size))
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isOk());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("vote-id").description("댓글 목록을 조회할 투표 ID")
+                    ),
+                    requestParameters(
+                            parameterWithName("cursor-id").optional().description("이전 마지막 조회 결과 댓글 ID (첫 페이지 조회 시 입력 X)"),
+                            parameterWithName("size").optional().description("검색할 ROW 수")
+                    ),
+                    responseFields(
+                            fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 존재 여부 "),
+                            subsectionWithPath("comments").type(JsonFieldType.ARRAY).description("댓글 목록")
+                    )
+            )).andDo(restDocs.document(
+                            responseFields(beneathPath("comments").withSubsectionId("comments"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("댓글 ID"),
+                                    fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("댓글 작성자 ID "),
+                                    fieldWithPath("memberImageUrl").type(JsonFieldType.STRING).description("댓글 작성자 프로필 이미지 URL"),
+                                    fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
+                                    fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("좋아요 개수"),
+                                    fieldWithPath("content").type(JsonFieldType.STRING).description("댓글 내용"),
+                                    fieldWithPath("createdAt").type(JsonFieldType.STRING).description("댓글 생성일"),
+                                    fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("댓글 수정일")
+                            )
+                    )
+            );
         }
     }
 
