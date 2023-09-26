@@ -563,6 +563,19 @@ class VoteControllerTest extends PresentationTest {
                     )
             );
         }
+
+        @Test
+        void 미인증_사용자일_경우_401_응답() throws Exception {
+
+            // given
+            final Long voteId = 1L;
+
+            // when & then
+            mockMvc.perform(get(BASE_URL + URL, voteId)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isUnauthorized());
+        }
     }
 
 
