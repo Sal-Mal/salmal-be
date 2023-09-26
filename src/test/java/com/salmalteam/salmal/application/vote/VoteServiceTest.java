@@ -239,4 +239,20 @@ class VoteServiceTest {
         }
     }
 
+    @Nested
+    class 투표_댓글_목록_조회_테스트{
+        @Test
+        void 댓글_목록을_조회할_투표가_존재하지_않으면_예외를_발생시킨다(){
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final Long voteId = 1L;
+            given(voteRepository.existsById(any())).willReturn(false);
+
+            // when & then 
+            assertThatThrownBy(() -> voteService.search(memberPayLoad, voteId))
+                    .isInstanceOf(VoteException.class);
+        }
+    }
+
 }

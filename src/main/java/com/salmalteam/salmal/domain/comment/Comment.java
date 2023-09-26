@@ -32,6 +32,9 @@ public class Comment extends BaseEntity {
     @Embedded
     private Content content;
 
+    @Column
+    private int likeCount = 0;
+
     private Comment(final String content, final Vote vote, final Member commenter){
         this.content = Content.of(content);
         this.commenter = commenter;

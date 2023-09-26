@@ -5,7 +5,9 @@ import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.vote.Vote;
 import com.salmalteam.salmal.domain.comment.Comment;
 import com.salmalteam.salmal.domain.comment.CommentRepository;
+import com.salmalteam.salmal.dto.request.comment.CommentPageRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentUpdateRequest;
+import com.salmalteam.salmal.dto.response.comment.CommentPageResponse;
 import com.salmalteam.salmal.exception.comment.CommentException;
 import com.salmalteam.salmal.exception.comment.CommentExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
@@ -21,10 +23,11 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public void save(final String content, final Vote vote, final Member member){
+    public void save(final String content, final Vote vote, final Member member) {
         final Comment comment = Comment.of(content, vote, member);
         commentRepository.save(comment);
     }
+
     @Transactional
     public void updateComment(final MemberPayLoad memberPayLoad, final Long commentId, final VoteCommentUpdateRequest voteCommentUpdateRequest) {
 
@@ -38,14 +41,22 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
-    private Comment getCommentById(final Long commentId){
+    private Comment getCommentById(final Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentExceptionType.NOT_FOUND));
     }
 
     private void validateAuthority(final Comment comment, final Member member) {
-        if (comment.getCommenter().getId() != member.getId()){
+        if (comment.getCommenter().getId() != member.getId()) {
             throw new CommentException(CommentExceptionType.FORBIDDEN_UPDATE);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public CommentPageResponse searchList(final Long voteId,
+                                          final MemberPayLoad memberPayLoad,
+                                          final CommentPageRequest commentPageRequest) {
+        final Long memberId = memberPayLoad.getId();
+        return commentRepository.searchList(voteId, memberId, commentPageRequest);
     }
 }

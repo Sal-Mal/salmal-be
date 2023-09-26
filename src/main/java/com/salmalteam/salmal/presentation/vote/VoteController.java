@@ -2,7 +2,9 @@ package com.salmalteam.salmal.presentation.vote;
 
 import com.salmalteam.salmal.application.vote.VoteService;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
+import com.salmalteam.salmal.dto.request.comment.CommentPageRequest;
 import com.salmalteam.salmal.dto.request.vote.*;
+import com.salmalteam.salmal.dto.response.comment.CommentPageResponse;
 import com.salmalteam.salmal.dto.response.vote.VotePageResponse;
 import com.salmalteam.salmal.dto.response.vote.VoteResponse;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
@@ -63,6 +65,17 @@ public class VoteController {
                             @PathVariable(name = "vote-id") final Long voteId,
                             @RequestBody @Valid final VoteCommentCreateRequest voteCommentCreateRequest){
         voteService.comment(memberPayLoad, voteId, voteCommentCreateRequest);
+    }
+
+    @GetMapping("/{vote-id}/comments")
+    @ResponseStatus(HttpStatus.OK)
+    @Login
+    public CommentPageResponse searchComments(@LoginMember final MemberPayLoad memberPayLoad,
+                                              @PathVariable(name = "vote-id") final Long voteId,
+                                              @RequestParam(value = "cursor-id", required = false) final Long cursorId,
+                                              @RequestParam(value = "size", required = false) final Integer size){
+        final CommentPageRequest commentPageRequest = CommentPageRequest.of(cursorId, size);
+        return voteService.searchComments(voteId, memberPayLoad, commentPageRequest);
     }
 
     @GetMapping("/{vote-id}")
