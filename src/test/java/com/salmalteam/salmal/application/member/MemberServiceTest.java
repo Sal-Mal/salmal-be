@@ -65,7 +65,22 @@ class MemberServiceTest {
             given(memberRepository.findById(eq(id))).willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> memberService.findMemberById(id)).isInstanceOf(MemberException.class);
+            assertThatThrownBy(() -> memberService.findMemberById(id))
+                    .isInstanceOf(MemberException.class);
+        }
+    }
+
+    @Nested
+    class 마이페이지_조회_테스트{
+        @Test
+        void 마이페이지를_조회할_회원이_존재하지_않으면_예외가_발생한다(){
+            // given
+            final Long memberId = 1L;
+            given(memberRepository.existsById(eq(memberId))).willReturn(false);
+
+            // when & then
+            assertThatThrownBy(() -> memberService.findMyPage(memberId))
+                    .isInstanceOf(MemberException.class);
         }
     }
 }

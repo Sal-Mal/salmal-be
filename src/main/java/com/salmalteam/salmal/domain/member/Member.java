@@ -26,6 +26,9 @@ public class Member extends BaseEntity {
     private NickName nickName;
 
     @Embedded
+    private Introduction introduction;
+
+    @Embedded
     private Setting setting;
 
     @Embedded
@@ -36,6 +39,7 @@ public class Member extends BaseEntity {
         this.providerId = providerId;
         this.nickName = NickName.from(nickName);
         this.memberImage = MemberImage.initMemberImage();
+        this.introduction = Introduction.initIntroduction();
         this.provider = Provider.from(provider);
         this.setting = Setting.of(marketingInformationConsent);
     }
