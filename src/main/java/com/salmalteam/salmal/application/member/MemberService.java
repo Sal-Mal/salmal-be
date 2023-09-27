@@ -4,8 +4,10 @@ import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.member.MemberRepository;
 import com.salmalteam.salmal.domain.member.NickName;
 import com.salmalteam.salmal.dto.request.auth.SignUpRequest;
+import com.salmalteam.salmal.dto.response.member.MyPageResponse;
 import com.salmalteam.salmal.exception.member.MemberException;
 import com.salmalteam.salmal.exception.member.MemberExceptionType;
+import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,5 +45,16 @@ public class MemberService {
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() ->  new MemberException(MemberExceptionType.NOT_FOUND));
         return member;
+    }
+
+    @Transactional(readOnly = true)
+    public MyPageResponse findMyPage(final Long memberId){
+        validateExistsById(memberId);
+        return memberRepository.searchMyPage(memberId);
+    }
+    private void validateExistsById(final Long memberId){
+        if(!memberRepository.existsById(memberId)){
+            throw new MemberException(MemberExceptionType.NOT_FOUND);
+        }
     }
 }

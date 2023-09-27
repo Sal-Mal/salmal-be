@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"id"}, callSuper = true)
 @Table(name = "blocked_member")
 public class BlockedMember extends BaseCreatedTimeEntity {
 
@@ -25,12 +25,12 @@ public class BlockedMember extends BaseCreatedTimeEntity {
     private Member blocker;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "blocked__id")
-    private Member blockedMember;
+    @JoinColumn(name = "target__id")
+    private Member target;
 
-    private BlockedMember(final Member blocker, final Member blockedMember) {
+    private BlockedMember(final Member blocker, final Member target) {
         this.blocker = blocker;
-        this.blockedMember = blockedMember;
+        this.target = target;
     }
 
     public static BlockedMember of(final Member blocker, final Member blockedMember) {
