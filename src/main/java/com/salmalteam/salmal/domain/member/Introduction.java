@@ -34,7 +34,7 @@ public class Introduction {
     }
     private void validateIntroduction(final String value){
         if(isNotValidLength(value)){
-            throw new MemberException(MemberExceptionType.INVALID_NICKNAME_LENGTH);
+            throw new MemberException(MemberExceptionType.INVALID_INTRODUCTION_LENGTH);
         }
     }
     private boolean isNotValidLength(final String value){
