@@ -255,4 +255,21 @@ class VoteServiceTest {
         }
     }
 
+    @Nested
+    class 투표_평가_취소_테스트{
+        @Test
+        void 투표가_존재하지_않으면_오류를_발생시킨다(){
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final Long voteId = 1L;
+
+            // when & then
+            assertThatThrownBy(() -> voteService.cancelEvaluation(memberPayLoad, voteId))
+                    .isInstanceOf(VoteException.class);
+
+            verify(memberService, times(1)).findMemberById(any());
+        }
+    }
+
 }
