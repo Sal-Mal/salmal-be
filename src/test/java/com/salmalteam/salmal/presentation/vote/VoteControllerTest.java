@@ -249,6 +249,52 @@ class VoteControllerTest extends PresentationTest {
     }
 
     @Nested
+    class 북마크_취소_테스트{
+        private final static String URL = "/{vote-id}/bookmarks";
+
+        @Test
+        void 투표_북마킹_성공() throws Exception {
+            // given
+            final Long voteId = 1L;
+            mockingForAuthorization();
+
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + URL, voteId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("vote-id").description("북마크할 투표 ID")
+                    )
+            ));
+
+            verify(voteService, times(1)).cancelBookmark(any(), any());
+
+        }
+
+        @Test
+        void 미인증_사용자일_경우_401_응답() throws Exception {
+
+            // given
+            final Long voteId = 1L;
+
+            // when & then
+            mockMvc.perform(delete(BASE_URL + URL, voteId)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isUnauthorized());
+        }
+
+    }
+
+    @Nested
     class 투표_신고_테스트 {
         private final static String URL = "/{vote-id}/reports";
 

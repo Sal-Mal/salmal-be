@@ -58,6 +58,14 @@ public class VoteController {
         voteService.bookmark(memberPayLoad, voteId, voteBookmarkRequest);
     }
 
+    @DeleteMapping("/{vote-id}/bookmarks")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Login
+    public void cancelBookmark(@LoginMember final MemberPayLoad memberPayLoad,
+                               @PathVariable(name = "vote-id") final Long voteId){
+        voteService.cancelBookmark(memberPayLoad, voteId);
+    }
+
     @PostMapping("/{vote-id}/reports")
     @ResponseStatus(HttpStatus.CREATED)
     @Login

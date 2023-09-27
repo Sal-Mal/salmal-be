@@ -136,6 +136,23 @@ class VoteServiceTest {
     }
 
     @Nested
+    class 북마크_취소_테스트{
+        @Test
+        void 북마크를_취소할_투표가_존재하지_않는다면_예외를_발생시킨다(){
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final Long voteId = 1L;
+
+            // when & then
+            assertThatThrownBy(() -> voteService.cancelBookmark(memberPayLoad, voteId))
+                    .isInstanceOf(VoteException.class);
+
+            verify(memberService, times(1)).findMemberById(any());
+        }
+    }
+
+    @Nested
     class 투표_신고_테스트{
 
         @Test
