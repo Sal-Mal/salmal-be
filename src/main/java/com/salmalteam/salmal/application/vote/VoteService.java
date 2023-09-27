@@ -142,6 +142,15 @@ public class VoteService {
     }
 
     @Transactional
+    public void cancelBookmark(final MemberPayLoad memberPayLoad, final Long voteId){
+
+        final Member member = memberService.findMemberById(memberPayLoad.getId());
+        final Vote vote = getVoteById(voteId);
+
+        voteBookMarkRepository.deleteByVoteAndBookmaker(vote, member);
+    }
+
+    @Transactional
     public void report(final MemberPayLoad memberPayLoad, final Long voteId){
 
         final Member member = memberService.findMemberById(memberPayLoad.getId());
