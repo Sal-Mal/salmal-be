@@ -578,5 +578,52 @@ class VoteControllerTest extends PresentationTest {
         }
     }
 
+    @Nested
+    class 투표_평가_취소_테스트{
+
+        private final static String URL = "/{vote-id}/evaluations";
+        @Test
+        void 투표_평가_취소_성공() throws Exception{
+            // given
+            final Long voteId = 1L;
+            mockingForAuthorization();
+
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + URL, voteId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("vote-id").description("평가 취소할 투표 ID")
+                    )
+            ));
+
+            verify(voteService, times(1)).cancelEvaluation(any(), any());
+
+        }
+
+        @Test
+        void 미인증_사용자일_경우_401_응답() throws Exception {
+
+            // given
+            final Long voteId = 1L;
+
+            // when & then
+            mockMvc.perform(delete(BASE_URL + URL, voteId)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isUnauthorized());
+        }
+
+
+    }
+
 
 }

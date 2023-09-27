@@ -41,6 +41,14 @@ public class VoteController {
         voteService.evaluate(memberPayLoad, voteId, voteEvaluationType);
     }
 
+    @DeleteMapping("/{vote-id}/evaluations")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Login
+    public void cancelEvaluation(@LoginMember final MemberPayLoad memberPayLoad,
+                                 @PathVariable(name = "vote-id") final Long voteId){
+        voteService.cancelEvaluation(memberPayLoad, voteId);
+    }
+
     @PostMapping("/{vote-id}/bookmarks")
     @ResponseStatus(HttpStatus.CREATED)
     @Login

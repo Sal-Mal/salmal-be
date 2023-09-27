@@ -92,6 +92,22 @@ public class VoteService {
         voteEvaluationRepository.save(VoteEvaluation.of(vote, member, voteEvaluationType));
     }
 
+    private void validateEvaluationVoteDuplicated(final Member member,final Vote vote, final VoteEvaluationType voteEvaluationType) {
+        if(voteEvaluationRepository.existsByEvaluatorAndVoteAndVoteEvaluationType(member, vote, voteEvaluationType)){
+            throw new VoteException(VoteExceptionType.DUPLICATED_VOTE_EVALUATION);
+        }
+    }
+
+    @Transactional
+    public void cancelEvaluation(final MemberPayLoad memberPayLoad, final Long voteId){
+
+        final Member member = memberService.findMemberById(memberPayLoad.getId());
+        final Vote vote = getVoteById(voteId);
+
+        deleteExistsEvaluation(member, vote);
+        voteEvaluationRepository.deleteByEvaluatorAndVote(member, vote);
+    }
+
     private void deleteExistsEvaluation(final Member member, final Vote vote){
 
         final Optional<VoteEvaluation> evaluationOptional = voteEvaluationRepository.findByEvaluatorAndVote(member, vote);
@@ -108,12 +124,6 @@ public class VoteService {
                     break;
             }
             voteEvaluationRepository.deleteByEvaluatorAndVote(member, vote);
-        }
-    }
-
-    private void validateEvaluationVoteDuplicated(final Member member,final Vote vote, final VoteEvaluationType voteEvaluationType) {
-        if(voteEvaluationRepository.existsByEvaluatorAndVoteAndVoteEvaluationType(member, vote, voteEvaluationType)){
-            throw new VoteException(VoteExceptionType.DUPLICATED_VOTE_EVALUATION);
         }
     }
 
