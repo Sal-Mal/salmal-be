@@ -166,4 +166,51 @@ class CommentControllerTest extends PresentationTest {
         }
 
     }
+
+    @Nested
+    class 댓글_신고_테스트{
+        private static final String URL = "/reports";
+
+        @Test
+        void 댓글_신고_성공() throws Exception{
+            // given
+            final Long commentId = 1L;
+
+            mockingForAuthorization();
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL +URL, commentId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isCreated());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("comment-id").description("신고할 댓글 ID")
+                    )
+            ));
+
+            verify(commentService, times(1)).report(any(), any());
+
+        }
+
+        @Test
+        void 미인증_사용자일_경우_401_응답() throws Exception {
+
+            // given
+            final Long commentId = 1L;
+
+            // when & then
+            mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + URL, commentId)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isUnauthorized());
+        }
+
+
+    }
 }

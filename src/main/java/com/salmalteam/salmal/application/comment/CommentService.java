@@ -3,6 +3,8 @@ package com.salmalteam.salmal.application.comment;
 import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.domain.comment.like.CommentLike;
 import com.salmalteam.salmal.domain.comment.like.CommentLikeRepository;
+import com.salmalteam.salmal.domain.comment.report.CommentReport;
+import com.salmalteam.salmal.domain.comment.report.CommentReportRepository;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.vote.Vote;
 import com.salmalteam.salmal.domain.comment.Comment;
@@ -14,6 +16,8 @@ import com.salmalteam.salmal.exception.comment.CommentException;
 import com.salmalteam.salmal.exception.comment.CommentExceptionType;
 import com.salmalteam.salmal.exception.comment.like.CommentLikeException;
 import com.salmalteam.salmal.exception.comment.like.CommentLikeExceptionType;
+import com.salmalteam.salmal.exception.comment.report.CommentReportException;
+import com.salmalteam.salmal.exception.comment.report.CommentReportExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +31,7 @@ public class CommentService {
 
     private final MemberService memberService;
     private final CommentRepository commentRepository;
+    private final CommentReportRepository commentReportRepository;
     private final CommentLikeRepository commentLikeRepository;
 
     @Transactional
@@ -100,6 +105,23 @@ public class CommentService {
         }
     }
 
+    @Transactional
+    public void report(final MemberPayLoad memberPayLoad, final Long commentId){
+
+        final Member member = memberService.findMemberById(memberPayLoad.getId());
+        final Comment comment = getCommentById(commentId);
+        final CommentReport commentReport = CommentReport.of(comment, member);
+
+        validateCommentAlreadyReport(comment, member);
+
+        commentReportRepository.save(commentReport);
+    }
+
+    private void validateCommentAlreadyReport(final Comment comment, final Member member) {
+        if(commentReportRepository.existsByCommentAndReporter(comment, member)){
+            throw new CommentReportException(CommentReportExceptionType.DUPLICATED_REPORT);
+        }
+    }
 
     private Comment getCommentById(final Long commentId) {
         return commentRepository.findById(commentId)
