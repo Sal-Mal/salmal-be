@@ -175,7 +175,7 @@ include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/http-resp
 
 ---
 
-=== 📌 투표 북마킹
+=== 📌 투표 북마킹 취소
 ==== 기본정보
 - 메서드 : DELETE
 - URL : `/api/votes/{vote-id}/bookmarks`

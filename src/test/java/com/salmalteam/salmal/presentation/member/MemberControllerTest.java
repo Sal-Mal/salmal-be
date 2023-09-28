@@ -1,6 +1,7 @@
 package com.salmalteam.salmal.presentation.member;
 
 import com.salmalteam.salmal.dto.response.member.MyPageResponse;
+import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import com.salmalteam.salmal.support.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -76,6 +77,90 @@ class MemberControllerTest extends PresentationTest {
 
             // when & then
             mockMvc.perform(get(BASE_URL + URL, memberId)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isUnauthorized());
+        }
+    }
+
+    @Nested
+    class 회원_차단{
+        private static final String URL = "/{member-id}/blocks";
+        @Test
+        void 회원_차단_성공() throws Exception{
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+
+            mockingForAuthorization();
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + URL, memberId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isCreated());
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    requestParameters(
+                            parameterWithName("member-id").optional().description("차단할 회원 ID")
+                    )
+            ));
+
+        }
+
+        @Test
+        void 미인증_사용자일_경우_401_응답() throws Exception {
+
+            // given
+            final Long memberId = 1L;
+
+            // when & then
+            mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + URL, memberId)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isUnauthorized());
+        }
+    }
+
+    @Nested
+    class 회원_차단_취소{
+        private static final String URL = "/{member-id}/blocks";
+        @Test
+        void 회원_차단_취소_성공() throws Exception{
+            // given
+            final Long memberId = 1L;
+
+            mockingForAuthorization();
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + URL, memberId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    requestParameters(
+                            parameterWithName("member-id").optional().description("차단을 취소할 회원 ID")
+                    )
+            ));
+
+        }
+
+        @Test
+        void 미인증_사용자일_경우_401_응답() throws Exception {
+
+            // given
+            final Long memberId = 1L;
+
+            // when & then
+            mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + URL, memberId)
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isUnauthorized());
