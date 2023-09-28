@@ -3,12 +3,14 @@ package com.salmalteam.salmal.application.comment;
 import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.domain.comment.Comment;
 import com.salmalteam.salmal.domain.comment.like.CommentLikeRepository;
+import com.salmalteam.salmal.domain.comment.report.CommentReportRepository;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.comment.CommentRepository;
 import com.salmalteam.salmal.domain.vote.Vote;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentUpdateRequest;
 import com.salmalteam.salmal.exception.comment.CommentException;
 import com.salmalteam.salmal.exception.comment.like.CommentLikeException;
+import com.salmalteam.salmal.exception.comment.report.CommentReportException;
 import com.salmalteam.salmal.exception.member.MemberException;
 import com.salmalteam.salmal.exception.member.MemberExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
@@ -38,6 +40,8 @@ class CommentServiceTest {
     CommentRepository commentRepository;
     @Mock
     CommentLikeRepository commentLikeRepository;
+    @Mock
+    CommentReportRepository commentReportRepository;
 
     @Nested
     class 댓글_수정_테스트{
@@ -156,5 +160,45 @@ class CommentServiceTest {
                     .isInstanceOf(CommentLikeException.class);
 
         }
+    }
+
+    @Nested
+    class 댓글_신고_테스트{
+
+        @Test
+        void 신고할_댓글이_존재하지_않을_경우_예외가_발생한다(){
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final Long commentId = 1L;
+
+            // when & then
+            assertThatThrownBy(() -> commentService.report(memberPayLoad, commentId))
+                    .isInstanceOf(CommentException.class);
+
+            verify(memberService).findMemberById(eq(memberId));
+        }
+
+        @Test
+        void 이미_신고를_한_경우_예외가_발생한다(){
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final Long commentId = 1L;
+
+            final Member member = Member.of("ss", "닉네임", "kakao", true);
+            final Vote vote = Vote.of("imageUrl", member);
+            final Comment comment = Comment.of("내용", vote, member);
+            given(memberService.findMemberById(eq(memberId))).willReturn(member);
+            given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+            given(commentReportRepository.existsByCommentAndReporter(any(),any())).willReturn(true);
+
+            // when & then
+            assertThatThrownBy(() -> commentService.report(memberPayLoad, commentId))
+                    .isInstanceOf(CommentReportException.class);
+
+        }
+
+
     }
 }

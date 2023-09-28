@@ -43,5 +43,13 @@ public class CommentController {
         commentService.unLikeComment(memberPayLoad, commentId);
     }
 
+    @PostMapping("/{comment-id}/reports")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Login
+    public void reportComment(@LoginMember final MemberPayLoad memberPayLoad,
+                              @PathVariable(name = "comment-id") final Long commentId){
+        commentService.report(memberPayLoad, commentId);
+    }
+
 
 }
