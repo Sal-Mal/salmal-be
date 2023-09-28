@@ -359,6 +359,24 @@ include::{snippets}/댓글_좋아요_취소_테스트/댓글_좋아요_취소_�
 ===== 응답
 include::{snippets}/댓글_좋아요_취소_테스트/댓글_좋아요_취소_성공/http-response.adoc[]
 
+---
+
+=== 📌 댓글 신고
+==== 기본정보
+- 메서드 : DELETE
+- URL : `/api/comments/{comment-id}/reports`
+
+==== 요청
+===== 헤더
+include::{snippets}/댓글_신고_테스트/댓글_신고_성공/request-headers.adoc[]
+===== 경로 변수
+include::{snippets}/댓글_신고_테스트/댓글_신고_성공/path-parameters.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/댓글_신고_테스트/댓글_신고_성공/http-request.adoc[]
+===== 응답
+include::{snippets}/댓글_신고_테스트/댓글_신고_성공/http-response.adoc[]
+
 == 회원 API
 
 === 📌 마이페이지 조회
@@ -379,3 +397,39 @@ include::{snippets}/마이페이지_조회/마이페이지_조회_성공/respons
 include::{snippets}/마이페이지_조회/마이페이지_조회_성공/http-request.adoc[]
 ===== 응답
 include::{snippets}/마이페이지_조회/마이페이지_조회_성공/http-response.adoc[]
+
+---
+
+=== 📌 회원 차단
+==== 기본정보
+- 메서드 : POST
+- URL : `/api/members/{member-id}/reports`
+
+==== 요청
+===== 헤더
+include::{snippets}/회원_차단/회원_차단_성공/request-headers.adoc[]
+===== 경로 변수
+include::{snippets}/회원_차단/회원_차단_성공/request-parameters.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/회원_차단/회원_차단_성공/http-request.adoc[]
+===== 응답
+include::{snippets}/회원_차단/회원_차단_성공/http-response.adoc[]
+
+---
+
+=== 📌 회원 차단 취소
+==== 기본정보
+- 메서드 : DELETE
+- URL : `/api/members/{member-id}/reports`
+
+==== 요청
+===== 헤더
+include::{snippets}/회원_차단_취소/회원_차단_취소_성공/request-headers.adoc[]
+===== 경로 변수
+include::{snippets}/회원_차단_취소/회원_차단_취소_성공/request-parameters.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/회원_차단_취소/회원_차단_취소_성공/http-request.adoc[]
+===== 응답
+include::{snippets}/회원_차단_취소/회원_차단_취소_성공/http-response.adoc[]
