@@ -8,7 +8,7 @@ import com.salmalteam.salmal.dto.response.member.QMyPageResponse;
 import lombok.RequiredArgsConstructor;
 
 import static com.salmalteam.salmal.domain.member.QMember.member;
-import static com.salmalteam.salmal.domain.member.block.QBlockedMember.blockedMember;
+import static com.salmalteam.salmal.domain.member.block.QMemberBlocked.memberBlocked;
 import static com.salmalteam.salmal.domain.vote.QVote.vote;
 
 @RequiredArgsConstructor
@@ -18,9 +18,9 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom{
     @Override
     public MyPageResponse searchMyPage(final Long memberId) {
 
-        final BooleanExpression blockedMemberSubQuery = JPAExpressions.selectFrom(blockedMember)
+        final BooleanExpression blockedMemberSubQuery = JPAExpressions.selectFrom(memberBlocked)
                 .where(
-                        blockedMember.blocker.id.eq(memberId)
+                        memberBlocked.blocker.id.eq(memberId)
                 )
                 .exists();
 

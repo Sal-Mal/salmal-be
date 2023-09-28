@@ -271,7 +271,7 @@ class VoteControllerTest extends PresentationTest {
                             headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
                     ),
                     pathParameters(
-                            parameterWithName("vote-id").description("북마크할 투표 ID")
+                            parameterWithName("vote-id").description("북마크 취소할 투표 ID")
                     )
             ));
 
