@@ -8,7 +8,6 @@ import com.salmalteam.salmal.domain.vote.VoteRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
 import com.salmalteam.salmal.domain.vote.report.VoteReportRepository;
-import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
 import com.salmalteam.salmal.exception.member.MemberException;
@@ -122,14 +121,12 @@ class VoteServiceTest {
             final Long memberId = 1L;
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
             final Long voteId = 1L;
-            final Boolean isBookmarked = true;
-            final VoteBookmarkRequest voteBookmarkRequest = new VoteBookmarkRequest(isBookmarked);
 
             given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
             given(voteRepository.findById(eq(voteId))).willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> voteService.bookmark(memberPayLoad, voteId, voteBookmarkRequest))
+            assertThatThrownBy(() -> voteService.bookmark(memberPayLoad, voteId))
                     .isInstanceOf(VoteException.class);
         }
 

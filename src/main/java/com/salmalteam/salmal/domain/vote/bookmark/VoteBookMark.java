@@ -29,20 +29,12 @@ public class VoteBookMark extends BaseCreatedTimeEntity {
     @JoinColumn(name = "vote_id")
     private Vote vote;
 
-    @Column
-    private Boolean isBookmarked;
-
-    private VoteBookMark(final Member member, final Vote vote, final Boolean isBookmarked) {
+    private VoteBookMark(final Member member, final Vote vote) {
         this.vote = vote;
         this.bookmaker = member;
-        this.isBookmarked = isBookmarked;
     }
 
-    public static VoteBookMark of(final Member member, final Vote vote, final Boolean isBookmarked) {
-        return new VoteBookMark(member, vote, isBookmarked);
-    }
-
-    public void updateBookmark(final Boolean isBookmarked){
-        this.isBookmarked = isBookmarked;
+    public static VoteBookMark of(final Member member, final Vote vote) {
+        return new VoteBookMark(member, vote);
     }
 }
