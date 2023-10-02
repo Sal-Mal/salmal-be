@@ -15,7 +15,6 @@ import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
 import com.salmalteam.salmal.domain.vote.report.VoteReport;
 import com.salmalteam.salmal.domain.vote.report.VoteReportRepository;
 import com.salmalteam.salmal.dto.request.comment.CommentPageRequest;
-import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VotePageRequest;
@@ -128,16 +127,14 @@ public class VoteService {
     }
 
     @Transactional
-    public void bookmark(final MemberPayLoad memberPayLoad, final Long voteId, final VoteBookmarkRequest voteBookmarkRequest){
+    public void bookmark(final MemberPayLoad memberPayLoad, final Long voteId){
 
         final Member member = memberService.findMemberById(memberPayLoad.getId());
         final Vote vote = getVoteById(voteId);
-        final Boolean isBookmarked = voteBookmarkRequest.getIsBookmarked();
 
         final VoteBookMark voteBookMark = voteBookMarkRepository.findByVoteAndBookmaker(vote, member)
-                .orElse(VoteBookMark.of(member, vote, isBookmarked));
+                .orElse(VoteBookMark.of(member, vote));
 
-        voteBookMark.updateBookmark(isBookmarked);
         voteBookMarkRepository.save(voteBookMark);
     }
 

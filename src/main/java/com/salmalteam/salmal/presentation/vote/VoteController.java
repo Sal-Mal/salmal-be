@@ -53,9 +53,8 @@ public class VoteController {
     @ResponseStatus(HttpStatus.CREATED)
     @Login
     public void bookmarkVote(@LoginMember final MemberPayLoad memberPayLoad,
-                             @PathVariable(name = "vote-id") final Long voteId,
-                             @RequestBody @Valid final VoteBookmarkRequest voteBookmarkRequest){
-        voteService.bookmark(memberPayLoad, voteId, voteBookmarkRequest);
+                             @PathVariable(name = "vote-id") final Long voteId){
+        voteService.bookmark(memberPayLoad, voteId);
     }
 
     @DeleteMapping("/{vote-id}/bookmarks")

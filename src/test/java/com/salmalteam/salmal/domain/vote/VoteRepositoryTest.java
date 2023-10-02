@@ -55,7 +55,7 @@ class VoteRepositoryTest extends RepositoryTest {
         final Member member = Member.of("pro", "닉네임1", "kakao", true);
         final Vote vote = Vote.of("imageUrl", member);
         final VoteEvaluation voteEvaluation = VoteEvaluation.of(vote, member, VoteEvaluationType.LIKE);
-        final VoteBookMark voteBookMark = VoteBookMark.of(member, vote, true);
+        final VoteBookMark voteBookMark = VoteBookMark.of(member, vote);
 
         memberRepository.save(member);
         voteRepository.save(vote);

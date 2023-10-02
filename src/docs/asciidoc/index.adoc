@@ -165,8 +165,6 @@ include::{snippets}/투표_평가_취소_테스트/투표_평가_취소_성공/h
 include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/request-headers.adoc[]
 ===== 경로 변수
 include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/path-parameters.adoc[]
-===== 본문
-include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/request-fields.adoc[]
 ==== 예시
 ===== 요청
 include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/http-request.adoc[]

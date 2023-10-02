@@ -94,7 +94,7 @@ public class VoteRepositoryCustomImpl implements VoteRepositoryCustom {
                         vote.likeRatio,
                         vote.dislikeRatio,
                         vote.createdAt,
-                        voteBookMark.isBookmarked,
+                        voteBookMark.isNotNull(),
                         voteEvaluation.voteEvaluationType.stringValue()))
                 .from(vote)
                 .leftJoin(voteEvaluation)

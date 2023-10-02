@@ -1,14 +1,11 @@
 package com.salmalteam.salmal.presentation.vote;
 
-import com.salmalteam.salmal.dto.request.vote.VoteBookmarkRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteEvaluateRequest;
-import com.salmalteam.salmal.dto.request.vote.VotePageRequest;
 import com.salmalteam.salmal.dto.response.comment.CommentPageResponse;
 import com.salmalteam.salmal.dto.response.comment.CommentResponse;
 import com.salmalteam.salmal.dto.response.vote.VotePageResponse;
 import com.salmalteam.salmal.dto.response.vote.VoteResponse;
-import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import com.salmalteam.salmal.support.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,7 +22,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -186,14 +182,11 @@ class VoteControllerTest extends PresentationTest {
         void 투표_북마킹_성공() throws Exception {
             // given
             final Long voteId = 1L;
-            final Boolean isBookmarked = true;
-            final VoteBookmarkRequest voteBookmarkRequest = new VoteBookmarkRequest(isBookmarked);
             mockingForAuthorization();
 
             // when
             final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + URL, voteId)
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
-                            .content(createJson(voteBookmarkRequest))
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isCreated());
@@ -205,13 +198,10 @@ class VoteControllerTest extends PresentationTest {
                     ),
                     pathParameters(
                             parameterWithName("vote-id").description("북마크할 투표 ID")
-                    ),
-                    requestFields(
-                            fieldWithPath("isBookmarked").type(JsonFieldType.BOOLEAN).description("북마크 여부 ( true, false )")
                     )
             ));
 
-            verify(voteService, times(1)).bookmark(any(), any(), any());
+            verify(voteService, times(1)).bookmark(any(), any());
 
         }
 
@@ -226,24 +216,6 @@ class VoteControllerTest extends PresentationTest {
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isUnauthorized());
-        }
-
-        @Test
-        void 북마크_여부가_전달이_안된_경우_400_응답() throws Exception {
-
-            // given
-            final Long voteId = 1L;
-            final Boolean isBookmarked = null;
-            final VoteBookmarkRequest voteBookmarkRequest = new VoteBookmarkRequest(isBookmarked);
-            mockingForAuthorization();
-
-            // when & then
-            mockMvc.perform(post(BASE_URL + URL, voteId)
-                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
-                            .content(createJson(voteBookmarkRequest))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
         }
 
     }
