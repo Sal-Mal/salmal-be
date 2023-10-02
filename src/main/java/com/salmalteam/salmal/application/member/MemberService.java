@@ -1,63 +1,73 @@
 package com.salmalteam.salmal.application.member;
 
+import com.salmalteam.salmal.application.ImageUploader;
+import com.salmalteam.salmal.domain.image.ImageFile;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.member.MemberRepository;
 import com.salmalteam.salmal.domain.member.NickName;
-import com.salmalteam.salmal.domain.member.block.MemberBlockedRepository;
 import com.salmalteam.salmal.domain.member.block.MemberBlocked;
+import com.salmalteam.salmal.domain.member.block.MemberBlockedRepository;
 import com.salmalteam.salmal.dto.request.auth.SignUpRequest;
+import com.salmalteam.salmal.dto.request.member.MemberImageUpdateRequest;
+import com.salmalteam.salmal.dto.request.member.MyPageUpdateRequest;
 import com.salmalteam.salmal.dto.response.member.MyPageResponse;
 import com.salmalteam.salmal.exception.member.MemberException;
 import com.salmalteam.salmal.exception.member.MemberExceptionType;
 import com.salmalteam.salmal.exception.member.block.MemberBlockedException;
 import com.salmalteam.salmal.exception.member.block.MemberBlockedExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
-@RequiredArgsConstructor
 public class MemberService {
-
     private final MemberRepository memberRepository;
-    private final MemberBlockedRepository blockMemberRepository;
+    private final MemberBlockedRepository memberBlockedRepository;
+    private final ImageUploader imageUploader;
+    private final String memberImagePath;
+
+    public MemberService(final MemberRepository memberRepository,
+                         final MemberBlockedRepository memberBlockedRepository,
+                         final ImageUploader imageUploader,
+                         @Value("${image.path.member}") final String memberImagePath) {
+        this.memberRepository = memberRepository;
+        this.memberBlockedRepository = memberBlockedRepository;
+        this.imageUploader = imageUploader;
+        this.memberImagePath = memberImagePath;
+    }
 
     @Transactional(readOnly = true)
-    public Long findMemberIdByProviderId(final String providerId){
+    public Long findMemberIdByProviderId(final String providerId) {
         final Member member = memberRepository.findByProviderId(providerId)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_FOUND));
         return member.getId();
     }
 
     @Transactional
-    public Long save(final String provider, final SignUpRequest signUpRequest){
+    public Long save(final String provider, final SignUpRequest signUpRequest) {
         validateNickNameExists(signUpRequest.getNickName());
         final Member member = memberRepository.save(Member.of(signUpRequest.getProviderId(), signUpRequest.getNickName(),
                 provider, signUpRequest.getMarketingInformationConsent()));
         return member.getId();
     }
 
-    private void validateNickNameExists(final String nickName){
-        if(memberRepository.existsByNickName(NickName.from(nickName))){
-            throw new MemberException(MemberExceptionType.DUPLICATED_NICKNAME);
-        }
-    }
 
     @Transactional(readOnly = true)
-    public MyPageResponse findMyPage(final Long memberId){
+    public MyPageResponse findMyPage(final Long memberId) {
         validateExistsById(memberId);
         return memberRepository.searchMyPage(memberId);
     }
-    private void validateExistsById(final Long memberId){
-        if(!memberRepository.existsById(memberId)){
+
+    private void validateExistsById(final Long memberId) {
+        if (!memberRepository.existsById(memberId)) {
             throw new MemberException(MemberExceptionType.NOT_FOUND);
         }
     }
 
     @Transactional
-    public void block(final MemberPayLoad memberPayLoad, final Long memberId){
+    public void block(final MemberPayLoad memberPayLoad, final Long memberId) {
 
         final Member blocker = findMemberById(memberPayLoad.getId());
         final Member target = findMemberById(memberId);
@@ -65,38 +75,77 @@ public class MemberService {
 
         validateDuplicateMemberBlocked(blocker, target);
 
-        blockMemberRepository.save(blockedMember);
+        memberBlockedRepository.save(blockedMember);
     }
 
     private void validateDuplicateMemberBlocked(final Member blocker, final Member target) {
-        if(blockMemberRepository.existsByBlockerAndTarget(blocker, target)){
+        if (memberBlockedRepository.existsByBlockerAndTarget(blocker, target)) {
             throw new MemberBlockedException(MemberBlockedExceptionType.DUPLICATED_MEMBER_BLOCKED);
         }
     }
 
 
     @Transactional
-    public void cancelBlocking(final MemberPayLoad memberPayLoad, final Long memberId){
+    public void cancelBlocking(final MemberPayLoad memberPayLoad, final Long memberId) {
 
         final Member blocker = findMemberById(memberPayLoad.getId());
         final Member target = findMemberById(memberId);
 
         validateMemberBlockedExists(blocker, target);
 
-        blockMemberRepository.deleteByBlockerAndTarget(blocker, target);
+        memberBlockedRepository.deleteByBlockerAndTarget(blocker, target);
     }
 
-    private void validateMemberBlockedExists(final Member blocker, final Member target){
-        if(!blockMemberRepository.existsByBlockerAndTarget(blocker, target)){
+    private void validateMemberBlockedExists(final Member blocker, final Member target) {
+        if (!memberBlockedRepository.existsByBlockerAndTarget(blocker, target)) {
             throw new MemberBlockedException(MemberBlockedExceptionType.NOT_FOUND);
         }
     }
 
     @Transactional(readOnly = true)
-    public Member findMemberById(final Long memberId){
+    public Member findMemberById(final Long memberId) {
         final Member member = memberRepository.findById(memberId)
-                .orElseThrow(() ->  new MemberException(MemberExceptionType.NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_FOUND));
         return member;
     }
 
+    @Transactional
+    public void updateMyPage(final MemberPayLoad memberPayLoad, final Long memberId, final MyPageUpdateRequest myPageUpdateRequest) {
+
+        final Member member = findMemberById(memberPayLoad.getId());
+        final Member targetMember = findMemberById(memberId);
+
+        validateAuthority(member, targetMember);
+        validateNickNameExists(myPageUpdateRequest.getNickName());
+
+        member.updateMyPage(myPageUpdateRequest.getNickName(), myPageUpdateRequest.getIntroduction());
+        memberRepository.save(member);
+    }
+
+    @Transactional
+    public void updateImage(final MemberPayLoad memberPayLoad, final Long memberId, final MemberImageUpdateRequest memberImageUpdateRequest){
+
+        final Member member = findMemberById(memberPayLoad.getId());
+        final Member targetMember = findMemberById(memberId);
+
+        validateAuthority(member, targetMember);
+
+        final ImageFile imageFile = ImageFile.of(memberImageUpdateRequest.getImageFile(), memberImagePath);
+        final String imageUrl = imageUploader.uploadImage(imageFile);
+
+        member.updateImage(imageUrl);
+        memberRepository.save(member);
+    }
+
+    private void validateAuthority(final Member requester, final Member target) {
+        if (!requester.equals(target)) {
+            throw new MemberException(MemberExceptionType.FORBIDDEN_UPDATE);
+        }
+    }
+
+    private void validateNickNameExists(final String nickName) {
+        if (memberRepository.existsByNickName(NickName.from(nickName))) {
+            throw new MemberException(MemberExceptionType.DUPLICATED_NICKNAME);
+        }
+    }
 }
