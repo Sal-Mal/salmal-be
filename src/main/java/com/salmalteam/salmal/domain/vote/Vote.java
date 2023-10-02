@@ -13,7 +13,7 @@ import java.time.LocalDate;
 
 @Getter
 @Entity
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"id"}, callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Vote extends BaseCreatedTimeEntity {
 

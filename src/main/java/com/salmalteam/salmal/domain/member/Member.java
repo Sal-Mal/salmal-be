@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"id"}, callSuper = true)
 @Table(name = "member")
 public class Member extends BaseEntity {
 
@@ -50,6 +50,15 @@ public class Member extends BaseEntity {
                 .provider(provider)
                 .marketingInformationConsent(marketingInformationConsent)
                 .build();
+    }
+
+    public void updateMyPage(final String nickName, final String introduction){
+        this.nickName = NickName.from(nickName);
+        this.introduction = Introduction.from(introduction);
+    }
+
+    public void updateImage(final String imageUrl){
+        this.memberImage = MemberImage.of(imageUrl);
     }
 
 }
