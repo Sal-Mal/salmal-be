@@ -10,7 +10,9 @@ import com.salmalteam.salmal.domain.member.block.MemberBlockedRepository;
 import com.salmalteam.salmal.dto.request.auth.SignUpRequest;
 import com.salmalteam.salmal.dto.request.member.MemberImageUpdateRequest;
 import com.salmalteam.salmal.dto.request.member.MyPageUpdateRequest;
+import com.salmalteam.salmal.dto.request.member.block.MemberBlockedPageRequest;
 import com.salmalteam.salmal.dto.response.member.MyPageResponse;
+import com.salmalteam.salmal.dto.response.member.block.MemberBlockedPageResponse;
 import com.salmalteam.salmal.exception.member.MemberException;
 import com.salmalteam.salmal.exception.member.MemberExceptionType;
 import com.salmalteam.salmal.exception.member.block.MemberBlockedException;
@@ -19,7 +21,6 @@ import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class MemberService {
@@ -115,7 +116,7 @@ public class MemberService {
         final Member member = findMemberById(memberPayLoad.getId());
         final Member targetMember = findMemberById(memberId);
 
-        validateAuthority(member, targetMember);
+        validateUpdateAuthority(member, targetMember);
         validateNickNameExists(myPageUpdateRequest.getNickName());
 
         member.updateMyPage(myPageUpdateRequest.getNickName(), myPageUpdateRequest.getIntroduction());
@@ -128,7 +129,7 @@ public class MemberService {
         final Member member = findMemberById(memberPayLoad.getId());
         final Member targetMember = findMemberById(memberId);
 
-        validateAuthority(member, targetMember);
+        validateUpdateAuthority(member, targetMember);
 
         final ImageFile imageFile = ImageFile.of(memberImageUpdateRequest.getImageFile(), memberImagePath);
         final String imageUrl = imageUploader.uploadImage(imageFile);
@@ -137,15 +138,34 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    private void validateAuthority(final Member requester, final Member target) {
-        if (!requester.equals(target)) {
-            throw new MemberException(MemberExceptionType.FORBIDDEN_UPDATE);
-        }
-    }
-
     private void validateNickNameExists(final String nickName) {
         if (memberRepository.existsByNickName(NickName.from(nickName))) {
             throw new MemberException(MemberExceptionType.DUPLICATED_NICKNAME);
         }
     }
+
+    private void validateUpdateAuthority(final Member requester, final Member target) {
+        if (!requester.equals(target)) {
+            throw new MemberException(MemberExceptionType.FORBIDDEN_UPDATE);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public MemberBlockedPageResponse searchBlockedMembers(final MemberPayLoad memberPayLoad, final Long memberId, final MemberBlockedPageRequest memberBlockedPageRequest){
+
+        final Member member = findMemberById(memberPayLoad.getId());
+        final Member targetMember = findMemberById(memberId);
+
+        validateSearchAuthority(member, targetMember);
+
+        return memberBlockedRepository.searchList(memberId, memberBlockedPageRequest);
+    }
+
+    private void validateSearchAuthority(final Member requester, final Member target) {
+        if (!requester.equals(target)) {
+            throw new MemberBlockedException(MemberBlockedExceptionType.FORBIDDEN_SEARCH);
+        }
+    }
+
+
 }

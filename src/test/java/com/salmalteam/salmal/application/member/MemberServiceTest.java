@@ -6,6 +6,7 @@ import com.salmalteam.salmal.domain.member.block.MemberBlockedRepository;
 import com.salmalteam.salmal.dto.request.auth.SignUpRequest;
 import com.salmalteam.salmal.dto.request.member.MemberImageUpdateRequest;
 import com.salmalteam.salmal.dto.request.member.MyPageUpdateRequest;
+import com.salmalteam.salmal.dto.request.member.block.MemberBlockedPageRequest;
 import com.salmalteam.salmal.exception.member.MemberException;
 import com.salmalteam.salmal.exception.member.MemberExceptionType;
 import com.salmalteam.salmal.exception.member.block.MemberBlockedException;
@@ -137,6 +138,56 @@ class MemberServiceTest {
 
             // when & then
             assertThatThrownBy(() -> memberService.cancelBlocking(memberPayLoad, targetMemberId))
+                    .isInstanceOf(MemberBlockedException.class);
+        }
+    }
+
+    @Nested
+    class 회원_차단_목록_조회_테스트{
+        @Test
+        void 요청자가_존재하지_않으면_예외가_발생한다(){
+            // given
+            final Long memberId = 1L;
+            final Long targetMemberId = 2L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final MemberBlockedPageRequest memberBlockedPageRequest = MemberBlockedPageRequest.of(1L, 3);
+
+            // when & then
+            assertThatThrownBy(() -> memberService.searchBlockedMembers(memberPayLoad, targetMemberId, memberBlockedPageRequest))
+                    .isInstanceOf(MemberException.class);
+        }
+
+        @Test
+        void 차단_목록을_조회할_회원이_존재하지_않으면_예외가_발생한다(){
+            // given
+            final Long memberId = 1L;
+            final Long targetMemberId = 2L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final MemberBlockedPageRequest memberBlockedPageRequest = MemberBlockedPageRequest.of(1L, 3);
+            final Member member = Member.of("LL", "닉네임", "kakao", true);
+
+            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
+
+            // when & then
+            assertThatThrownBy(() -> memberService.searchBlockedMembers(memberPayLoad, targetMemberId, memberBlockedPageRequest))
+                    .isInstanceOf(MemberException.class);
+        }
+
+        @Test
+        void 본인이_아니면_예외가_발생한다(){
+            // given
+            final Long memberId = 1L;
+            final Long targetMemberId = 2L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final MemberBlockedPageRequest memberBlockedPageRequest = MemberBlockedPageRequest.of(1L, 3);
+            final Member memberA = Member.of("LL", "닉네임", "kakao", true);
+            final Member memberB = Member.of("PP", "닉넴", "kakao", true);
+
+            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(memberA));
+            given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(memberB));
+
+            // when & then
+            assertThatThrownBy(() -> memberService.searchBlockedMembers(memberPayLoad, targetMemberId, memberBlockedPageRequest))
                     .isInstanceOf(MemberBlockedException.class);
         }
     }
