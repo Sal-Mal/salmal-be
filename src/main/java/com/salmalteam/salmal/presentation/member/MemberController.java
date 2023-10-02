@@ -3,14 +3,15 @@ package com.salmalteam.salmal.presentation.member;
 import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.dto.request.member.MemberImageUpdateRequest;
 import com.salmalteam.salmal.dto.request.member.MyPageUpdateRequest;
+import com.salmalteam.salmal.dto.request.member.block.MemberBlockedPageRequest;
 import com.salmalteam.salmal.dto.response.member.MyPageResponse;
+import com.salmalteam.salmal.dto.response.member.block.MemberBlockedPageResponse;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import com.salmalteam.salmal.presentation.Login;
 import com.salmalteam.salmal.presentation.LoginMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -60,6 +61,17 @@ public class MemberController {
     public void cancelBlocking(@LoginMember final MemberPayLoad memberPayLoad,
                                @PathVariable("member-id") final Long memberId) {
         memberService.cancelBlocking(memberPayLoad, memberId);
+    }
+
+    @GetMapping("/{member-id}/blocks")
+    @ResponseStatus(HttpStatus.OK)
+    @Login
+    public MemberBlockedPageResponse searchBlockMembers(@LoginMember final MemberPayLoad memberPayLoad,
+                                                        @PathVariable("member-id") final Long memberId,
+                                                        @RequestParam(value = "cursor-id", required = false) final Long cursorId,
+                                                        @RequestParam(value = "size", required = false) final Integer size){
+        final MemberBlockedPageRequest memberBlockedPageRequest = MemberBlockedPageRequest.of(cursorId, size);
+        return memberService.searchBlockedMembers(memberPayLoad, memberId, memberBlockedPageRequest);
     }
 
 
