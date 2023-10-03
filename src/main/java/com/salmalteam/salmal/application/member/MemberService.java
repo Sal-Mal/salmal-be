@@ -1,18 +1,22 @@
 package com.salmalteam.salmal.application.member;
 
 import com.salmalteam.salmal.application.ImageUploader;
+import com.salmalteam.salmal.application.vote.VoteService;
 import com.salmalteam.salmal.domain.image.ImageFile;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.member.MemberRepository;
 import com.salmalteam.salmal.domain.member.NickName;
 import com.salmalteam.salmal.domain.member.block.MemberBlocked;
 import com.salmalteam.salmal.domain.member.block.MemberBlockedRepository;
+import com.salmalteam.salmal.domain.vote.VoteRepository;
 import com.salmalteam.salmal.dto.request.auth.SignUpRequest;
 import com.salmalteam.salmal.dto.request.member.MemberImageUpdateRequest;
 import com.salmalteam.salmal.dto.request.member.MyPageUpdateRequest;
 import com.salmalteam.salmal.dto.request.member.block.MemberBlockedPageRequest;
+import com.salmalteam.salmal.dto.request.member.vote.MemberVotePageRequest;
 import com.salmalteam.salmal.dto.response.member.MyPageResponse;
 import com.salmalteam.salmal.dto.response.member.block.MemberBlockedPageResponse;
+import com.salmalteam.salmal.dto.response.member.vote.MemberVotePageResponse;
 import com.salmalteam.salmal.exception.member.MemberException;
 import com.salmalteam.salmal.exception.member.MemberExceptionType;
 import com.salmalteam.salmal.exception.member.block.MemberBlockedException;
@@ -28,15 +32,18 @@ public class MemberService {
     private final MemberBlockedRepository memberBlockedRepository;
     private final ImageUploader imageUploader;
     private final String memberImagePath;
+    private final VoteRepository voteRepository;
 
     public MemberService(final MemberRepository memberRepository,
                          final MemberBlockedRepository memberBlockedRepository,
                          final ImageUploader imageUploader,
-                         @Value("${image.path.member}") final String memberImagePath) {
+                         @Value("${image.path.member}") final String memberImagePath,
+                         final VoteRepository voteRepository) {
         this.memberRepository = memberRepository;
         this.memberBlockedRepository = memberBlockedRepository;
         this.imageUploader = imageUploader;
         this.memberImagePath = memberImagePath;
+        this.voteRepository = voteRepository;
     }
 
     @Transactional(readOnly = true)
@@ -59,12 +66,6 @@ public class MemberService {
     public MyPageResponse findMyPage(final Long memberId) {
         validateExistsById(memberId);
         return memberRepository.searchMyPage(memberId);
-    }
-
-    private void validateExistsById(final Long memberId) {
-        if (!memberRepository.existsById(memberId)) {
-            throw new MemberException(MemberExceptionType.NOT_FOUND);
-        }
     }
 
     @Transactional
@@ -101,13 +102,6 @@ public class MemberService {
         if (!memberBlockedRepository.existsByBlockerAndTarget(blocker, target)) {
             throw new MemberBlockedException(MemberBlockedExceptionType.NOT_FOUND);
         }
-    }
-
-    @Transactional(readOnly = true)
-    public Member findMemberById(final Long memberId) {
-        final Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_FOUND));
-        return member;
     }
 
     @Transactional
@@ -164,6 +158,27 @@ public class MemberService {
     private void validateSearchAuthority(final Member requester, final Member target) {
         if (!requester.equals(target)) {
             throw new MemberBlockedException(MemberBlockedExceptionType.FORBIDDEN_SEARCH);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public MemberVotePageResponse searchMemberVotes(final MemberPayLoad memberPayLoad, final Long memberId, final MemberVotePageRequest memberVotePageRequest){
+
+        validateExistsById(memberId);
+
+        return voteRepository.searchMemberVoteList(memberId, memberVotePageRequest);
+    }
+
+    @Transactional(readOnly = true)
+    public Member findMemberById(final Long memberId) {
+        final Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_FOUND));
+        return member;
+    }
+
+    private void validateExistsById(final Long memberId) {
+        if (!memberRepository.existsById(memberId)) {
+            throw new MemberException(MemberExceptionType.NOT_FOUND);
         }
     }
 
