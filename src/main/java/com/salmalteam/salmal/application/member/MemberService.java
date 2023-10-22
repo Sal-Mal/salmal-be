@@ -117,9 +117,9 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    private void validateNickNameChangeValidity(final String nickName1, final String nickName2){
-        if(!nickName1.equals(nickName2)){
-            validateNickNameExists(nickName1);
+    private void validateNickNameChangeValidity(final String requestNickName, final String currentNickName){
+        if(!requestNickName.equals(currentNickName)){
+            validateNickNameExists(requestNickName);
         }
     }
 
