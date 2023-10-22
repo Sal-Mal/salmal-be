@@ -111,10 +111,16 @@ public class MemberService {
         final Member targetMember = findMemberById(memberId);
 
         validateUpdateAuthority(member, targetMember);
-        validateNickNameExists(myPageUpdateRequest.getNickName());
+        validateNickNameChangeValidity(myPageUpdateRequest.getNickName(), member.getNickName().getValue());
 
         member.updateMyPage(myPageUpdateRequest.getNickName(), myPageUpdateRequest.getIntroduction());
         memberRepository.save(member);
+    }
+
+    private void validateNickNameChangeValidity(final String nickName1, final String nickName2){
+        if(!nickName1.equals(nickName2)){
+            validateNickNameExists(nickName1);
+        }
     }
 
     @Transactional
