@@ -597,6 +597,54 @@ class VoteControllerTest extends PresentationTest {
     }
 
     @Nested
+    class 투표_댓글_목록_전체_조회_테스트{
+
+        private final static String URL = "/{vote-id}/comments/all";
+
+        @Test
+        void 투표_댓글_목록_전체_조회_성공() throws Exception{
+            // given
+            final Long voteId = 1L;
+            final String memberImageURL = "https://.../image.jpg";
+            final CommentResponse commentResponse1 = new CommentResponse(5L, 1L, memberImageURL,false, 33, "이옷 정말 예뻐요~!", LocalDateTime.now(), LocalDateTime.now());
+            final CommentResponse commentResponse2 = new CommentResponse(4L, 2L,memberImageURL, false, 31, "강추 강추!", LocalDateTime.now(), LocalDateTime.now());
+            final CommentResponse commentResponse3 = new CommentResponse(3L, 3L,memberImageURL, false, 22, "좋네요", LocalDateTime.now(), LocalDateTime.now());
+
+            given(voteService.searchAllComments(any(), any())).willReturn(List.of(commentResponse1, commentResponse2, commentResponse3));
+
+            mockingForAuthorization();
+
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + URL, voteId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isOk());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("vote-id").description("댓글 전체 목록을 조회할 투표 ID")
+                    ),
+                    responseFields(
+                            subsectionWithPath("[].id").type(JsonFieldType.NUMBER).description("댓글 ID"),
+                            subsectionWithPath("[].memberId").type(JsonFieldType.NUMBER).description("댓글 작성자 ID"),
+                            subsectionWithPath("[].memberImageUrl").type(JsonFieldType.STRING).description("댓글 작성자 프로필 이미지 URL"),
+                            subsectionWithPath("[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
+                            subsectionWithPath("[].likeCount").type(JsonFieldType.NUMBER).description("좋아요 개수"),
+                            subsectionWithPath("[].content").type(JsonFieldType.STRING).description("댓글 내용"),
+                            subsectionWithPath("[].createdAt").type(JsonFieldType.STRING).description("댓글 생성일"),
+                            subsectionWithPath("[].updatedAt").type(JsonFieldType.STRING).description("댓글 수정일")
+                    )
+            ));
+
+        }
+    }
+
+    @Nested
     class 투표_평가_취소_테스트{
 
         private final static String URL = "/{vote-id}/evaluations";

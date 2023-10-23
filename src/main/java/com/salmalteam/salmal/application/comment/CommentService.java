@@ -12,6 +12,7 @@ import com.salmalteam.salmal.domain.comment.CommentRepository;
 import com.salmalteam.salmal.dto.request.comment.CommentPageRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentUpdateRequest;
 import com.salmalteam.salmal.dto.response.comment.CommentPageResponse;
+import com.salmalteam.salmal.dto.response.comment.CommentResponse;
 import com.salmalteam.salmal.exception.comment.CommentException;
 import com.salmalteam.salmal.exception.comment.CommentExceptionType;
 import com.salmalteam.salmal.exception.comment.like.CommentLikeException;
@@ -22,6 +23,8 @@ import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +66,12 @@ public class CommentService {
                                           final CommentPageRequest commentPageRequest) {
         final Long memberId = memberPayLoad.getId();
         return commentRepository.searchList(voteId, memberId, commentPageRequest);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommentResponse> searchAllList(final Long voteId, final MemberPayLoad memberPayLoad){
+        final Long memberId = memberPayLoad.getId();
+        return commentRepository.searchAllList(voteId, memberId);
     }
 
     @Transactional

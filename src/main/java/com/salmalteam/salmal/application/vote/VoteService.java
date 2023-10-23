@@ -19,6 +19,7 @@ import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VotePageRequest;
 import com.salmalteam.salmal.dto.response.comment.CommentPageResponse;
+import com.salmalteam.salmal.dto.response.comment.CommentResponse;
 import com.salmalteam.salmal.dto.response.vote.VotePageResponse;
 import com.salmalteam.salmal.dto.response.vote.VoteResponse;
 import com.salmalteam.salmal.exception.vote.VoteException;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -180,6 +182,12 @@ public class VoteService {
     public CommentPageResponse searchComments(final Long voteId, final MemberPayLoad memberPayLoad, final CommentPageRequest commentPageRequest){
         validateVoteExist(voteId);
         return commentService.searchList(voteId, memberPayLoad, commentPageRequest);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommentResponse> searchAllComments(final Long voteId, final MemberPayLoad memberPayLoad){
+        validateVoteExist(voteId);
+        return commentService.searchAllList(voteId, memberPayLoad);
     }
 
     @Transactional(readOnly = true)
