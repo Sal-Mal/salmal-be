@@ -44,6 +44,32 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
         return CommentPageResponse.of(hasNext, commentResponses);
     }
 
+    /**
+     * iOS 요청 (임시) 사항 : 댓글 전체 조회 기능
+     * 페이지네이션 적용 안함
+     */
+    @Override
+    public List<CommentResponse> searchAllList(final Long voteId, final Long memberId){
+
+        return jpaQueryFactory.select(new QCommentResponse(
+                        comment.id,
+                        comment.commenter.id,
+                        comment.commenter.memberImage.imageUrl,
+                        commentLike.isNotNull(),
+                        comment.likeCount,
+                        comment.content.value,
+                        comment.createAt,
+                        comment.updateAt))
+                .from(comment)
+                .leftJoin(commentLike)
+                .on(commentLike.comment.id.eq(comment.id).and(commentLike.liker.id.eq(memberId)))
+                .where(
+                        comment.vote.id.eq(voteId)
+                )
+                .orderBy(comment.id.desc())
+                .fetch();
+    }
+
     private boolean isHasNext(List<?> result, final int pageSize) {
         boolean hasNext = false;
         if (result.size() > pageSize) {

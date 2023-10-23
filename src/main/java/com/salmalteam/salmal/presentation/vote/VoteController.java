@@ -5,6 +5,7 @@ import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
 import com.salmalteam.salmal.dto.request.comment.CommentPageRequest;
 import com.salmalteam.salmal.dto.request.vote.*;
 import com.salmalteam.salmal.dto.response.comment.CommentPageResponse;
+import com.salmalteam.salmal.dto.response.comment.CommentResponse;
 import com.salmalteam.salmal.dto.response.vote.VotePageResponse;
 import com.salmalteam.salmal.dto.response.vote.VoteResponse;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -91,6 +93,17 @@ public class VoteController {
                                               @RequestParam(value = "size", required = false) final Integer size){
         final CommentPageRequest commentPageRequest = CommentPageRequest.of(cursorId, size);
         return voteService.searchComments(voteId, memberPayLoad, commentPageRequest);
+    }
+
+    /**
+     * iOS 요청 사항 : 댓글 전체 목록 조회 API
+     */
+    @GetMapping("/{vote-id}/comments/all")
+    @ResponseStatus(HttpStatus.OK)
+    @Login
+    public List<CommentResponse> searchAllComments(@LoginMember final MemberPayLoad memberPayLoad,
+                                                   @PathVariable(name = "vote-id") final Long voteId){
+        return voteService.searchAllComments(voteId, memberPayLoad);
     }
 
     @GetMapping("/{vote-id}")
