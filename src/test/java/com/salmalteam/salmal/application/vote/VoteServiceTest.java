@@ -5,6 +5,7 @@ import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.vote.Vote;
 import com.salmalteam.salmal.domain.vote.VoteRepository;
+import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMarkRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
 import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
 import com.salmalteam.salmal.domain.vote.report.VoteReportRepository;
@@ -13,6 +14,7 @@ import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
 import com.salmalteam.salmal.exception.member.MemberException;
 import com.salmalteam.salmal.exception.member.MemberExceptionType;
 import com.salmalteam.salmal.exception.vote.VoteException;
+import com.salmalteam.salmal.exception.vote.bookmark.VoteBookmarkException;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,6 +44,9 @@ class VoteServiceTest {
     MemberService memberService;
     @Mock
     VoteRepository voteRepository;
+
+    @Mock
+    VoteBookMarkRepository voteBookMarkRepository;
     @Mock
     VoteEvaluationRepository voteEvaluationRepository;
     @Mock
@@ -128,6 +133,24 @@ class VoteServiceTest {
             // when & then
             assertThatThrownBy(() -> voteService.bookmark(memberPayLoad, voteId))
                     .isInstanceOf(VoteException.class);
+        }
+
+        @Test
+        void 이미_북마크한_투표일_경우_예외를_발생시킨다(){
+            // given
+            final Long memberId = 1L;
+            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+            final Long voteId = 1L;
+            final Member member = Member.of("LLLLLLL", "닉네임", "KAKAO", true);
+
+            given(memberService.findMemberById(eq(memberId))).willReturn(member);
+            given(voteRepository.findById(eq(voteId))).willReturn(Optional.ofNullable(Vote.of("imageUrl", member)));
+            given(voteBookMarkRepository.existsByVoteAndBookmaker(any(), any())).willReturn(true);
+
+            // when & then
+            assertThatThrownBy(() -> voteService.bookmark(memberPayLoad, voteId))
+                    .isInstanceOf(VoteBookmarkException.class);
+
         }
 
     }
