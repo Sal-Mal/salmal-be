@@ -24,6 +24,8 @@ import com.salmalteam.salmal.dto.response.vote.VotePageResponse;
 import com.salmalteam.salmal.dto.response.vote.VoteResponse;
 import com.salmalteam.salmal.exception.vote.VoteException;
 import com.salmalteam.salmal.exception.vote.VoteExceptionType;
+import com.salmalteam.salmal.exception.vote.bookmark.VoteBookmarkException;
+import com.salmalteam.salmal.exception.vote.bookmark.VoteBookmarkExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import com.salmalteam.salmal.presentation.vote.SearchTypeConstant;
 import org.springframework.beans.factory.annotation.Value;
@@ -134,10 +136,17 @@ public class VoteService {
         final Member member = memberService.findMemberById(memberPayLoad.getId());
         final Vote vote = getVoteById(voteId);
 
+        validateBookmarkExist(vote, member);
         final VoteBookMark voteBookMark = voteBookMarkRepository.findByVoteAndBookmaker(vote, member)
                 .orElse(VoteBookMark.of(member, vote));
 
         voteBookMarkRepository.save(voteBookMark);
+    }
+
+    private void validateBookmarkExist(final Vote vote, final Member member){
+        if(voteBookMarkRepository.existsByVoteAndBookmaker(vote, member)){
+            throw new VoteBookmarkException(VoteBookmarkExceptionType.DUPLICATED_BOOKMARK);
+        }
     }
 
     @Transactional
