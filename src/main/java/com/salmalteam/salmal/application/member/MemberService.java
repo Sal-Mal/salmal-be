@@ -13,10 +13,13 @@ import com.salmalteam.salmal.dto.request.auth.SignUpRequest;
 import com.salmalteam.salmal.dto.request.member.MemberImageUpdateRequest;
 import com.salmalteam.salmal.dto.request.member.MyPageUpdateRequest;
 import com.salmalteam.salmal.dto.request.member.block.MemberBlockedPageRequest;
+import com.salmalteam.salmal.dto.request.member.vote.MemberEvaluationVotePageRequest;
 import com.salmalteam.salmal.dto.request.member.vote.MemberVotePageRequest;
 import com.salmalteam.salmal.dto.response.member.MyPageResponse;
 import com.salmalteam.salmal.dto.response.member.block.MemberBlockedPageResponse;
+import com.salmalteam.salmal.dto.response.member.vote.MemberEvaluationVotePageResponse;
 import com.salmalteam.salmal.dto.response.member.vote.MemberVotePageResponse;
+import com.salmalteam.salmal.dto.response.vote.VotePageResponse;
 import com.salmalteam.salmal.exception.member.MemberException;
 import com.salmalteam.salmal.exception.member.MemberExceptionType;
 import com.salmalteam.salmal.exception.member.block.MemberBlockedException;
@@ -186,6 +189,14 @@ public class MemberService {
         if (!memberRepository.existsById(memberId)) {
             throw new MemberException(MemberExceptionType.NOT_FOUND);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public MemberEvaluationVotePageResponse searchMemberEvaluatedVotes(final MemberPayLoad memberPayLoad, final Long memberId, final MemberEvaluationVotePageRequest memberEvaluationVotePageRequest){
+
+        validateExistsById(memberId);
+
+        return voteRepository.searchMemberEvaluationVoteList(memberId, memberEvaluationVotePageRequest);
     }
 
 
