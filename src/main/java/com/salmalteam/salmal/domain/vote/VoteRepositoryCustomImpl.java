@@ -6,11 +6,10 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.salmalteam.salmal.dto.request.member.vote.MemberEvaluationVotePageRequest;
 import com.salmalteam.salmal.dto.request.member.vote.MemberVotePageRequest;
 import com.salmalteam.salmal.dto.request.vote.VotePageRequest;
-import com.salmalteam.salmal.dto.response.member.vote.MemberVotePageResponse;
-import com.salmalteam.salmal.dto.response.member.vote.MemberVoteResponse;
-import com.salmalteam.salmal.dto.response.member.vote.QMemberVoteResponse;
+import com.salmalteam.salmal.dto.response.member.vote.*;
 import com.salmalteam.salmal.dto.response.vote.QVoteResponse;
 import com.salmalteam.salmal.dto.response.vote.VotePageResponse;
 import com.salmalteam.salmal.dto.response.vote.VoteResponse;
@@ -138,6 +137,31 @@ public class VoteRepositoryCustomImpl implements VoteRepositoryCustom {
         return MemberVotePageResponse.of(hasNext, memberVoteResponses);
     }
 
+    @Override
+    public MemberEvaluationVotePageResponse searchMemberEvaluationVoteList(final Long memberId, final MemberEvaluationVotePageRequest memberEvaluationVotePageRequest){
+
+        final List<MemberEvaluationVoteResponse> memberEvaluationVoteResponses = queryFactory.select(new QMemberEvaluationVoteResponse(
+                        vote.id,
+                        vote.voteImage.imageUrl,
+                        voteEvaluation.createdAt
+                ))
+                .from(vote)
+                .innerJoin(voteEvaluation)
+                .on(vote.id.eq(voteEvaluation.vote.id))
+                .where(
+                        voteEvaluation.evaluator.id.eq(memberId),
+                        ltId(memberEvaluationVotePageRequest.getCursorId())
+                )
+                .orderBy(
+                        vote.id.desc()
+                )
+                .limit(memberEvaluationVotePageRequest.getSize() + 1)
+                .fetch();
+
+        final boolean hasNext = isHasNext(memberEvaluationVoteResponses, memberEvaluationVotePageRequest.getSize());
+        return MemberEvaluationVotePageResponse.of(hasNext, memberEvaluationVoteResponses);
+    }
+
     private boolean isHasNext(List<?> result, final int pageSize) {
         boolean hasNext = false;
         if (result.size() > pageSize) {
@@ -145,6 +169,10 @@ public class VoteRepositoryCustomImpl implements VoteRepositoryCustom {
             result.remove(pageSize);
         }
         return hasNext;
+    }
+
+    private BooleanExpression ltId(final Long cursorId){
+        return cursorId == null ? null : vote.id.lt(cursorId);
     }
 
     private BooleanExpression cursorLikeCountAndCursorId(final Long cursorId, final Integer cursorLikeCount) {

@@ -4,9 +4,11 @@ import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.dto.request.member.MemberImageUpdateRequest;
 import com.salmalteam.salmal.dto.request.member.MyPageUpdateRequest;
 import com.salmalteam.salmal.dto.request.member.block.MemberBlockedPageRequest;
+import com.salmalteam.salmal.dto.request.member.vote.MemberEvaluationVotePageRequest;
 import com.salmalteam.salmal.dto.request.member.vote.MemberVotePageRequest;
 import com.salmalteam.salmal.dto.response.member.MyPageResponse;
 import com.salmalteam.salmal.dto.response.member.block.MemberBlockedPageResponse;
+import com.salmalteam.salmal.dto.response.member.vote.MemberEvaluationVotePageResponse;
 import com.salmalteam.salmal.dto.response.member.vote.MemberVotePageResponse;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import com.salmalteam.salmal.presentation.Login;
@@ -85,5 +87,16 @@ public class MemberController {
                                                     @RequestParam(value = "size", required = false) final Integer size){
         final MemberVotePageRequest memberVotePageRequest = MemberVotePageRequest.of(cursorId, size);
         return memberService.searchMemberVotes(memberPayLoad, memberId, memberVotePageRequest);
+    }
+
+    @GetMapping("/{member-id}/evaluations")
+    @ResponseStatus(HttpStatus.OK)
+    @Login
+    public MemberEvaluationVotePageResponse searchMemberEvaluationVote(@LoginMember final MemberPayLoad memberPayLoad,
+                                                                       @PathVariable("member-id") final Long memberId,
+                                                                       @RequestParam(value = "cursor-id", required = false) final Long cursorId,
+                                                                       @RequestParam(value = "size", required = false) final Integer size){
+        final MemberEvaluationVotePageRequest memberEvaluationVotePageRequest = MemberEvaluationVotePageRequest.of(cursorId, size);
+        return memberService.searchMemberEvaluatedVotes(memberPayLoad, memberId, memberEvaluationVotePageRequest);
     }
 }
