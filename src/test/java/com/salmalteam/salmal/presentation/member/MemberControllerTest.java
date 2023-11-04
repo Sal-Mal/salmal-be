@@ -496,7 +496,7 @@ class MemberControllerTest extends PresentationTest {
                             responseFields(beneathPath("votes").withSubsectionId("votes"),
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("투표 ID"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("투표 이미지 URL"),
-                                    fieldWithPath("createdDate").type(JsonFieldType.STRING).description("생성일")
+                                    fieldWithPath("createdDate").type(JsonFieldType.STRING).description("평가 생성일")
                             )
                     )
             );
@@ -539,7 +539,7 @@ class MemberControllerTest extends PresentationTest {
                             headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
                     ),
                     pathParameters(
-                            parameterWithName("member-id").description("평가 목록을 조회할 회원 ID")
+                            parameterWithName("member-id").description("북마크 목록을 조회할 회원 ID")
                     ),
                     requestParameters(
                             parameterWithName("cursor-id").optional().description("이전 마지막 조회 결과 투표 ID (첫 페이지 조회 시 입력 X)"),
@@ -553,10 +553,40 @@ class MemberControllerTest extends PresentationTest {
                             responseFields(beneathPath("votes").withSubsectionId("votes"),
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("투표 ID"),
                                     fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("투표 이미지 URL"),
-                                    fieldWithPath("createdDate").type(JsonFieldType.STRING).description("생성일")
+                                    fieldWithPath("createdDate").type(JsonFieldType.STRING).description("북마크 생성일")
                             )
                     )
             );
+        }
+    }
+
+    @Nested
+    class 회원_삭제{
+        private final String URL = "/{member-id}";
+        @Test
+        void 회원_삭제_성공() throws Exception{
+            // given
+            final Long memberId = 1L;
+
+            mockingForAuthorization();
+
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + URL, memberId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("member-id").description("삭제할 회원 ID")
+                    )
+            ));
+
         }
     }
 
