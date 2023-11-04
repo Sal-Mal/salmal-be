@@ -10,4 +10,5 @@ public interface MemberRepository extends Repository <Member, Long>, MemberRepos
     Optional<Member> findByProviderId(String providerId);
     boolean existsByNickName(NickName nickName);
     boolean existsById(Long memberId);
+    void delete(Member member);
 }

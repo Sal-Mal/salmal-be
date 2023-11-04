@@ -28,6 +28,7 @@ import com.salmalteam.salmal.exception.vote.bookmark.VoteBookmarkException;
 import com.salmalteam.salmal.exception.vote.bookmark.VoteBookmarkExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import com.salmalteam.salmal.presentation.vote.SearchTypeConstant;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +36,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class VoteService {
 
     private final MemberService memberService;
@@ -72,6 +75,14 @@ public class VoteService {
         final String imageUrl = imageUploader.uploadImage(ImageFile.of(multipartFile, voteImagePath));
         final Member member = memberService.findMemberById(memberPayLoad.getId());
         voteRepository.save(Vote.of(imageUrl, member));
+    }
+
+    @Transactional
+    public void deleteAll(final Long memberId){
+        List<Vote> votesToDel = voteRepository.findAllByMember_Id(memberId);
+        List<Long> voteIdsToDel = votesToDel.stream().map(Vote::getId).collect(Collectors.toList());
+
+        voteRepository.deleteAllByIdIn(voteIdsToDel);
     }
 
     @Transactional

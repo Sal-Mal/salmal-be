@@ -1,7 +1,6 @@
 package com.salmalteam.salmal.application.member;
 
 import com.salmalteam.salmal.application.ImageUploader;
-import com.salmalteam.salmal.application.vote.VoteService;
 import com.salmalteam.salmal.domain.image.ImageFile;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.member.MemberRepository;
@@ -21,13 +20,13 @@ import com.salmalteam.salmal.dto.response.member.block.MemberBlockedPageResponse
 import com.salmalteam.salmal.dto.response.member.vote.MemberBookmarkVotePageResponse;
 import com.salmalteam.salmal.dto.response.member.vote.MemberEvaluationVotePageResponse;
 import com.salmalteam.salmal.dto.response.member.vote.MemberVotePageResponse;
-import com.salmalteam.salmal.dto.response.vote.VotePageResponse;
 import com.salmalteam.salmal.exception.member.MemberException;
 import com.salmalteam.salmal.exception.member.MemberExceptionType;
 import com.salmalteam.salmal.exception.member.block.MemberBlockedException;
 import com.salmalteam.salmal.exception.member.block.MemberBlockedExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,17 +37,20 @@ public class MemberService {
     private final ImageUploader imageUploader;
     private final String memberImagePath;
     private final VoteRepository voteRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public MemberService(final MemberRepository memberRepository,
                          final MemberBlockedRepository memberBlockedRepository,
                          final ImageUploader imageUploader,
                          @Value("${image.path.member}") final String memberImagePath,
-                         final VoteRepository voteRepository) {
+                         final VoteRepository voteRepository,
+                         final ApplicationEventPublisher applicationEventPublisher) {
         this.memberRepository = memberRepository;
         this.memberBlockedRepository = memberBlockedRepository;
         this.imageUploader = imageUploader;
         this.memberImagePath = memberImagePath;
         this.voteRepository = voteRepository;
+        this.eventPublisher = applicationEventPublisher;
     }
 
     @Transactional(readOnly = true)
@@ -64,6 +66,13 @@ public class MemberService {
         final Member member = memberRepository.save(Member.of(signUpRequest.getProviderId(), signUpRequest.getNickName(),
                 provider, signUpRequest.getMarketingInformationConsent()));
         return member.getId();
+    }
+
+    public void delete(final MemberPayLoad memberPayLoad, final Long memberId){
+
+        final Member member = findMemberById(memberId);
+        eventPublisher.publishEvent(MemberDeleteEvent.of(memberId));
+        memberRepository.delete(member);
     }
 
 
