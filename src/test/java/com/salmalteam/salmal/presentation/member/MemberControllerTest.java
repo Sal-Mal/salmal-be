@@ -4,10 +4,7 @@ import com.salmalteam.salmal.dto.request.member.MyPageUpdateRequest;
 import com.salmalteam.salmal.dto.response.member.MyPageResponse;
 import com.salmalteam.salmal.dto.response.member.block.MemberBlockedPageResponse;
 import com.salmalteam.salmal.dto.response.member.block.MemberBlockedResponse;
-import com.salmalteam.salmal.dto.response.member.vote.MemberEvaluationVotePageResponse;
-import com.salmalteam.salmal.dto.response.member.vote.MemberEvaluationVoteResponse;
-import com.salmalteam.salmal.dto.response.member.vote.MemberVotePageResponse;
-import com.salmalteam.salmal.dto.response.member.vote.MemberVoteResponse;
+import com.salmalteam.salmal.dto.response.member.vote.*;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import com.salmalteam.salmal.support.PresentationTest;
 import org.junit.jupiter.api.Nested;
@@ -506,5 +503,62 @@ class MemberControllerTest extends PresentationTest {
 
         }
     }
+
+    @Nested
+    class 회원_북마크_투표_목록_조회{
+        private final String URL = "/{member-id}/bookmarks";
+
+        @Test
+        void 회원_북마크_투표_목록_조회_성공() throws Exception{
+
+            // given
+            final Long memberId = 1L;
+            final Integer size = 2;
+            final Long cursorId = 10L;
+
+            mockingForAuthorization();
+
+            MemberBookmarkVoteResponse memberBookmarkVoteResponse1 = new MemberBookmarkVoteResponse(40L, "imageUrl", LocalDateTime.now());
+            MemberBookmarkVoteResponse memberBookmarkVoteResponse2 = new MemberBookmarkVoteResponse(24L, "imageUrl", LocalDateTime.now());
+
+            MemberBookmarkVotePageResponse memberBookmarkVotePageResponse = MemberBookmarkVotePageResponse.of(true, List.of(memberBookmarkVoteResponse1, memberBookmarkVoteResponse2));
+            given(memberService.searchMemberBookmarkedVotes(any(), any(), any())).willReturn(memberBookmarkVotePageResponse);
+
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + URL, memberId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .param("size", String.valueOf(size))
+                            .param("cursor-id", String.valueOf(cursorId))
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isOk());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("member-id").description("평가 목록을 조회할 회원 ID")
+                    ),
+                    requestParameters(
+                            parameterWithName("cursor-id").optional().description("이전 마지막 조회 결과 투표 ID (첫 페이지 조회 시 입력 X)"),
+                            parameterWithName("size").optional().description("검색할 ROW 수")
+                    ),
+                    responseFields(
+                            fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 존재 여부"),
+                            subsectionWithPath("votes").type(JsonFieldType.ARRAY).description("평가 투표 목록")
+                    )
+            )).andDo(restDocs.document(
+                            responseFields(beneathPath("votes").withSubsectionId("votes"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("투표 ID"),
+                                    fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("투표 이미지 URL"),
+                                    fieldWithPath("createdDate").type(JsonFieldType.STRING).description("생성일")
+                            )
+                    )
+            );
+        }
+    }
+
 
 }
