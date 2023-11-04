@@ -77,6 +77,9 @@ public class VoteService {
         voteRepository.save(Vote.of(imageUrl, member));
     }
 
+    /**
+     * S3 에 올라가있는 투표 이미지 삭제하기
+     */
     @Transactional
     public void deleteAll(final Long memberId){
         List<Vote> votesToDel = voteRepository.findAllByMember_Id(memberId);

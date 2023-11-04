@@ -68,6 +68,9 @@ public class MemberService {
         return member.getId();
     }
 
+    /**
+     * TODO: S3 스토리지에 올라가있는 회원 데이터(이미지) 삭제
+     */
     public void delete(final MemberPayLoad memberPayLoad, final Long memberId){
 
         final Member member = findMemberById(memberId);
