@@ -1,9 +1,7 @@
 package com.salmalteam.salmal.dto.response.member.vote;
 
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter

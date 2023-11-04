@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.salmalteam.salmal.dto.request.member.vote.MemberBookmarkVotePageRequest;
 import com.salmalteam.salmal.dto.request.member.vote.MemberEvaluationVotePageRequest;
 import com.salmalteam.salmal.dto.request.member.vote.MemberVotePageRequest;
 import com.salmalteam.salmal.dto.request.vote.VotePageRequest;
@@ -138,7 +139,7 @@ public class VoteRepositoryCustomImpl implements VoteRepositoryCustom {
     }
 
     @Override
-    public MemberEvaluationVotePageResponse searchMemberEvaluationVoteList(final Long memberId, final MemberEvaluationVotePageRequest memberEvaluationVotePageRequest){
+    public MemberEvaluationVotePageResponse searchMemberEvaluationVoteList(final Long memberId, final MemberEvaluationVotePageRequest memberEvaluationVotePageRequest) {
 
         final List<MemberEvaluationVoteResponse> memberEvaluationVoteResponses = queryFactory.select(new QMemberEvaluationVoteResponse(
                         vote.id,
@@ -162,6 +163,31 @@ public class VoteRepositoryCustomImpl implements VoteRepositoryCustom {
         return MemberEvaluationVotePageResponse.of(hasNext, memberEvaluationVoteResponses);
     }
 
+    @Override
+    public MemberBookmarkVotePageResponse searchMemberBookmarkVoteList(final Long memberId, final MemberBookmarkVotePageRequest memberBookmarkVotePageRequest) {
+
+        final List<MemberBookmarkVoteResponse> memberBookmarkVoteResponses = queryFactory.select(new QMemberBookmarkVoteResponse(
+                        vote.id,
+                        vote.voteImage.imageUrl,
+                        voteBookMark.createdAt
+                ))
+                .from(vote)
+                .innerJoin(voteBookMark)
+                .on(vote.id.eq(voteBookMark.id))
+                .where(
+                    voteBookMark.bookmaker.id.eq(memberId),
+                        ltId(memberBookmarkVotePageRequest.getCursorId())
+                )
+                .orderBy(
+                        vote.id.desc()
+                )
+                .limit(memberBookmarkVotePageRequest.getSize() + 1)
+                .fetch();
+
+        final boolean hasNext = isHasNext(memberBookmarkVoteResponses, memberBookmarkVotePageRequest.getSize());
+        return MemberBookmarkVotePageResponse.of(hasNext, memberBookmarkVoteResponses);
+    }
+
     private boolean isHasNext(List<?> result, final int pageSize) {
         boolean hasNext = false;
         if (result.size() > pageSize) {
@@ -171,7 +197,7 @@ public class VoteRepositoryCustomImpl implements VoteRepositoryCustom {
         return hasNext;
     }
 
-    private BooleanExpression ltId(final Long cursorId){
+    private BooleanExpression ltId(final Long cursorId) {
         return cursorId == null ? null : vote.id.lt(cursorId);
     }
 
