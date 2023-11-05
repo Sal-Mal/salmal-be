@@ -23,9 +23,11 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
         final List<CommentResponse> commentResponses = jpaQueryFactory.select(new QCommentResponse(
                         comment.id,
                         comment.commenter.id,
+                        comment.commenter.nickName.value,
                         comment.commenter.memberImage.imageUrl,
                         commentLike.isNotNull(),
                         comment.likeCount,
+                        comment.replyCount,
                         comment.content.value,
                         comment.createAt,
                         comment.updateAt))
@@ -34,6 +36,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
                 .on(commentLike.comment.id.eq(comment.id).and(commentLike.liker.id.eq(memberId)))
                 .where(
                         comment.vote.id.eq(voteId),
+                        comment.commentType.eq(CommentType.COMMENT),
                         cursorId(commentPageRequest.getCursorId())
                 )
                 .orderBy(comment.id.desc())
@@ -54,9 +57,11 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
         return jpaQueryFactory.select(new QCommentResponse(
                         comment.id,
                         comment.commenter.id,
+                        comment.commenter.nickName.value,
                         comment.commenter.memberImage.imageUrl,
                         commentLike.isNotNull(),
                         comment.likeCount,
+                        comment.replyCount,
                         comment.content.value,
                         comment.createAt,
                         comment.updateAt))
@@ -64,10 +69,12 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
                 .leftJoin(commentLike)
                 .on(commentLike.comment.id.eq(comment.id).and(commentLike.liker.id.eq(memberId)))
                 .where(
+                        comment.commentType.eq(CommentType.COMMENT),
                         comment.vote.id.eq(voteId)
                 )
                 .orderBy(comment.id.desc())
                 .fetch();
+
     }
 
     private boolean isHasNext(List<?> result, final int pageSize) {

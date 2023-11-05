@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -35,14 +37,40 @@ public class Comment extends BaseEntity {
     @Column
     private int likeCount = 0;
 
+    @Column
+    private int replyCount = 0;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private CommentType commentType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_comment_id")
+    private Comment parentComment;
+
+    @OneToMany(mappedBy = "parentComment")
+    private List<Comment> childComments = new ArrayList<>();
+
     private Comment(final String content, final Vote vote, final Member commenter){
         this.content = Content.of(content);
         this.commenter = commenter;
         this.vote = vote;
+        this.commentType = CommentType.COMMENT;
+    }
+
+    private Comment(final String content, final Comment parentComment, final Member replier){
+        this.content = Content.of(content);
+        this.commenter = replier;
+        this.parentComment = parentComment;
+        this.commentType =CommentType.REPLY;
     }
 
     public static Comment of(final String content, final Vote vote, final Member commenter){
         return new Comment(content, vote, commenter);
+    }
+
+    public static Comment ofReply(final String content, final Comment parentComment, final Member replier){
+        return new Comment(content, parentComment, replier);
     }
 
     public void updateContent(final String content){

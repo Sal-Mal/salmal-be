@@ -533,9 +533,9 @@ class VoteControllerTest extends PresentationTest {
             final Long cursorId = 6L;
             final int size = 3;
             final String memberImageURL = "https://.../image.jpg";
-            final CommentResponse commentResponse1 = new CommentResponse(5L, 1L, memberImageURL,false, 33, "이옷 정말 예뻐요~!", LocalDateTime.now(), LocalDateTime.now());
-            final CommentResponse commentResponse2 = new CommentResponse(4L, 2L,memberImageURL, false, 31, "강추 강추!", LocalDateTime.now(), LocalDateTime.now());
-            final CommentResponse commentResponse3 = new CommentResponse(3L, 3L,memberImageURL, false, 22, "좋네요", LocalDateTime.now(), LocalDateTime.now());
+            final CommentResponse commentResponse1 = new CommentResponse(5L, 1L,"사과나무", memberImageURL,false, 33, 3, "이옷 정말 예뻐요~!", LocalDateTime.now(), LocalDateTime.now());
+            final CommentResponse commentResponse2 = new CommentResponse(4L, 2L,"느티나무",memberImageURL, false, 31, 10, "강추 강추!", LocalDateTime.now(), LocalDateTime.now());
+            final CommentResponse commentResponse3 = new CommentResponse(3L, 3L,"포도나무",memberImageURL, false, 22, 1,"좋네요", LocalDateTime.now(), LocalDateTime.now());
 
             final CommentPageResponse commentPageResponse = CommentPageResponse.of(true, List.of(commentResponse1, commentResponse2, commentResponse3));
             given(voteService.searchComments(any(), any(), any())).willReturn(commentPageResponse);
@@ -571,9 +571,11 @@ class VoteControllerTest extends PresentationTest {
                             responseFields(beneathPath("comments").withSubsectionId("comments"),
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("댓글 ID"),
                                     fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("댓글 작성자 ID "),
+                                    fieldWithPath("nickName").type(JsonFieldType.STRING).description("작성자 닉네임"),
                                     fieldWithPath("memberImageUrl").type(JsonFieldType.STRING).description("댓글 작성자 프로필 이미지 URL"),
                                     fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
                                     fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("좋아요 개수"),
+                                    fieldWithPath("replyCount").type(JsonFieldType.NUMBER).description("답글 개수"),
                                     fieldWithPath("content").type(JsonFieldType.STRING).description("댓글 내용"),
                                     fieldWithPath("createdAt").type(JsonFieldType.STRING).description("댓글 생성일"),
                                     fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("댓글 수정일")
@@ -606,9 +608,9 @@ class VoteControllerTest extends PresentationTest {
             // given
             final Long voteId = 1L;
             final String memberImageURL = "https://.../image.jpg";
-            final CommentResponse commentResponse1 = new CommentResponse(5L, 1L, memberImageURL,false, 33, "이옷 정말 예뻐요~!", LocalDateTime.now(), LocalDateTime.now());
-            final CommentResponse commentResponse2 = new CommentResponse(4L, 2L,memberImageURL, false, 31, "강추 강추!", LocalDateTime.now(), LocalDateTime.now());
-            final CommentResponse commentResponse3 = new CommentResponse(3L, 3L,memberImageURL, false, 22, "좋네요", LocalDateTime.now(), LocalDateTime.now());
+            final CommentResponse commentResponse1 = new CommentResponse(5L, 1L, "사과나무", memberImageURL,false, 33, 1, "이옷 정말 예뻐요~!", LocalDateTime.now(), LocalDateTime.now());
+            final CommentResponse commentResponse2 = new CommentResponse(4L, 2L, "느티나무", memberImageURL, false, 31, 10, "강추 강추!", LocalDateTime.now(), LocalDateTime.now());
+            final CommentResponse commentResponse3 = new CommentResponse(3L, 3L, "포도나무", memberImageURL, false, 22, 24, "좋네요", LocalDateTime.now(), LocalDateTime.now());
 
             given(voteService.searchAllComments(any(), any())).willReturn(List.of(commentResponse1, commentResponse2, commentResponse3));
 
@@ -632,9 +634,11 @@ class VoteControllerTest extends PresentationTest {
                     responseFields(
                             subsectionWithPath("[].id").type(JsonFieldType.NUMBER).description("댓글 ID"),
                             subsectionWithPath("[].memberId").type(JsonFieldType.NUMBER).description("댓글 작성자 ID"),
+                            subsectionWithPath("[].nickName").type(JsonFieldType.STRING).description("작성자 닉네임"),
                             subsectionWithPath("[].memberImageUrl").type(JsonFieldType.STRING).description("댓글 작성자 프로필 이미지 URL"),
                             subsectionWithPath("[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
                             subsectionWithPath("[].likeCount").type(JsonFieldType.NUMBER).description("좋아요 개수"),
+                            subsectionWithPath("[].replyCount").type(JsonFieldType.NUMBER).description("답글 개수"),
                             subsectionWithPath("[].content").type(JsonFieldType.STRING).description("댓글 내용"),
                             subsectionWithPath("[].createdAt").type(JsonFieldType.STRING).description("댓글 생성일"),
                             subsectionWithPath("[].updatedAt").type(JsonFieldType.STRING).description("댓글 수정일")

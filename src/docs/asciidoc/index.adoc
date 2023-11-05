@@ -340,6 +340,23 @@ include::{snippets}/댓글_수정_테스트/댓글_수정_성공/http-request.ad
 ===== 응답
 include::{snippets}/댓글_수정_테스트/댓글_수정_성공/http-response.adoc[]
 
+---
+
+=== 대댓글 생성
+==== 기본정보
+- 메서드 : POST
+- URL : `/api/comments/{comment-id}/replys`
+
+==== 요청
+===== 헤더
+include::{snippets}/대댓글_생성_테스트/대댓글_생성_성공/request-headers.adoc[]
+===== 경로 변수
+include::{snippets}/대댓글_생성_테스트/대댓글_생성_성공/path-parameters.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/대댓글_생성_테스트/대댓글_생성_성공/http-request.adoc[]
+===== 응답
+include::{snippets}/대댓글_생성_테스트/대댓글_생성_성공/http-response.adoc[]
 
 ---
 
