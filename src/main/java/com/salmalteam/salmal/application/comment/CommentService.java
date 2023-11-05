@@ -10,6 +10,7 @@ import com.salmalteam.salmal.domain.vote.Vote;
 import com.salmalteam.salmal.domain.comment.Comment;
 import com.salmalteam.salmal.domain.comment.CommentRepository;
 import com.salmalteam.salmal.dto.request.comment.CommentPageRequest;
+import com.salmalteam.salmal.dto.request.comment.CommentReplyCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentUpdateRequest;
 import com.salmalteam.salmal.dto.response.comment.CommentPageResponse;
 import com.salmalteam.salmal.dto.response.comment.CommentResponse;
@@ -39,6 +40,18 @@ public class CommentService {
     public void save(final String content, final Vote vote, final Member member) {
         final Comment comment = Comment.of(content, vote, member);
         commentRepository.save(comment);
+    }
+
+    @Transactional
+    public void replyComment(final MemberPayLoad memberPayLoad, final Long commentId, final CommentReplyCreateRequest commentReplyCreateRequest){
+
+        final Member member = memberService.findMemberById(memberPayLoad.getId());
+
+        final Comment comment = getCommentById(commentId);
+        final Comment reply = Comment.ofReply(commentReplyCreateRequest.getContent(), comment, member);
+
+        commentRepository.save(reply);
+        commentRepository.increaseReplyCount(commentId);
     }
 
     @Transactional

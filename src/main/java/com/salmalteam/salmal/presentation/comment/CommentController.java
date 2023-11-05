@@ -2,6 +2,7 @@ package com.salmalteam.salmal.presentation.comment;
 
 import com.salmalteam.salmal.application.comment.CommentService;
 import com.salmalteam.salmal.dto.request.comment.CommentPageRequest;
+import com.salmalteam.salmal.dto.request.comment.CommentReplyCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentUpdateRequest;
 import com.salmalteam.salmal.dto.response.comment.CommentPageResponse;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
@@ -49,6 +50,15 @@ public class CommentController {
     public void reportComment(@LoginMember final MemberPayLoad memberPayLoad,
                               @PathVariable(name = "comment-id") final Long commentId){
         commentService.report(memberPayLoad, commentId);
+    }
+
+    @PostMapping("/{comment-id}/replys")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Login
+    public void replyComment(@LoginMember final MemberPayLoad memberPayLoad,
+                             @PathVariable(name = "comment-id") final Long commentId,
+                             @RequestBody @Valid CommentReplyCreateRequest commentReplyCreateRequest){
+        commentService.replyComment(memberPayLoad, commentId, commentReplyCreateRequest);
     }
 
 

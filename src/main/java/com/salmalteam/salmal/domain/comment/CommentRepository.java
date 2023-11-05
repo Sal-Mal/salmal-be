@@ -17,4 +17,8 @@ public interface CommentRepository extends Repository<Comment, Long>, CommentRep
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = "update Comment c set c.likeCount = c.likeCount - 1 where c.id = :id")
     void decreaseLikeCount(Long id);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(value = "update Comment c set c.replyCount = c.replyCount + 1 where c.id = :id")
+    void increaseReplyCount(Long id);
 }
