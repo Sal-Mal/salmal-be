@@ -11,9 +11,12 @@ import com.salmalteam.salmal.domain.comment.Comment;
 import com.salmalteam.salmal.domain.comment.CommentRepository;
 import com.salmalteam.salmal.dto.request.comment.CommentPageRequest;
 import com.salmalteam.salmal.dto.request.comment.CommentReplyCreateRequest;
+import com.salmalteam.salmal.dto.request.comment.ReplyPageRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentUpdateRequest;
 import com.salmalteam.salmal.dto.response.comment.CommentPageResponse;
 import com.salmalteam.salmal.dto.response.comment.CommentResponse;
+import com.salmalteam.salmal.dto.response.comment.ReplyPageResponse;
+import com.salmalteam.salmal.dto.response.comment.ReplyResponse;
 import com.salmalteam.salmal.exception.comment.CommentException;
 import com.salmalteam.salmal.exception.comment.CommentExceptionType;
 import com.salmalteam.salmal.exception.comment.like.CommentLikeException;
@@ -52,6 +55,29 @@ public class CommentService {
 
         commentRepository.save(reply);
         commentRepository.increaseReplyCount(commentId);
+    }
+
+    @Transactional(readOnly = true)
+    public ReplyPageResponse searchReplies(final MemberPayLoad memberPayLoad, final Long commentId, final ReplyPageRequest replyPageRequest){
+
+        final Member member = memberService.findMemberById(memberPayLoad.getId());
+        validateCommentExist(commentId);
+
+        return commentRepository.searchReplies(commentId, member.getId(), replyPageRequest);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReplyResponse> searchAllReplies(final MemberPayLoad memberPayLoad, final Long commentId){
+        final Member member = memberService.findMemberById(memberPayLoad.getId());
+        validateCommentExist(commentId);
+
+        return commentRepository.searchAllReplies(commentId, member.getId());
+    }
+
+    private void validateCommentExist(final Long commentId){
+        if(commentRepository.existsById(commentId)){
+            throw new CommentException(CommentExceptionType.NOT_FOUND);
+        }
     }
 
     @Transactional
