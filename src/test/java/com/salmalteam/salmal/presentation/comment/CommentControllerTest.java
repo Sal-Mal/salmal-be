@@ -2,6 +2,8 @@ package com.salmalteam.salmal.presentation.comment;
 
 import com.salmalteam.salmal.dto.request.comment.CommentReplyCreateRequest;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentUpdateRequest;
+import com.salmalteam.salmal.dto.response.comment.ReplyPageResponse;
+import com.salmalteam.salmal.dto.response.comment.ReplyResponse;
 import com.salmalteam.salmal.support.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,17 +15,19 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.beneathPath;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class CommentControllerTest extends PresentationTest {
@@ -208,7 +212,7 @@ class CommentControllerTest extends PresentationTest {
 
     @Nested
     class 대댓글_생성_테스트{
-        private final String URL = "/replys";
+        private final String URL = "/replies";
 
         @Test
         void 대댓글_생성_성공() throws Exception{
@@ -243,6 +247,116 @@ class CommentControllerTest extends PresentationTest {
             verify(commentService, times(1)).replyComment(any(), any(), any());
 
         }
+    }
+
+    @Nested
+    class 대댓글_목록_조회_테스트{
+
+        private final String URL = "/replies";
+        @Test
+        void 대댓글_목록_조회_성공() throws Exception{
+            // given
+            final Long commentId = 1L;
+            final Long cursorId = 10L;
+            final Integer size = 10;
+
+            final ReplyResponse replyResponse1 = new ReplyResponse(11L, 15L, "느티나무", "imageUrl", true, 10, "인정합니다!", LocalDateTime.now(), LocalDateTime.now());
+            final ReplyResponse replyResponse2 = new ReplyResponse(12L, 22L, "소나무", "imageUrl", false, 13, "인정합니다!", LocalDateTime.now(), LocalDateTime.now());
+            final ReplyResponse replyResponse3 = new ReplyResponse(13L, 53L, "버드나무", "imageUrl", true, 20, "인정합니다!", LocalDateTime.now(), LocalDateTime.now());
+
+            final ReplyPageResponse replyPageResponse = ReplyPageResponse.of(true, List.of(replyResponse1, replyResponse2, replyResponse3));
+
+            given(commentService.searchReplies(any(), any(), any())).willReturn(replyPageResponse);
+            mockingForAuthorization();
+
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + URL, commentId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .param("cursorId", String.valueOf(cursorId))
+                            .param("size", String.valueOf(size))
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isOk());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("comment-id").description("대댓글 목록을 조회할 댓글 ID")
+                    ),
+                    requestParameters(
+                            parameterWithName("cursorId").optional().description("이전 마지막 검색 결과 대댓글 ID (첫 페이지 조회 시 입력 X)"),
+                            parameterWithName("size").optional().description("검색할 ROW 수")
+                    ),
+                    responseFields(
+                            fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 존재 여부"),
+                            subsectionWithPath("replies").type(JsonFieldType.ARRAY).description("대댓글 목록")
+                    )
+            )).andDo(restDocs.document(
+                            responseFields(beneathPath("replies").withSubsectionId("replies"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("대댓글 ID"),
+                                    fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("대댓글 작성자 ID"),
+                                    fieldWithPath("nickName").type(JsonFieldType.STRING).description("대댓글 작성자 닉네임"),
+                                    fieldWithPath("memberImageUrl").type(JsonFieldType.STRING).description("대댓글 작성자 이미지 URL"),
+                                    fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
+                                    fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("좋아요 개수"),
+                                    fieldWithPath("content").type(JsonFieldType.STRING).description("내용"),
+                                    fieldWithPath("createdAt").type(JsonFieldType.STRING).description("대댓글 생성일"),
+                                    fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("대댓글 수정일")
+                            )
+                    )
+            );
+        }
+
+    }
+
+    @Nested
+    class 대댓글_목록_전체_조회_테스트{
+
+        private final String URL = "/replies/all";
+        @Test
+        void 대댓글_목록_전체_조회_테스트_성공() throws Exception{
+
+            final Long commentId = 1L;
+
+            final ReplyResponse replyResponse1 = new ReplyResponse(11L, 15L, "느티나무", "imageUrl", true, 10, "인정합니다!", LocalDateTime.now(), LocalDateTime.now());
+            final ReplyResponse replyResponse2 = new ReplyResponse(12L, 22L, "소나무", "imageUrl", false, 13, "인정합니다!", LocalDateTime.now(), LocalDateTime.now());
+            final ReplyResponse replyResponse3 = new ReplyResponse(13L, 53L, "버드나무", "imageUrl", true, 20, "인정합니다!", LocalDateTime.now(), LocalDateTime.now());
+
+            given(commentService.searchAllReplies( any(), any())).willReturn(List.of(replyResponse1, replyResponse2, replyResponse3));
+            mockingForAuthorization();
+
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + URL, commentId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isOk());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("comment-id").description("대댓글 전체 목록을 조회할 댓글 ID")
+                    ),
+                    responseFields(
+                            subsectionWithPath("[].id").type(JsonFieldType.NUMBER).description("대댓글 ID"),
+                            subsectionWithPath("[].memberId").type(JsonFieldType.NUMBER).description("대댓글 작성자 ID"),
+                            subsectionWithPath("[].nickName").type(JsonFieldType.STRING).description("대댓글 작성자 닉네임"),
+                            subsectionWithPath("[].memberImageUrl").type(JsonFieldType.STRING).description("대댓글 작성자 이미지 URL"),
+                            subsectionWithPath("[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
+                            subsectionWithPath("[].likeCount").type(JsonFieldType.NUMBER).description("좋아요 개수"),
+                            subsectionWithPath("[].content").type(JsonFieldType.STRING).description("내용"),
+                            subsectionWithPath("[].createdAt").type(JsonFieldType.STRING).description("대댓글 생성일"),
+                            subsectionWithPath("[].updatedAt").type(JsonFieldType.STRING).description("대댓글 수정일")
+                    )
+            ));
+        }
+
     }
 
 
