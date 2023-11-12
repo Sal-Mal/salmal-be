@@ -30,6 +30,15 @@ public class CommentController {
                               @RequestBody @Valid final VoteCommentUpdateRequest voteCommentUpdateRequest){
         commentService.updateComment(memberPayLoad, commentId, voteCommentUpdateRequest);
     }
+
+    @DeleteMapping("/{comment-id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Login
+    public void deleteComment(@LoginMember final MemberPayLoad memberPayLoad,
+                              @PathVariable(name = "comment-id") final Long commentId){
+        commentService.deleteComment(memberPayLoad, commentId);
+    }
+
     @PostMapping("/{comment-id}/likes")
     @ResponseStatus(HttpStatus.OK)
     @Login

@@ -1,5 +1,6 @@
 package com.salmalteam.salmal.application;
 
+import com.salmalteam.salmal.application.comment.CommentDeleteEvent;
 import com.salmalteam.salmal.application.comment.CommentService;
 import com.salmalteam.salmal.application.member.MemberDeleteEvent;
 import com.salmalteam.salmal.application.vote.VoteService;

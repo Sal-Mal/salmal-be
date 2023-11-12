@@ -256,6 +256,4 @@ public class VoteService {
         final Long memberId = memberPayLoad.getId();
         return voteRepository.searchList(memberId, votePageRequest, searchTypeConstant);
     }
-
-
 }
