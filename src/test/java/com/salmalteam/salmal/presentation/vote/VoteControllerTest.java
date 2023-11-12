@@ -102,6 +102,38 @@ class VoteControllerTest extends PresentationTest {
     }
 
     @Nested
+    class 투표_삭제_테스트{
+        private final String URL = "/{vote-id}";
+        @Test
+        void 투표_삭제_성공() throws Exception{
+            // given
+            final Long voteId = 1L;
+
+            mockingForAuthorization();
+
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + URL, voteId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("vote-id").description("삭제할 투표 ID")
+                    )
+            ));
+
+            verify(voteService).delete(any(), any());
+
+        }
+    }
+
+    @Nested
     class 투표_평가_테스트 {
 
         private final static String URL = "/{vote-id}/evaluations";

@@ -124,4 +124,12 @@ public class VoteController {
         return voteService.searchList(memberPayLoad, votePageRequest, searchTypeConstant);
     }
 
+    @DeleteMapping("/{vote-id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Login
+    public void deleteVote(@LoginMember final MemberPayLoad memberPayLoad,
+                           @PathVariable(name = "vote-id") final Long voteId){
+        voteService.delete(memberPayLoad, voteId);
+    }
+
 }
