@@ -30,6 +30,7 @@ import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import com.salmalteam.salmal.presentation.vote.SearchTypeConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,7 +51,6 @@ public class VoteService {
     private final CommentService commentService;
     private final ImageUploader imageUploader;
     private final String voteImagePath;
-
     public VoteService(final MemberService memberService,
                        final VoteRepository voteRepository,
                        final VoteEvaluationRepository voteEvaluationRepository,
@@ -78,8 +78,25 @@ public class VoteService {
     }
 
     /**
-     * S3 에 올라가있는 투표 이미지 삭제하기
+     * TODO: 비동기로 S3 에 올라가있는 투표 이미지 삭제하기
      */
+    @Transactional
+    public void delete(final MemberPayLoad memberPayLoad, final Long voteId){
+        final Vote vote = getVoteById(voteId);
+
+        final Long writerId = vote.getMember().getId();
+        final Long requesterId = memberPayLoad.getId();
+        validateDeleteAuthority(writerId, requesterId);
+
+        commentService.deleteAllCommentsByVoteId(voteId);
+        voteRepository.delete(vote);
+    }
+    private void validateDeleteAuthority(final Long writerId, final Long requesterId){
+        if(writerId == null || writerId != requesterId){
+            throw new VoteException(VoteExceptionType.FORBIDDEN_DELETE);
+        }
+    }
+
     @Transactional
     public void deleteAll(final Long memberId){
         List<Vote> votesToDel = voteRepository.findAllByMember_Id(memberId);

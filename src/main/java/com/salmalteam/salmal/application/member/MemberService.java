@@ -1,6 +1,8 @@
 package com.salmalteam.salmal.application.member;
 
 import com.salmalteam.salmal.application.ImageUploader;
+import com.salmalteam.salmal.application.comment.CommentService;
+import com.salmalteam.salmal.application.vote.VoteService;
 import com.salmalteam.salmal.domain.image.ImageFile;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.member.MemberRepository;
@@ -44,13 +46,13 @@ public class MemberService {
                          final ImageUploader imageUploader,
                          @Value("${image.path.member}") final String memberImagePath,
                          final VoteRepository voteRepository,
-                         final ApplicationEventPublisher applicationEventPublisher) {
+                         final ApplicationEventPublisher eventPublisher) {
         this.memberRepository = memberRepository;
         this.memberBlockedRepository = memberBlockedRepository;
         this.imageUploader = imageUploader;
         this.memberImagePath = memberImagePath;
         this.voteRepository = voteRepository;
-        this.eventPublisher = applicationEventPublisher;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional(readOnly = true)
@@ -74,8 +76,16 @@ public class MemberService {
     public void delete(final MemberPayLoad memberPayLoad, final Long memberId){
 
         final Member member = findMemberById(memberId);
-        eventPublisher.publishEvent(MemberDeleteEvent.of(memberId));
+        validateDeleteAuthority(memberId, memberPayLoad.getId());
+
+        eventPublisher.publishEvent(MemberDeleteEvent.of(member.getId()));
         memberRepository.delete(member);
+    }
+
+    private void validateDeleteAuthority(final Long memberId, final Long requesterId){
+        if(memberId != requesterId){
+            throw new MemberException(MemberExceptionType.FORBIDDEN_DELETE);
+        }
     }
 
 

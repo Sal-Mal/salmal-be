@@ -1,6 +1,7 @@
 package com.salmalteam.salmal.application.comment;
 
 import com.salmalteam.salmal.application.member.MemberService;
+import com.salmalteam.salmal.domain.comment.CommentType;
 import com.salmalteam.salmal.domain.comment.like.CommentLike;
 import com.salmalteam.salmal.domain.comment.like.CommentLikeRepository;
 import com.salmalteam.salmal.domain.comment.report.CommentReport;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -172,5 +174,20 @@ public class CommentService {
     private Comment getCommentById(final Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentExceptionType.NOT_FOUND));
+    }
+
+    @Transactional
+    public void deleteAllCommentsByVoteId(final Long voteId) {
+        final List<Comment> allByVoteId = commentRepository.findAllByVote_Id(voteId);
+        final List<Long> commentIdsForDel = allByVoteId.stream().map(Comment::getId).collect(Collectors.toList());
+
+        commentRepository.deleteAllRepliesByIdIn(commentIdsForDel);
+        commentRepository.deleteAllCommentsByIdIn(commentIdsForDel);
+    }
+
+    @Transactional
+    public void deleteAllCommentsByMemberId(final Long memberId){
+        commentRepository.deleteAllCommentsByCommenterId(memberId, CommentType.REPLY);
+        commentRepository.deleteAllCommentsByCommenterId(memberId, CommentType.COMMENT);
     }
 }

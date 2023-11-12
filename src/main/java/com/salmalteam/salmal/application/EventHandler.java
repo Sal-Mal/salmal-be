@@ -1,21 +1,22 @@
-package com.salmalteam.salmal.application.vote;
+package com.salmalteam.salmal.application;
 
+import com.salmalteam.salmal.application.comment.CommentService;
 import com.salmalteam.salmal.application.member.MemberDeleteEvent;
+import com.salmalteam.salmal.application.vote.VoteService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
-public class VoteEventListener {
-
+public class EventHandler {
     private final VoteService voteService;
+    private final CommentService commentService;
+
     @EventListener
     public void handleMemberDeleteEvent(MemberDeleteEvent memberDeleteEvent){
         Long memberId = memberDeleteEvent.getMemberId();
-        log.info("이벤트 호출");
+        commentService.deleteAllCommentsByMemberId(memberId);
         voteService.deleteAll(memberId);
     }
 }
