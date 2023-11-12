@@ -102,7 +102,7 @@ public class CommentService {
     }
 
     private void validateCommentExist(final Long commentId){
-        if(commentRepository.existsById(commentId)){
+        if(!commentRepository.existsById(commentId)){
             throw new CommentException(CommentExceptionType.NOT_FOUND);
         }
     }
