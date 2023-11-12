@@ -1,5 +1,6 @@
 package com.salmalteam.salmal.application.comment;
 
+import com.salmalteam.salmal.application.EventHandler;
 import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.domain.comment.CommentType;
 import com.salmalteam.salmal.domain.comment.like.CommentLike;
@@ -10,6 +11,7 @@ import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.vote.Vote;
 import com.salmalteam.salmal.domain.comment.Comment;
 import com.salmalteam.salmal.domain.comment.CommentRepository;
+import com.salmalteam.salmal.domain.vote.VoteRepository;
 import com.salmalteam.salmal.dto.request.comment.CommentPageRequest;
 import com.salmalteam.salmal.dto.request.comment.CommentReplyCreateRequest;
 import com.salmalteam.salmal.dto.request.comment.ReplyPageRequest;
@@ -26,6 +28,7 @@ import com.salmalteam.salmal.exception.comment.report.CommentReportException;
 import com.salmalteam.salmal.exception.comment.report.CommentReportExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,11 +43,33 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentReportRepository commentReportRepository;
     private final CommentLikeRepository commentLikeRepository;
+    private final VoteRepository voteRepository;
 
     @Transactional
     public void save(final String content, final Vote vote, final Member member) {
         final Comment comment = Comment.of(content, vote, member);
         commentRepository.save(comment);
+    }
+
+    @Transactional
+    public void deleteComment(final MemberPayLoad memberPayLoad, final Long commentId){
+        final Comment comment = getCommentById(commentId);
+        validateDeleteAuthority(comment.getCommenter().getId(), memberPayLoad.getId());
+        
+        switch (comment.getCommentType()){
+            case COMMENT:
+                commentRepository.deleteAllRepliesByParentCommentId(commentId);
+                voteRepository.decreaseCommentCount(comment.getVote().getId());
+            case REPLY:
+                commentRepository.decreaseReplyCount(commentId);
+        }
+        commentRepository.delete(comment);
+    }
+
+    private void validateDeleteAuthority(final Long commenterId, final Long requesterId){
+        if(commenterId != requesterId){
+            throw new CommentException(CommentExceptionType.FORBIDDEN_DELETE);
+        }
     }
 
     @Transactional
