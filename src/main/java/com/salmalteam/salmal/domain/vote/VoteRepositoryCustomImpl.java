@@ -104,7 +104,7 @@ public class VoteRepositoryCustomImpl implements VoteRepositoryCustom {
                 .leftJoin(voteEvaluation)
                 .on(vote.id.eq(voteEvaluation.vote.id).and(voteEvaluation.evaluator.id.eq(memberId)))
                 .leftJoin(voteBookMark)
-                .on(vote.id.eq(voteBookMark.id).and(voteBookMark.bookmaker.id.eq(memberId)))
+                .on(vote.id.eq(voteBookMark.vote.id).and(voteBookMark.bookmaker.id.eq(memberId)))
                 .where(
                         cursorLikeCountAndCursorId(votePageRequest.getCursorId(), votePageRequest.getCursorLikes())
                 )
