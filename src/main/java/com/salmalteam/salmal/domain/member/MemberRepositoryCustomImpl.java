@@ -12,15 +12,16 @@ import static com.salmalteam.salmal.domain.member.block.QMemberBlocked.memberBlo
 import static com.salmalteam.salmal.domain.vote.QVote.vote;
 
 @RequiredArgsConstructor
-public class MemberRepositoryCustomImpl implements MemberRepositoryCustom{
+public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
+
     @Override
     public MyPageResponse searchMyPage(final Long memberId) {
 
         final BooleanExpression blockedMemberSubQuery = JPAExpressions.selectFrom(memberBlocked)
                 .where(
-                        memberBlocked.blocker.id.eq(memberId)
+                        memberBlocked.target.id.eq(memberId)
                 )
                 .exists();
 
