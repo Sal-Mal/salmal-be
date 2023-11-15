@@ -106,7 +106,7 @@ public class VoteRepositoryCustomImpl implements VoteRepositoryCustom {
                 .leftJoin(voteBookMark)
                 .on(vote.id.eq(voteBookMark.vote.id).and(voteBookMark.bookmaker.id.eq(memberId)))
                 .where(
-                        cursorLikeCountAndCursorId(votePageRequest.getCursorId(), votePageRequest.getCursorLikes())
+                        cursorLikeCountAndCursorId(votePageRequest.getCursorId(), votePageRequest.getCursorLikes(), searchTypeConstant)
                 )
                 .orderBy(orderSpecifiers(searchTypeConstant))
                 .limit(votePageRequest.getSize() + 1)
@@ -114,6 +114,16 @@ public class VoteRepositoryCustomImpl implements VoteRepositoryCustom {
 
         final boolean hasNext = isHasNext(voteResponses, votePageRequest.getSize());
         return VotePageResponse.of(hasNext, voteResponses);
+    }
+
+    private BooleanExpression cursorLikeCountAndCursorId(final Long cursorId, final Integer cursorLikeCount, final SearchTypeConstant searchTypeConstant) {
+
+        if (searchTypeConstant.equals(SearchTypeConstant.HOME)) return vote.id.lt(cursorId);
+        if (cursorLikeCount == null || cursorId == null) return null;
+
+        return vote.likeCount.eq(cursorLikeCount)
+                .and(vote.id.lt(cursorId))
+                .or(vote.likeCount.lt(cursorLikeCount));
     }
 
     @Override
@@ -199,14 +209,6 @@ public class VoteRepositoryCustomImpl implements VoteRepositoryCustom {
 
     private BooleanExpression ltId(final Long cursorId) {
         return cursorId == null ? null : vote.id.lt(cursorId);
-    }
-
-    private BooleanExpression cursorLikeCountAndCursorId(final Long cursorId, final Integer cursorLikeCount) {
-        if (cursorLikeCount == null || cursorId == null) return null;
-
-        return vote.likeCount.eq(cursorLikeCount)
-                .and(vote.id.lt(cursorId))
-                .or(vote.likeCount.loe(cursorLikeCount));
     }
 
     private OrderSpecifier[] orderSpecifiers(final SearchTypeConstant searchTypeConstant) {
