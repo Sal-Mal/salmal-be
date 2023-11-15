@@ -162,6 +162,7 @@ class VoteRepositoryTest extends RepositoryTest {
             voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(1L);
             voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(2L);
             voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(2L);
+            voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(2L);
             voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(3L);
             voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(3L);
             voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(3L);
@@ -174,10 +175,11 @@ class VoteRepositoryTest extends RepositoryTest {
 
             // then
             List<VoteResponse> votes = votePageResponse.getVotes();
+
             Assertions.assertAll(
-                    () -> assertThat(votes.size()).isEqualTo(3),
+                    () -> assertThat(votes.size()).isEqualTo(2),
                     () -> assertThat(votes.get(0).getLikeCount()).isEqualTo(3),
-                    () -> assertThat(votes.get(2).getLikeCount()).isEqualTo(2)
+                    () -> assertThat(votes.get(1).getLikeCount()).isEqualTo(2)
             );
         }
     }
