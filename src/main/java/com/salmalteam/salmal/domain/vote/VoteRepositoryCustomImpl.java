@@ -173,9 +173,9 @@ public class VoteRepositoryCustomImpl implements VoteRepositoryCustom {
                 ))
                 .from(vote)
                 .innerJoin(voteBookMark)
-                .on(vote.id.eq(voteBookMark.id))
+                .on(vote.id.eq(voteBookMark.vote.id))
                 .where(
-                    voteBookMark.bookmaker.id.eq(memberId),
+                        voteBookMark.bookmaker.id.eq(memberId),
                         ltId(memberBookmarkVotePageRequest.getCursorId())
                 )
                 .orderBy(
