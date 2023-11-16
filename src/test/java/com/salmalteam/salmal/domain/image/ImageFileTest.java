@@ -15,7 +15,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 class ImageFileTest {
 
     @ParameterizedTest
-    @CsvSource(value = {"testImage.gif", "testImage.bmp", "testImage.png"})
+    @CsvSource(value = {"testImage.gif", "testImage.bmp"})
     void 지원하는_형식이_아니라면_예외를_발생시킨다(final String fileName) throws IOException {
         // given
         final String path = "vote";
