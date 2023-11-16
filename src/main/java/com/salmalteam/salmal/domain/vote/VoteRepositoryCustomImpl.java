@@ -118,7 +118,7 @@ public class VoteRepositoryCustomImpl implements VoteRepositoryCustom {
 
     private BooleanExpression cursorLikeCountAndCursorId(final Long cursorId, final Integer cursorLikeCount, final SearchTypeConstant searchTypeConstant) {
 
-        if (searchTypeConstant.equals(SearchTypeConstant.HOME)) return vote.id.lt(cursorId);
+        if (cursorId != null && searchTypeConstant.equals(SearchTypeConstant.HOME)) return vote.id.lt(cursorId);
         if (cursorLikeCount == null || cursorId == null) return null;
 
         return vote.likeCount.eq(cursorLikeCount)
