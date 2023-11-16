@@ -5,6 +5,7 @@ import com.salmalteam.salmal.application.comment.CommentService;
 import com.salmalteam.salmal.application.vote.VoteService;
 import com.salmalteam.salmal.domain.image.ImageFile;
 import com.salmalteam.salmal.domain.member.Member;
+import com.salmalteam.salmal.domain.member.MemberImage;
 import com.salmalteam.salmal.domain.member.MemberRepository;
 import com.salmalteam.salmal.domain.member.NickName;
 import com.salmalteam.salmal.domain.member.block.MemberBlocked;
@@ -162,6 +163,20 @@ public class MemberService {
         final String imageUrl = imageUploader.uploadImage(imageFile);
 
         member.updateImage(imageUrl);
+        memberRepository.save(member);
+    }
+
+    /**
+     * TODO: S3 비동기 삭제 로직 구현
+     */
+    @Transactional
+    public void deleteImage(final MemberPayLoad memberPayLoad, final Long memberId){
+        final Member member = findMemberById(memberPayLoad.getId());
+        final Member targetMember = findMemberById(memberId);
+
+        validateUpdateAuthority(member, targetMember);
+
+        member.updateImage(MemberImage.getMemberImageUrl());
         memberRepository.save(member);
     }
 

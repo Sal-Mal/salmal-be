@@ -25,4 +25,8 @@ public class MemberImage {
         return new MemberImage(MEMBER_IMAGE_URL);
     }
 
+    public static String getMemberImageUrl(){
+        return MEMBER_IMAGE_URL;
+    }
+
 }
