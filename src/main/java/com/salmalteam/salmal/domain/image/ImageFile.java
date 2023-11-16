@@ -14,8 +14,8 @@ import java.util.Set;
 import java.util.UUID;
 
 public class ImageFile {
-    private final static Set<String> IMAGE_EXTENSIONS = new HashSet<>(Set.of("jpg","jpeg", "JPG", "JPEG"));
-    private final static Set<String> MIME_TYPES = new HashSet<>(Set.of("image/jpg", "image/jpeg"));
+    private final static Set<String> IMAGE_EXTENSIONS = new HashSet<>(Set.of("jpg","jpeg", "JPG", "JPEG", "png", "PNG", "heif", "HEIF"));
+    private final static Set<String> MIME_TYPES = new HashSet<>(Set.of("image/jpg", "image/jpeg", "image/png", "image/heif"));
     private final static Tika tika = new Tika();
     private final static String DOT = ".";
     private final MultipartFile multipartFile;
