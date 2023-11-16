@@ -7,14 +7,14 @@ import java.util.List;
 @Getter
 public class ReplyPageResponse {
     private boolean hasNext;
-    private List<ReplyResponse> replies;
+    private List<ReplyResponse> comments;
 
-    private ReplyPageResponse(boolean hashNext, List<ReplyResponse> replies) {
+    private ReplyPageResponse(boolean hashNext, List<ReplyResponse> comments) {
         this.hasNext = hashNext;
-        this.replies = replies;
+        this.comments = comments;
     }
 
-    public static ReplyPageResponse of(boolean hashNext, List<ReplyResponse> replies){
-        return new ReplyPageResponse(hashNext, replies);
+    public static ReplyPageResponse of(boolean hashNext, List<ReplyResponse> comments){
+        return new ReplyPageResponse(hashNext, comments);
     }
 }

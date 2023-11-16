@@ -321,10 +321,10 @@ class CommentControllerTest extends PresentationTest {
                     ),
                     responseFields(
                             fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 존재 여부"),
-                            subsectionWithPath("replies").type(JsonFieldType.ARRAY).description("대댓글 목록")
+                            subsectionWithPath("comments").type(JsonFieldType.ARRAY).description("대댓글 목록")
                     )
             )).andDo(restDocs.document(
-                            responseFields(beneathPath("replies").withSubsectionId("replies"),
+                            responseFields(beneathPath("comments").withSubsectionId("comments"),
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("대댓글 ID"),
                                     fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("대댓글 작성자 ID"),
                                     fieldWithPath("nickName").type(JsonFieldType.STRING).description("대댓글 작성자 닉네임"),
