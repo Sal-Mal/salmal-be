@@ -590,5 +590,34 @@ class MemberControllerTest extends PresentationTest {
         }
     }
 
+    @Nested
+    class 회원_프로필_이미지_삭제{
+        private final String URL = "/{member-id}/images";
+        @Test
+        void 회원_프로필_이미지_삭제_성공() throws Exception{
+            // given
+            final Long memberId = 1L;
+
+            mockingForAuthorization();
+
+            // when
+            final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + URL, memberId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+            // then
+            resultActions.andDo(restDocs.document(
+                    requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")
+                    ),
+                    pathParameters(
+                            parameterWithName("member-id").description("프로필 이미지를 삭제할 회원 ID")
+                    )
+            ));
+
+        }
+    }
 
 }

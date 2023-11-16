@@ -61,6 +61,14 @@ public class MemberController {
         memberService.updateImage(memberPayLoad, memberId, memberImageUpdateRequest);
     }
 
+    @DeleteMapping("/{member-id}/images")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Login
+    public void deleteImage(@LoginMember MemberPayLoad memberPayLoad,
+                            @PathVariable("member-id") final Long memberId){
+        memberService.deleteImage(memberPayLoad, memberId);
+    }
+
     @PostMapping("/{member-id}/blocks")
     @ResponseStatus(HttpStatus.CREATED)
     @Login
