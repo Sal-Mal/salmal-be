@@ -536,6 +536,24 @@ include::{snippets}/마이페이지_수정/마이페이지_수정_성공/http-re
 
 ---
 
+=== 📌 회원 이미지 삭제
+==== 기본정보
+- 메서드 : DELETE
+- URL : `/api/members/{member-id}/images`
+
+==== 요청
+===== 헤더
+include::{snippets}/회원_프로필_이미지_삭제/회원_프로필_이미지_삭제_성공/request-headers.adoc[]
+===== 경로 변수
+include::{snippets}/회원_프로필_이미지_삭제/회원_프로필_이미지_삭제_성공/path-parameters.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/회원_프로필_이미지_삭제/회원_프로필_이미지_삭제_성공/http-request.adoc[]
+===== 응답
+include::{snippets}/회원_프로필_이미지_삭제/회원_프로필_이미지_삭제_성공/http-response.adoc[]
+
+---
+
 === 📌 회원 이미지 수정
 ==== 기본정보
 - 메서드 : POST
