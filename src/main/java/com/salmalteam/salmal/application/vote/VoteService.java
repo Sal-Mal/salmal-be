@@ -3,6 +3,9 @@ package com.salmalteam.salmal.application.vote;
 import com.salmalteam.salmal.application.ImageUploader;
 import com.salmalteam.salmal.application.comment.CommentService;
 import com.salmalteam.salmal.application.member.MemberService;
+import com.salmalteam.salmal.domain.comment.Comment;
+import com.salmalteam.salmal.domain.comment.CommentRepository;
+import com.salmalteam.salmal.domain.comment.CommentType;
 import com.salmalteam.salmal.domain.image.ImageFile;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.vote.Vote;
@@ -36,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -49,6 +53,7 @@ public class VoteService {
     private final VoteBookMarkRepository voteBookMarkRepository;
     private final VoteReportRepository voteReportRepository;
     private final CommentService commentService;
+    private final CommentRepository commentRepository;
     private final ImageUploader imageUploader;
     private final String voteImagePath;
     public VoteService(final MemberService memberService,
@@ -57,6 +62,7 @@ public class VoteService {
                        final VoteBookMarkRepository voteBookMarkRepository,
                        final VoteReportRepository voteReportRepository,
                        final CommentService commentService,
+                       final CommentRepository commentRepository,
                        final ImageUploader imageUploader,
                        @Value("${image.path.vote}") String voteImagePath){
         this.memberService = memberService;
@@ -65,6 +71,7 @@ public class VoteService {
         this.voteBookMarkRepository = voteBookMarkRepository;
         this.voteReportRepository = voteReportRepository;
         this.commentService = commentService;
+        this.commentRepository = commentRepository;
         this.imageUploader = imageUploader;
         this.voteImagePath = voteImagePath;
     }
@@ -88,7 +95,6 @@ public class VoteService {
         final Long requesterId = memberPayLoad.getId();
         validateDeleteAuthority(writerId, requesterId);
 
-        commentService.deleteAllCommentsByVoteId(voteId);
         voteRepository.delete(vote);
     }
     private void validateDeleteAuthority(final Long writerId, final Long requesterId){
@@ -97,12 +103,46 @@ public class VoteService {
         }
     }
 
+    /**
+     * 회원 삭제 이벤트 : 투표의 평가 개수 변경
+     */
     @Transactional
-    public void deleteAll(final Long memberId){
-        List<Vote> votesToDel = voteRepository.findAllByMember_Id(memberId);
-        List<Long> voteIdsToDel = votesToDel.stream().map(Vote::getId).collect(Collectors.toList());
+    public void decreaseEvaluationCountByMemberDelete(final Long memberId){
 
-        voteRepository.deleteAllByIdIn(voteIdsToDel);
+        // 회원이 평가한 평가 목록 조회
+        final List<VoteEvaluation> voteEvaluations = voteEvaluationRepository.findAllByEvaluator_Id(memberId);
+
+        // 회원 평가 모두 취소 후 Count 변경
+        for(VoteEvaluation voteEvaluation : voteEvaluations){
+            final Vote vote = voteEvaluation.getVote();
+            final VoteEvaluationType voteEvaluationType = voteEvaluation.getVoteEvaluationType();
+            if(voteEvaluationType.equals(VoteEvaluationType.LIKE)){
+                voteRepository.updateVoteEvaluationsStatisticsForEvaluationLikeDelete(vote.getId());
+            }else {
+                voteRepository.updateVoteEvaluationsStatisticsForEvaluationDisLikeDelete(vote.getId());
+            }
+        }
+
+    }
+
+    /**
+     * 회원 삭제 이벤트 : 투표의 댓글 개수 변경
+     */
+    @Transactional
+    public void decreaseCommentCountByMemberDelete(final Long memberId){
+        // 회원이 작성한 댓글 목록 모두 조회
+        final List<Comment> comments = commentRepository.findAllByCommenter_Id(memberId);
+
+        // 투표 기준으로 매핑 && && 댓글만 적용(대댓글 제외)
+        final Map<Vote, List<Comment>> voteCommentsMap = comments.stream()
+                .filter(comment -> CommentType.COMMENT.equals(comment.getCommentType()))
+                .collect(Collectors.groupingBy(Comment::getVote));
+
+        // 투표 댓글 개수 변경
+        voteCommentsMap.forEach((vote, commentList) -> {
+            vote.decreaseCommentCount(commentList.size());
+        });
+
     }
 
     @Transactional

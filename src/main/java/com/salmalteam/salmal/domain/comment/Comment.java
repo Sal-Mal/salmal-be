@@ -1,6 +1,8 @@
 package com.salmalteam.salmal.domain.comment;
 
 import com.salmalteam.salmal.domain.BaseEntity;
+import com.salmalteam.salmal.domain.comment.like.CommentLike;
+import com.salmalteam.salmal.domain.comment.report.CommentReport;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.vote.Vote;
 import lombok.AccessLevel;
@@ -30,6 +32,12 @@ public class Comment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vote_id")
     private Vote vote;
+
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
+    private List<CommentLike> commentLikes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
+    private List<CommentReport> commentReports = new ArrayList<>();
 
     @Embedded
     private Content content;

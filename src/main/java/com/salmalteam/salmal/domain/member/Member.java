@@ -1,9 +1,18 @@
 package com.salmalteam.salmal.domain.member;
 
 import com.salmalteam.salmal.domain.BaseEntity;
+import com.salmalteam.salmal.domain.comment.Comment;
+import com.salmalteam.salmal.domain.comment.like.CommentLike;
+import com.salmalteam.salmal.domain.comment.report.CommentReport;
+import com.salmalteam.salmal.domain.vote.Vote;
+import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMark;
+import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluation;
+import com.salmalteam.salmal.domain.vote.report.VoteReport;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -18,6 +27,27 @@ public class Member extends BaseEntity {
 
     @Column(name = "provider_id", nullable = false)
     private String providerId;
+
+    @OneToMany(mappedBy = "commenter", cascade = CascadeType.REMOVE)
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reporter", cascade = CascadeType.REMOVE)
+    private List<CommentReport> commentReports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "liker", cascade = CascadeType.REMOVE)
+    private List<CommentLike> commentLikes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+    private List<Vote> votes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reporter", cascade = CascadeType.REMOVE)
+    private List<VoteReport> voteReports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "bookmaker", cascade = CascadeType.REMOVE)
+    private List<VoteBookMark> voteBookMarks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "evaluator", cascade = CascadeType.REMOVE)
+    private List<VoteEvaluation> voteEvaluations = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private Provider provider;

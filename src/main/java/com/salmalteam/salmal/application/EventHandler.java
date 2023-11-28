@@ -17,7 +17,7 @@ public class EventHandler {
     @EventListener
     public void handleMemberDeleteEvent(MemberDeleteEvent memberDeleteEvent){
         Long memberId = memberDeleteEvent.getMemberId();
-        commentService.deleteAllCommentsByMemberId(memberId);
-        voteService.deleteAll(memberId);
+        voteService.decreaseEvaluationCountByMemberDelete(memberId);
+        voteService.decreaseCommentCountByMemberDelete(memberId);
     }
 }

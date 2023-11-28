@@ -13,6 +13,7 @@ public interface CommentRepository extends Repository<Comment, Long>, CommentRep
     void delete(Comment comment);
     Optional<Comment> findById(Long id);
     boolean existsById(Long id);
+    List<Comment> findAllByCommenter_Id(Long commenterId);
     List<Comment> findAllByVote_Id(Long voteId);
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = "update Comment c set c.replyCount = c.replyCount - 1 where c.id = :id")
