@@ -16,7 +16,7 @@
 |               BackEnd & DevOps               | 
 |:--------------------------------------------:|
 | ![](https://github.com/pia2011.png?size=200) |
-|   [김규성(LUKAS)](https://github.com/pia2011)   | 
+|   [김규성](https://github.com/pia2011)   | 
 
 
 
