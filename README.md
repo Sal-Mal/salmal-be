@@ -2,7 +2,7 @@
 
 <h1> 살말 백엔드 ( 개발중 ) </h1>
 
-## 링크 모음📌 
+## 링크 모음📌  
 
 [![API Docs](http://img.shields.io/badge/-API%20Docs-important?style=flat&logo=dev.to&logoColor=white&link=http://3.38.192.126/docs/)](http://3.38.192.126/docs/)
 [![WIKI](http://img.shields.io/badge/-GitHub%20WiKi-395FC1?style=flat&logo=GitHub&logoColor=white&link=https://github.com/Sal-Mal/salmal-be/wiki)](https://github.com/Sal-Mal/salmal-be/wiki)
