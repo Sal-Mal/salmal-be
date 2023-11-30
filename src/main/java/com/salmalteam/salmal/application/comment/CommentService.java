@@ -1,7 +1,8 @@
 package com.salmalteam.salmal.application.comment;
 
-import com.salmalteam.salmal.application.EventHandler;
 import com.salmalteam.salmal.application.member.MemberService;
+import com.salmalteam.salmal.domain.comment.Comment;
+import com.salmalteam.salmal.domain.comment.CommentRepository;
 import com.salmalteam.salmal.domain.comment.CommentType;
 import com.salmalteam.salmal.domain.comment.like.CommentLike;
 import com.salmalteam.salmal.domain.comment.like.CommentLikeRepository;
@@ -9,8 +10,6 @@ import com.salmalteam.salmal.domain.comment.report.CommentReport;
 import com.salmalteam.salmal.domain.comment.report.CommentReportRepository;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.vote.Vote;
-import com.salmalteam.salmal.domain.comment.Comment;
-import com.salmalteam.salmal.domain.comment.CommentRepository;
 import com.salmalteam.salmal.domain.vote.VoteRepository;
 import com.salmalteam.salmal.dto.request.comment.CommentPageRequest;
 import com.salmalteam.salmal.dto.request.comment.CommentReplyCreateRequest;
@@ -28,11 +27,11 @@ import com.salmalteam.salmal.exception.comment.report.CommentReportException;
 import com.salmalteam.salmal.exception.comment.report.CommentReportExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -201,18 +200,42 @@ public class CommentService {
                 .orElseThrow(() -> new CommentException(CommentExceptionType.NOT_FOUND));
     }
 
+    /**
+     * 회원 삭제 이벤트 : 댓글의 대댓글 개수 감소
+     */
     @Transactional
-    public void deleteAllCommentsByVoteId(final Long voteId) {
-        final List<Comment> allByVoteId = commentRepository.findAllByVote_Id(voteId);
-        final List<Long> commentIdsForDel = allByVoteId.stream().map(Comment::getId).collect(Collectors.toList());
+    public void decreaseReplyCountByMemberDelete(final Long memberId) {
 
-        commentRepository.deleteAllRepliesByIdIn(commentIdsForDel);
-        commentRepository.deleteAllCommentsByIdIn(commentIdsForDel);
+        // 회원이 작성한 대댓글 목록 조회
+        final List<Comment> replies = commentRepository.findALlByCommenter_idAndCommentType(memberId, CommentType.REPLY);
+
+        // parent_id 기준으로 Comment 묶기
+        Map<Comment, List<Comment>> commentListMap = replies.stream()
+                .collect(Collectors.groupingBy(Comment::getParentComment));
+
+        // 대댓글 개수 감소
+        commentListMap.forEach((comment, replyList) -> {
+            comment.decreaseReplyCount(replyList.size());
+        });
+
     }
 
-    @Transactional
-    public void deleteAllCommentsByMemberId(final Long memberId){
-        commentRepository.deleteAllCommentsByCommenterId(memberId, CommentType.REPLY);
-        commentRepository.deleteAllCommentsByCommenterId(memberId, CommentType.COMMENT);
-    }
+//    /**
+//     * 회원 삭제 이벤트 : 댓글의 좋아요 개수 감소
+//     */
+//    @Transactional
+//    public void decreaseLikeCountByMemberDelete(final Long memberId){
+//        // 회원이 작성한 좋아요 목록 조회
+//        final List<CommentLike> commentLikes = commentLikeRepository.findAllByLiker_Id(memberId);
+//
+//        // vote 기준으로 좋아요 묶기
+//        Map<Comment, List<CommentLike>> commentListMap = commentLikes.stream()
+//                .collect(Collectors.groupingBy(CommentLike::getComment));
+//
+//        // 좋아요 개수 감소
+//        commentListMap.forEach((comment, commentLikeList) -> {
+//            comment.decreaseLikeCount(commentLikeList.size());
+//        });
+//    }
+
 }

@@ -11,13 +11,14 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class EventHandler {
+
     private final VoteService voteService;
     private final CommentService commentService;
 
     @EventListener
     public void handleMemberDeleteEvent(MemberDeleteEvent memberDeleteEvent){
         Long memberId = memberDeleteEvent.getMemberId();
-        commentService.deleteAllCommentsByMemberId(memberId);
-        voteService.deleteAll(memberId);
+        voteService.decreaseCommentCountByMemberDelete(memberId);
+        commentService.decreaseReplyCountByMemberDelete(memberId);
     }
 }

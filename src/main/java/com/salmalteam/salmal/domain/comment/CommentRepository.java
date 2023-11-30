@@ -13,11 +13,12 @@ public interface CommentRepository extends Repository<Comment, Long>, CommentRep
     void delete(Comment comment);
     Optional<Comment> findById(Long id);
     boolean existsById(Long id);
+    List<Comment> findAllByCommenter_Id(Long commenterId);
+    List<Comment> findALlByCommenter_idAndCommentType(Long commenterId, CommentType commentType);
     List<Comment> findAllByVote_Id(Long voteId);
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = "update Comment c set c.replyCount = c.replyCount - 1 where c.id = :id")
     void decreaseReplyCount(Long id);
-
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("DELETE from Comment c where c.parentComment.id = :commentId")
     void deleteAllRepliesByParentCommentId(@Param("commentId") Long commentId);

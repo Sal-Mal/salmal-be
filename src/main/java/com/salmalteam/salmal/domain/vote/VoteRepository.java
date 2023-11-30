@@ -15,7 +15,6 @@ public interface VoteRepository extends Repository<Vote, Long>, VoteRepositoryCu
     boolean existsById(Long id);
     void delete(Vote vote);
     Optional<Vote> findById(Long id);
-    List<Vote> findAllByMember_Id(Long memberId);
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("DELETE from Vote v where v.id in :voteIdsToDel")
     void deleteAllByIdIn(@Param("voteIdsToDel") List<Long> voteIdsToDel);
