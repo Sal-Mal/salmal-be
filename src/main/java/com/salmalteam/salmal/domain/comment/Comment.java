@@ -59,6 +59,13 @@ public class Comment extends BaseEntity {
     @OneToMany(mappedBy = "parentComment")
     private List<Comment> childComments = new ArrayList<>();
 
+    public void decreaseReplyCount(final int size){
+        this.replyCount -= size;
+    }
+    public void decreaseLikeCount(final int size){
+        this.likeCount -= size;
+    }
+
     private Comment(final String content, final Vote vote, final Member commenter){
         this.content = Content.of(content);
         this.commenter = commenter;

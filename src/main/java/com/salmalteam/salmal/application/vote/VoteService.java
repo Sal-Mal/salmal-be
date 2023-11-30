@@ -106,24 +106,24 @@ public class VoteService {
     /**
      * 회원 삭제 이벤트 : 투표의 평가 개수 변경
      */
-    @Transactional
-    public void decreaseEvaluationCountByMemberDelete(final Long memberId){
-
-        // 회원이 평가한 평가 목록 조회
-        final List<VoteEvaluation> voteEvaluations = voteEvaluationRepository.findAllByEvaluator_Id(memberId);
-
-        // 회원 평가 모두 취소 후 Count 변경
-        for(VoteEvaluation voteEvaluation : voteEvaluations){
-            final Vote vote = voteEvaluation.getVote();
-            final VoteEvaluationType voteEvaluationType = voteEvaluation.getVoteEvaluationType();
-            if(voteEvaluationType.equals(VoteEvaluationType.LIKE)){
-                voteRepository.updateVoteEvaluationsStatisticsForEvaluationLikeDelete(vote.getId());
-            }else {
-                voteRepository.updateVoteEvaluationsStatisticsForEvaluationDisLikeDelete(vote.getId());
-            }
-        }
-
-    }
+//    @Transactional
+//    public void decreaseEvaluationCountByMemberDelete(final Long memberId){
+//
+//        // 회원이 평가한 평가 목록 조회
+//        final List<VoteEvaluation> voteEvaluations = voteEvaluationRepository.findAllByEvaluator_Id(memberId);
+//
+//        // 회원 평가 모두 취소 후 Count 변경
+//        for(VoteEvaluation voteEvaluation : voteEvaluations){
+//            final Vote vote = voteEvaluation.getVote();
+//            final VoteEvaluationType voteEvaluationType = voteEvaluation.getVoteEvaluationType();
+//            if(voteEvaluationType.equals(VoteEvaluationType.LIKE)){
+//                voteRepository.updateVoteEvaluationsStatisticsForEvaluationLikeDelete(vote.getId());
+//            }else {
+//                voteRepository.updateVoteEvaluationsStatisticsForEvaluationDisLikeDelete(vote.getId());
+//            }
+//        }
+//
+//    }
 
     /**
      * 회원 삭제 이벤트 : 투표의 댓글 개수 변경
@@ -131,11 +131,10 @@ public class VoteService {
     @Transactional
     public void decreaseCommentCountByMemberDelete(final Long memberId){
         // 회원이 작성한 댓글 목록 모두 조회
-        final List<Comment> comments = commentRepository.findAllByCommenter_Id(memberId);
+        final List<Comment> comments = commentRepository.findALlByCommenter_idAndCommentType(memberId, CommentType.COMMENT);
 
-        // 투표 기준으로 매핑 && && 댓글만 적용(대댓글 제외)
+        // 투표 기준으로 매핑
         final Map<Vote, List<Comment>> voteCommentsMap = comments.stream()
-                .filter(comment -> CommentType.COMMENT.equals(comment.getCommentType()))
                 .collect(Collectors.groupingBy(Comment::getVote));
 
         // 투표 댓글 개수 변경
