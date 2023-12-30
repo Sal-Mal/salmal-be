@@ -223,7 +223,14 @@ public class MemberService {
 	public Member findMemberById(final Long memberId) {
 		final Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new MemberException(MemberExceptionType.NOT_FOUND));
+		validateActivatedMember(member);
 		return member;
+	}
+
+	private void validateActivatedMember(Member member) {
+		if (member.isRemoved()) {
+			throw new MemberException(MemberExceptionType.NOT_FOUND);
+		}
 	}
 
 	@Transactional(readOnly = true)
