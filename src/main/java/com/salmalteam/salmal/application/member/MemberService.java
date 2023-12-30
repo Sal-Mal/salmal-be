@@ -1,7 +1,6 @@
 package com.salmalteam.salmal.application.member;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,20 +38,17 @@ public class MemberService {
 	private final ImageUploader imageUploader;
 	private final String memberImagePath;
 	private final VoteRepository voteRepository;
-	private final ApplicationEventPublisher eventPublisher;
 
 	public MemberService(final MemberRepository memberRepository,
 		final MemberBlockedRepository memberBlockedRepository,
 		final ImageUploader imageUploader,
 		@Value("${image.path.member}") final String memberImagePath,
-		final VoteRepository voteRepository,
-		final ApplicationEventPublisher eventPublisher) {
+		final VoteRepository voteRepository) {
 		this.memberRepository = memberRepository;
 		this.memberBlockedRepository = memberBlockedRepository;
 		this.imageUploader = imageUploader;
 		this.memberImagePath = memberImagePath;
 		this.voteRepository = voteRepository;
-		this.eventPublisher = eventPublisher;
 	}
 
 	@Transactional(readOnly = true)
@@ -74,13 +70,11 @@ public class MemberService {
 	/**
 	 * TODO: S3 스토리지에 올라가있는 회원 데이터(이미지) 삭제
 	 */
+	@Transactional
 	public void delete(final MemberPayLoad memberPayLoad, final Long memberId) {
-
 		final Member member = findMemberById(memberId);
 		validateDeleteAuthority(memberId, memberPayLoad.getId());
-
-		eventPublisher.publishEvent(MemberDeleteEvent.of(member.getId()));
-		memberRepository.delete(member);
+		member.remove();
 	}
 
 	private void validateDeleteAuthority(final Long memberId, final Long requesterId) {
