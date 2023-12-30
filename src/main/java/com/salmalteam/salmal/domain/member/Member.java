@@ -85,4 +85,8 @@ public class Member extends BaseEntity {
 	public boolean isRemoved() {
 		return status.equals(Status.REMOVED);
 	}
+
+	public void remove() {
+		status = Status.REMOVED;
+	}
 }
