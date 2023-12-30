@@ -1,5 +1,21 @@
 package com.salmalteam.salmal.application.vote;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
+
 import com.salmalteam.salmal.application.ImageUploader;
 import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.domain.member.Member;
@@ -16,24 +32,6 @@ import com.salmalteam.salmal.exception.member.MemberExceptionType;
 import com.salmalteam.salmal.exception.vote.VoteException;
 import com.salmalteam.salmal.exception.vote.bookmark.VoteBookmarkException;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class VoteServiceTest {
@@ -90,7 +88,7 @@ class VoteServiceTest {
             final Long voteId = 1L;
             final String voteEvaluationTypeStr = "LIKE";
             final VoteEvaluationType voteEvaluationType = VoteEvaluationType.from(voteEvaluationTypeStr);
-            given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
+            given(memberService.findMemberById(eq(memberId))).willReturn(Member.createActivatedMember("LLLLLLL", "닉네임", "KAKAO", true));
             given(voteRepository.findById(eq(voteId))).willReturn(Optional.empty());
 
             // when & then
@@ -107,8 +105,8 @@ class VoteServiceTest {
             final String voteEvaluationTypeStr = "LIKE";
             final VoteEvaluationType voteEvaluationType = VoteEvaluationType.from(voteEvaluationTypeStr);
 
-            given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
-            given(voteRepository.findById(eq(voteId))).willReturn(Optional.ofNullable(Vote.of("imageUrl", Member.of("LLLLLLL", "닉네임", "KAKAO", true))));
+            given(memberService.findMemberById(eq(memberId))).willReturn(Member.createActivatedMember("LLLLLLL", "닉네임", "KAKAO", true));
+            given(voteRepository.findById(eq(voteId))).willReturn(Optional.ofNullable(Vote.of("imageUrl", Member.createActivatedMember("LLLLLLL", "닉네임", "KAKAO", true))));
             given(voteEvaluationRepository.existsByEvaluatorAndVoteAndVoteEvaluationType(any(), any(), any())).willReturn(true);
 
             // when & then
@@ -127,7 +125,7 @@ class VoteServiceTest {
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
             final Long voteId = 1L;
 
-            given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
+            given(memberService.findMemberById(eq(memberId))).willReturn(Member.createActivatedMember("LLLLLLL", "닉네임", "KAKAO", true));
             given(voteRepository.findById(eq(voteId))).willReturn(Optional.empty());
 
             // when & then
@@ -141,7 +139,7 @@ class VoteServiceTest {
             final Long memberId = 1L;
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
             final Long voteId = 1L;
-            final Member member = Member.of("LLLLLLL", "닉네임", "KAKAO", true);
+            final Member member = Member.createActivatedMember("LLLLLLL", "닉네임", "KAKAO", true);
 
             given(memberService.findMemberById(eq(memberId))).willReturn(member);
             given(voteRepository.findById(eq(voteId))).willReturn(Optional.ofNullable(Vote.of("imageUrl", member)));
@@ -196,7 +194,7 @@ class VoteServiceTest {
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
             final Long voteId = 1L;
 
-            given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
+            given(memberService.findMemberById(eq(memberId))).willReturn(Member.createActivatedMember("LLLLLLL", "닉네임", "KAKAO", true));
             given(voteRepository.findById(eq(voteId))).willReturn(Optional.empty());
 
             // when & then
@@ -211,8 +209,8 @@ class VoteServiceTest {
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
             final Long voteId = 1L;
 
-            given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
-            given(voteRepository.findById(eq(voteId))).willReturn(Optional.ofNullable(Vote.of("imageUrl", Member.of("LLLLLLL", "닉네임", "KAKAO", true))));
+            given(memberService.findMemberById(eq(memberId))).willReturn(Member.createActivatedMember("LLLLLLL", "닉네임", "KAKAO", true));
+            given(voteRepository.findById(eq(voteId))).willReturn(Optional.ofNullable(Vote.of("imageUrl", Member.createActivatedMember("LLLLLLL", "닉네임", "KAKAO", true))));
             given(voteReportRepository.existsByVoteAndReporter(any(), any())).willReturn(true);
 
             // when & then
@@ -249,7 +247,7 @@ class VoteServiceTest {
             final String content = "댓글입니다";
             final VoteCommentCreateRequest voteCommentCreateRequest = new VoteCommentCreateRequest(content);
 
-            given(memberService.findMemberById(eq(memberId))).willReturn(Member.of("LLLLLLL", "닉네임", "KAKAO", true));
+            given(memberService.findMemberById(eq(memberId))).willReturn(Member.createActivatedMember("LLLLLLL", "닉네임", "KAKAO", true));
             given(voteRepository.findById(eq(voteId))).willReturn(Optional.empty());
 
             // when & then
