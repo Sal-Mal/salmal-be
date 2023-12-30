@@ -54,7 +54,7 @@ class VoteRepositoryTest extends RepositoryTest {
         // given
         final Long voteId = 1L;
         final Long memberId = 1L;
-        final Member member = Member.of("pro", "닉네임1", "kakao", true);
+        final Member member = Member.createActivatedMember("pro", "닉네임1", "kakao", true);
         final Vote vote = Vote.of("imageUrl", member);
         final VoteEvaluation voteEvaluation = VoteEvaluation.of(vote, member, VoteEvaluationType.LIKE);
         final VoteBookMark voteBookMark = VoteBookMark.of(member, vote);
@@ -85,7 +85,7 @@ class VoteRepositoryTest extends RepositoryTest {
         void 싫어요_1_좋아요_1인_상태에서_좋아요를_추가(){
             // given
             final Long voteId = 1L;
-            final Member member = Member.of("pro", "닉네임1", "kakao", true);
+            final Member member = Member.createActivatedMember("pro", "닉네임1", "kakao", true);
             final Vote vote = Vote.of("imageUrl", member);
 
             memberRepository.save(member);
@@ -117,9 +117,9 @@ class VoteRepositoryTest extends RepositoryTest {
         void 좋아요_평가_목록_조회_테스트(){
             // given
             final Long memberId = 1L;
-            final Member memberA = Member.of("pro1", "닉네임1", "kakao", true);
-            final Member memberB = Member.of("pro2", "닉네임2", "kakao", true);
-            final Member memberC = Member.of("pro3", "닉네임3", "kakao", true);
+            final Member memberA = Member.createActivatedMember("pro1", "닉네임1", "kakao", true);
+            final Member memberB = Member.createActivatedMember("pro2", "닉네임2", "kakao", true);
+            final Member memberC = Member.createActivatedMember("pro3", "닉네임3", "kakao", true);
 
             final Vote voteA = Vote.of("imageUrl", memberA);
             final Vote voteB = Vote.of("imageUrl", memberA);

@@ -106,8 +106,8 @@ class MemberServiceTest {
             final Long targetMemberId = 2L;
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
 
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(Member.of("kk", "닉네임 A", "kakao", true)));
-            given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(Member.of("ksk", "닉네임 B", "kakao", true)));
+            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(Member.createActivatedMember("kk", "닉네임 A", "kakao", true)));
+            given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(Member.createActivatedMember("ksk", "닉네임 B", "kakao", true)));
             given(memberBlockedRepository.existsByBlockerAndTarget(any(), any())).willReturn(true);
 
             // when & then
@@ -127,8 +127,8 @@ class MemberServiceTest {
             final Long targetMemberId = 2L;
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
 
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(Member.of("kk", "닉네임 A", "kakao", true)));
-            given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(Member.of("ksk", "닉네임 B", "kakao", true)));
+            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(Member.createActivatedMember("kk", "닉네임 A", "kakao", true)));
+            given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(Member.createActivatedMember("ksk", "닉네임 B", "kakao", true)));
             given(memberBlockedRepository.existsByBlockerAndTarget(any(), any())).willReturn(false);
 
             // when & then
@@ -159,7 +159,7 @@ class MemberServiceTest {
             final Long targetMemberId = 2L;
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
             final MemberBlockedPageRequest memberBlockedPageRequest = MemberBlockedPageRequest.of(1L, 3);
-            final Member member = Member.of("LL", "닉네임", "kakao", true);
+            final Member member = Member.createActivatedMember("LL", "닉네임", "kakao", true);
 
             given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
 
@@ -175,8 +175,8 @@ class MemberServiceTest {
             final Long targetMemberId = 2L;
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
             final MemberBlockedPageRequest memberBlockedPageRequest = MemberBlockedPageRequest.of(1L, 3);
-            final Member memberA = Member.of("LL", "닉네임", "kakao", true);
-            final Member memberB = Member.of("PP", "닉넴", "kakao", true);
+            final Member memberA = Member.createActivatedMember("LL", "닉네임", "kakao", true);
+            final Member memberB = Member.createActivatedMember("PP", "닉넴", "kakao", true);
 
             given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(memberA));
             given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(memberB));
@@ -212,7 +212,7 @@ class MemberServiceTest {
             final Long targetMemberId = 2L;
             final MyPageUpdateRequest myPageUpdateRequest = new MyPageUpdateRequest("수정할 닉네임", "수정할 한줄 소개");
 
-            final Member member = Member.of("123", "닉네임", "kakao", true);
+            final Member member = Member.createActivatedMember("123", "닉네임", "kakao", true);
             given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
 
             // when & then
@@ -229,8 +229,8 @@ class MemberServiceTest {
             final Long targetMemberId = 2L;
             final MyPageUpdateRequest myPageUpdateRequest = new MyPageUpdateRequest("수정할 닉네임", "수정할 한줄 소개");
 
-            final Member memberA = Member.of("123", "닉네임", "kakao", true);
-            final Member memberB = Member.of("321", "닉넴", "kakao", true);
+            final Member memberA = Member.createActivatedMember("123", "닉네임", "kakao", true);
+            final Member memberB = Member.createActivatedMember("321", "닉넴", "kakao", true);
 
             given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(memberA));
             given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(memberB));
@@ -249,7 +249,7 @@ class MemberServiceTest {
             final Long targetMemberId = 1L;
             final MyPageUpdateRequest myPageUpdateRequest = new MyPageUpdateRequest("수정할 닉네임", "수정할 한줄 소개");
 
-            final Member memberA = Member.of("123", "닉네임", "kakao", true);
+            final Member memberA = Member.createActivatedMember("123", "닉네임", "kakao", true);
 
             given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(memberA));
             given(memberRepository.existsByNickName(any())).willReturn(true);
@@ -300,7 +300,7 @@ class MemberServiceTest {
 
             final MemberImageUpdateRequest memberImageUpdateRequest = new MemberImageUpdateRequest(multipartFile);
 
-            final Member member = Member.of("123", "닉네임", "kakao", true);
+            final Member member = Member.createActivatedMember("123", "닉네임", "kakao", true);
             given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
 
             // when & then
@@ -324,8 +324,8 @@ class MemberServiceTest {
             final MockMultipartFile multipartFile = new MockMultipartFile(name, fileName, contentType, fileInputStream);
 
             final MemberImageUpdateRequest memberImageUpdateRequest = new MemberImageUpdateRequest(multipartFile);
-            final Member memberA = Member.of("123", "닉네임", "kakao", true);
-            final Member memberB = Member.of("321", "닉넴", "kakao", true);
+            final Member memberA = Member.createActivatedMember("123", "닉네임", "kakao", true);
+            final Member memberB = Member.createActivatedMember("321", "닉넴", "kakao", true);
             given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(memberA));
             given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(memberB));
 

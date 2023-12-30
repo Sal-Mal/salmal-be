@@ -62,7 +62,7 @@ public class Member extends BaseEntity {
 		this.status = status;
 	}
 
-	public static Member of(final String providerId, final String nickName, final String provider,
+	public static Member createActivatedMember(final String providerId, final String nickName, final String provider,
 		final Boolean marketingInformationConsent) {
 		return Member.builder()
 			.providerId(providerId)

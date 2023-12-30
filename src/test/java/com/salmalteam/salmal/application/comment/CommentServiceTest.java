@@ -67,7 +67,7 @@ class CommentServiceTest {
             final Long commentId = 1L;
             final String content = "수정할 댓글입니다";
             final VoteCommentUpdateRequest voteCommentUpdateRequest = new VoteCommentUpdateRequest(content);
-            final Member member = Member.of("LLLLLLL", "닉네임", "KAKAO", true);
+            final Member member = Member.createActivatedMember("LLLLLLL", "닉네임", "KAKAO", true);
 
             given(memberService.findMemberById(any())).willReturn(member);
             given(commentRepository.findById(any())).willReturn(Optional.empty());
@@ -104,7 +104,7 @@ class CommentServiceTest {
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
             final Long commentId = 1L;
 
-            final Member member = Member.of("xxx", "닉네임", "kakao", true);
+            final Member member = Member.createActivatedMember("xxx", "닉네임", "kakao", true);
             final Vote vote = Vote.of("imageUrl", member);
             final Comment comment = Comment.of("댓글", vote, member);
 
@@ -146,7 +146,7 @@ class CommentServiceTest {
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
             final Long commentId = 1L;
 
-            final Member member = Member.of("xxx", "닉네임", "kakao", true);
+            final Member member = Member.createActivatedMember("xxx", "닉네임", "kakao", true);
             final Vote vote = Vote.of("imageUrl", member);
             final Comment comment = Comment.of("댓글", vote, member);
 
@@ -185,7 +185,7 @@ class CommentServiceTest {
             final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
             final Long commentId = 1L;
 
-            final Member member = Member.of("ss", "닉네임", "kakao", true);
+            final Member member = Member.createActivatedMember("ss", "닉네임", "kakao", true);
             final Vote vote = Vote.of("imageUrl", member);
             final Comment comment = Comment.of("내용", vote, member);
             given(memberService.findMemberById(eq(memberId))).willReturn(member);

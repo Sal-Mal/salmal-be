@@ -66,7 +66,7 @@ public class MemberService {
 	public Long save(final String provider, final SignUpRequest signUpRequest) {
 		validateNickNameExists(signUpRequest.getNickName());
 		final Member member = memberRepository.save(
-			Member.of(signUpRequest.getProviderId(), signUpRequest.getNickName(),
+			Member.createActivatedMember(signUpRequest.getProviderId(), signUpRequest.getNickName(),
 				provider, signUpRequest.getMarketingInformationConsent()));
 		return member.getId();
 	}
