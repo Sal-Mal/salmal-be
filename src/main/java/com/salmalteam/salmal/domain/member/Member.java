@@ -1,18 +1,22 @@
 package com.salmalteam.salmal.domain.member;
 
-import com.salmalteam.salmal.domain.BaseEntity;
-import com.salmalteam.salmal.domain.comment.Comment;
-import com.salmalteam.salmal.domain.comment.like.CommentLike;
-import com.salmalteam.salmal.domain.comment.report.CommentReport;
-import com.salmalteam.salmal.domain.vote.Vote;
-import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMark;
-import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluation;
-import com.salmalteam.salmal.domain.vote.report.VoteReport;
-import lombok.*;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import com.salmalteam.salmal.domain.BaseEntity;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
@@ -21,74 +25,61 @@ import java.util.List;
 @Table(name = "member")
 public class Member extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(name = "provider_id", nullable = false)
-    private String providerId;
+	@Column(name = "provider_id", nullable = false)
+	private String providerId;
 
-    @OneToMany(mappedBy = "commenter", cascade = CascadeType.REMOVE)
-    private List<Comment> comments = new ArrayList<>();
+	@Enumerated(EnumType.STRING)
+	private Provider provider;
 
-    @OneToMany(mappedBy = "reporter", cascade = CascadeType.REMOVE)
-    private List<CommentReport> commentReports = new ArrayList<>();
+	@Embedded
+	private NickName nickName;
 
-    @OneToMany(mappedBy = "liker", cascade = CascadeType.REMOVE)
-    private List<CommentLike> commentLikes = new ArrayList<>();
+	@Embedded
+	private Introduction introduction;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
-    private List<Vote> votes = new ArrayList<>();
+	@Embedded
+	private Setting setting;
 
-    @OneToMany(mappedBy = "reporter", cascade = CascadeType.REMOVE)
-    private List<VoteReport> voteReports = new ArrayList<>();
+	@Embedded
+	private MemberImage memberImage;
 
-    @OneToMany(mappedBy = "bookmaker", cascade = CascadeType.REMOVE)
-    private List<VoteBookMark> voteBookMarks = new ArrayList<>();
+	@Enumerated(EnumType.STRING)
+	private Status status;
 
-    @OneToMany(mappedBy = "evaluator", cascade = CascadeType.REMOVE)
-    private List<VoteEvaluation> voteEvaluations = new ArrayList<>();
+	@Builder(access = AccessLevel.PRIVATE)
+	private Member(final String providerId, final String nickName, final String provider,
+		final Boolean marketingInformationConsent, Status status) {
+		this.providerId = providerId;
+		this.nickName = NickName.from(nickName);
+		this.memberImage = MemberImage.initMemberImage();
+		this.introduction = Introduction.initIntroduction();
+		this.provider = Provider.from(provider);
+		this.setting = Setting.of(marketingInformationConsent);
+		this.status = status;
+	}
 
-    @Enumerated(EnumType.STRING)
-    private Provider provider;
+	public static Member of(final String providerId, final String nickName, final String provider,
+		final Boolean marketingInformationConsent) {
+		return Member.builder()
+			.providerId(providerId)
+			.nickName(nickName)
+			.provider(provider)
+			.marketingInformationConsent(marketingInformationConsent)
+			.status(Status.ACTIVATED)
+			.build();
+	}
 
-    @Embedded
-    private NickName nickName;
+	public void updateMyPage(final String nickName, final String introduction) {
+		this.nickName = NickName.from(nickName);
+		this.introduction = Introduction.from(introduction);
+	}
 
-    @Embedded
-    private Introduction introduction;
-
-    @Embedded
-    private Setting setting;
-
-    @Embedded
-    private MemberImage memberImage;
-
-    @Builder(access = AccessLevel.PRIVATE)
-    private Member(final String providerId, final String nickName, final String provider, final Boolean marketingInformationConsent){
-        this.providerId = providerId;
-        this.nickName = NickName.from(nickName);
-        this.memberImage = MemberImage.initMemberImage();
-        this.introduction = Introduction.initIntroduction();
-        this.provider = Provider.from(provider);
-        this.setting = Setting.of(marketingInformationConsent);
-    }
-    public static Member of(final String providerId, final String nickName, final String provider, final Boolean marketingInformationConsent){
-        return Member.builder()
-                .providerId(providerId)
-                .nickName(nickName)
-                .provider(provider)
-                .marketingInformationConsent(marketingInformationConsent)
-                .build();
-    }
-
-    public void updateMyPage(final String nickName, final String introduction){
-        this.nickName = NickName.from(nickName);
-        this.introduction = Introduction.from(introduction);
-    }
-
-    public void updateImage(final String imageUrl){
-        this.memberImage = MemberImage.of(imageUrl);
-    }
+	public void updateImage(final String imageUrl) {
+		this.memberImage = MemberImage.of(imageUrl);
+	}
 
 }
