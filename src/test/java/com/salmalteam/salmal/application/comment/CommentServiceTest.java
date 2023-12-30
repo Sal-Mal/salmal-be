@@ -1,11 +1,24 @@
 package com.salmalteam.salmal.application.comment;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.domain.comment.Comment;
+import com.salmalteam.salmal.domain.comment.CommentRepository;
 import com.salmalteam.salmal.domain.comment.like.CommentLikeRepository;
 import com.salmalteam.salmal.domain.comment.report.CommentReportRepository;
 import com.salmalteam.salmal.domain.member.Member;
-import com.salmalteam.salmal.domain.comment.CommentRepository;
 import com.salmalteam.salmal.domain.vote.Vote;
 import com.salmalteam.salmal.dto.request.vote.VoteCommentUpdateRequest;
 import com.salmalteam.salmal.exception.comment.CommentException;
@@ -14,20 +27,6 @@ import com.salmalteam.salmal.exception.comment.report.CommentReportException;
 import com.salmalteam.salmal.exception.member.MemberException;
 import com.salmalteam.salmal.exception.member.MemberExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class CommentServiceTest {

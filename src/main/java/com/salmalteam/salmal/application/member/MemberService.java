@@ -1,8 +1,11 @@
 package com.salmalteam.salmal.application.member;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.salmalteam.salmal.application.ImageUploader;
-import com.salmalteam.salmal.application.comment.CommentService;
-import com.salmalteam.salmal.application.vote.VoteService;
 import com.salmalteam.salmal.domain.image.ImageFile;
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.member.MemberImage;
@@ -28,223 +31,223 @@ import com.salmalteam.salmal.exception.member.MemberExceptionType;
 import com.salmalteam.salmal.exception.member.block.MemberBlockedException;
 import com.salmalteam.salmal.exception.member.block.MemberBlockedExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MemberService {
-    private final MemberRepository memberRepository;
-    private final MemberBlockedRepository memberBlockedRepository;
-    private final ImageUploader imageUploader;
-    private final String memberImagePath;
-    private final VoteRepository voteRepository;
-    private final ApplicationEventPublisher eventPublisher;
+	private final MemberRepository memberRepository;
+	private final MemberBlockedRepository memberBlockedRepository;
+	private final ImageUploader imageUploader;
+	private final String memberImagePath;
+	private final VoteRepository voteRepository;
+	private final ApplicationEventPublisher eventPublisher;
 
-    public MemberService(final MemberRepository memberRepository,
-                         final MemberBlockedRepository memberBlockedRepository,
-                         final ImageUploader imageUploader,
-                         @Value("${image.path.member}") final String memberImagePath,
-                         final VoteRepository voteRepository,
-                         final ApplicationEventPublisher eventPublisher) {
-        this.memberRepository = memberRepository;
-        this.memberBlockedRepository = memberBlockedRepository;
-        this.imageUploader = imageUploader;
-        this.memberImagePath = memberImagePath;
-        this.voteRepository = voteRepository;
-        this.eventPublisher = eventPublisher;
-    }
+	public MemberService(final MemberRepository memberRepository,
+		final MemberBlockedRepository memberBlockedRepository,
+		final ImageUploader imageUploader,
+		@Value("${image.path.member}") final String memberImagePath,
+		final VoteRepository voteRepository,
+		final ApplicationEventPublisher eventPublisher) {
+		this.memberRepository = memberRepository;
+		this.memberBlockedRepository = memberBlockedRepository;
+		this.imageUploader = imageUploader;
+		this.memberImagePath = memberImagePath;
+		this.voteRepository = voteRepository;
+		this.eventPublisher = eventPublisher;
+	}
 
-    @Transactional(readOnly = true)
-    public Long findMemberIdByProviderId(final String providerId) {
-        final Member member = memberRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_FOUND));
-        return member.getId();
-    }
+	@Transactional(readOnly = true)
+	public Long findMemberIdByProviderId(final String providerId) {
+		final Member member = memberRepository.findByProviderId(providerId)
+			.orElseThrow(() -> new MemberException(MemberExceptionType.NOT_FOUND));
+		return member.getId();
+	}
 
-    @Transactional
-    public Long save(final String provider, final SignUpRequest signUpRequest) {
-        validateNickNameExists(signUpRequest.getNickName());
-        final Member member = memberRepository.save(Member.of(signUpRequest.getProviderId(), signUpRequest.getNickName(),
-                provider, signUpRequest.getMarketingInformationConsent()));
-        return member.getId();
-    }
+	@Transactional
+	public Long save(final String provider, final SignUpRequest signUpRequest) {
+		validateNickNameExists(signUpRequest.getNickName());
+		final Member member = memberRepository.save(
+			Member.of(signUpRequest.getProviderId(), signUpRequest.getNickName(),
+				provider, signUpRequest.getMarketingInformationConsent()));
+		return member.getId();
+	}
 
-    /**
-     * TODO: S3 스토리지에 올라가있는 회원 데이터(이미지) 삭제
-     */
-    public void delete(final MemberPayLoad memberPayLoad, final Long memberId){
+	/**
+	 * TODO: S3 스토리지에 올라가있는 회원 데이터(이미지) 삭제
+	 */
+	public void delete(final MemberPayLoad memberPayLoad, final Long memberId) {
 
-        final Member member = findMemberById(memberId);
-        validateDeleteAuthority(memberId, memberPayLoad.getId());
+		final Member member = findMemberById(memberId);
+		validateDeleteAuthority(memberId, memberPayLoad.getId());
 
-        eventPublisher.publishEvent(MemberDeleteEvent.of(member.getId()));
-        memberRepository.delete(member);
-    }
+		eventPublisher.publishEvent(MemberDeleteEvent.of(member.getId()));
+		memberRepository.delete(member);
+	}
 
-    private void validateDeleteAuthority(final Long memberId, final Long requesterId){
-        if(memberId != requesterId){
-            throw new MemberException(MemberExceptionType.FORBIDDEN_DELETE);
-        }
-    }
+	private void validateDeleteAuthority(final Long memberId, final Long requesterId) {
+		if (memberId != requesterId) {
+			throw new MemberException(MemberExceptionType.FORBIDDEN_DELETE);
+		}
+	}
 
+	@Transactional(readOnly = true)
+	public MyPageResponse findMyPage(final Long memberId) {
+		validateExistsById(memberId);
+		return memberRepository.searchMyPage(memberId);
+	}
 
-    @Transactional(readOnly = true)
-    public MyPageResponse findMyPage(final Long memberId) {
-        validateExistsById(memberId);
-        return memberRepository.searchMyPage(memberId);
-    }
+	@Transactional
+	public void block(final MemberPayLoad memberPayLoad, final Long memberId) {
 
-    @Transactional
-    public void block(final MemberPayLoad memberPayLoad, final Long memberId) {
+		final Member blocker = findMemberById(memberPayLoad.getId());
+		final Member target = findMemberById(memberId);
+		final MemberBlocked blockedMember = MemberBlocked.of(blocker, target);
 
-        final Member blocker = findMemberById(memberPayLoad.getId());
-        final Member target = findMemberById(memberId);
-        final MemberBlocked blockedMember = MemberBlocked.of(blocker, target);
+		validateDuplicateMemberBlocked(blocker, target);
 
-        validateDuplicateMemberBlocked(blocker, target);
+		memberBlockedRepository.save(blockedMember);
+	}
 
-        memberBlockedRepository.save(blockedMember);
-    }
+	private void validateDuplicateMemberBlocked(final Member blocker, final Member target) {
+		if (memberBlockedRepository.existsByBlockerAndTarget(blocker, target)) {
+			throw new MemberBlockedException(MemberBlockedExceptionType.DUPLICATED_MEMBER_BLOCKED);
+		}
+	}
 
-    private void validateDuplicateMemberBlocked(final Member blocker, final Member target) {
-        if (memberBlockedRepository.existsByBlockerAndTarget(blocker, target)) {
-            throw new MemberBlockedException(MemberBlockedExceptionType.DUPLICATED_MEMBER_BLOCKED);
-        }
-    }
+	@Transactional
+	public void cancelBlocking(final MemberPayLoad memberPayLoad, final Long memberId) {
 
+		final Member blocker = findMemberById(memberPayLoad.getId());
+		final Member target = findMemberById(memberId);
 
-    @Transactional
-    public void cancelBlocking(final MemberPayLoad memberPayLoad, final Long memberId) {
+		validateMemberBlockedExists(blocker, target);
 
-        final Member blocker = findMemberById(memberPayLoad.getId());
-        final Member target = findMemberById(memberId);
+		memberBlockedRepository.deleteByBlockerAndTarget(blocker, target);
+	}
 
-        validateMemberBlockedExists(blocker, target);
+	private void validateMemberBlockedExists(final Member blocker, final Member target) {
+		if (!memberBlockedRepository.existsByBlockerAndTarget(blocker, target)) {
+			throw new MemberBlockedException(MemberBlockedExceptionType.NOT_FOUND);
+		}
+	}
 
-        memberBlockedRepository.deleteByBlockerAndTarget(blocker, target);
-    }
+	@Transactional
+	public void updateMyPage(final MemberPayLoad memberPayLoad, final Long memberId,
+		final MyPageUpdateRequest myPageUpdateRequest) {
 
-    private void validateMemberBlockedExists(final Member blocker, final Member target) {
-        if (!memberBlockedRepository.existsByBlockerAndTarget(blocker, target)) {
-            throw new MemberBlockedException(MemberBlockedExceptionType.NOT_FOUND);
-        }
-    }
+		final Member member = findMemberById(memberPayLoad.getId());
+		final Member targetMember = findMemberById(memberId);
 
-    @Transactional
-    public void updateMyPage(final MemberPayLoad memberPayLoad, final Long memberId, final MyPageUpdateRequest myPageUpdateRequest) {
+		validateUpdateAuthority(member, targetMember);
+		validateNickNameChangeValidity(myPageUpdateRequest.getNickName(), member.getNickName().getValue());
 
-        final Member member = findMemberById(memberPayLoad.getId());
-        final Member targetMember = findMemberById(memberId);
+		member.updateMyPage(myPageUpdateRequest.getNickName(), myPageUpdateRequest.getIntroduction());
+		memberRepository.save(member);
+	}
 
-        validateUpdateAuthority(member, targetMember);
-        validateNickNameChangeValidity(myPageUpdateRequest.getNickName(), member.getNickName().getValue());
+	private void validateNickNameChangeValidity(final String requestNickName, final String currentNickName) {
+		if (!requestNickName.equals(currentNickName)) {
+			validateNickNameExists(requestNickName);
+		}
+	}
 
-        member.updateMyPage(myPageUpdateRequest.getNickName(), myPageUpdateRequest.getIntroduction());
-        memberRepository.save(member);
-    }
+	@Transactional
+	public void updateImage(final MemberPayLoad memberPayLoad, final Long memberId,
+		final MemberImageUpdateRequest memberImageUpdateRequest) {
 
-    private void validateNickNameChangeValidity(final String requestNickName, final String currentNickName){
-        if(!requestNickName.equals(currentNickName)){
-            validateNickNameExists(requestNickName);
-        }
-    }
+		final Member member = findMemberById(memberPayLoad.getId());
+		final Member targetMember = findMemberById(memberId);
 
-    @Transactional
-    public void updateImage(final MemberPayLoad memberPayLoad, final Long memberId, final MemberImageUpdateRequest memberImageUpdateRequest){
+		validateUpdateAuthority(member, targetMember);
 
-        final Member member = findMemberById(memberPayLoad.getId());
-        final Member targetMember = findMemberById(memberId);
+		final ImageFile imageFile = ImageFile.of(memberImageUpdateRequest.getImageFile(), memberImagePath);
+		final String imageUrl = imageUploader.uploadImage(imageFile);
 
-        validateUpdateAuthority(member, targetMember);
+		member.updateImage(imageUrl);
+		memberRepository.save(member);
+	}
 
-        final ImageFile imageFile = ImageFile.of(memberImageUpdateRequest.getImageFile(), memberImagePath);
-        final String imageUrl = imageUploader.uploadImage(imageFile);
+	/**
+	 * TODO: S3 비동기 삭제 로직 구현
+	 */
+	@Transactional
+	public void deleteImage(final MemberPayLoad memberPayLoad, final Long memberId) {
+		final Member member = findMemberById(memberPayLoad.getId());
+		final Member targetMember = findMemberById(memberId);
 
-        member.updateImage(imageUrl);
-        memberRepository.save(member);
-    }
+		validateUpdateAuthority(member, targetMember);
 
-    /**
-     * TODO: S3 비동기 삭제 로직 구현
-     */
-    @Transactional
-    public void deleteImage(final MemberPayLoad memberPayLoad, final Long memberId){
-        final Member member = findMemberById(memberPayLoad.getId());
-        final Member targetMember = findMemberById(memberId);
+		member.updateImage(MemberImage.getMemberImageUrl());
+		memberRepository.save(member);
+	}
 
-        validateUpdateAuthority(member, targetMember);
+	private void validateNickNameExists(final String nickName) {
+		if (memberRepository.existsByNickName(NickName.from(nickName))) {
+			throw new MemberException(MemberExceptionType.DUPLICATED_NICKNAME);
+		}
+	}
 
-        member.updateImage(MemberImage.getMemberImageUrl());
-        memberRepository.save(member);
-    }
+	private void validateUpdateAuthority(final Member requester, final Member target) {
+		if (!requester.equals(target)) {
+			throw new MemberException(MemberExceptionType.FORBIDDEN_UPDATE);
+		}
+	}
 
-    private void validateNickNameExists(final String nickName) {
-        if (memberRepository.existsByNickName(NickName.from(nickName))) {
-            throw new MemberException(MemberExceptionType.DUPLICATED_NICKNAME);
-        }
-    }
+	@Transactional(readOnly = true)
+	public MemberBlockedPageResponse searchBlockedMembers(final MemberPayLoad memberPayLoad, final Long memberId,
+		final MemberBlockedPageRequest memberBlockedPageRequest) {
 
-    private void validateUpdateAuthority(final Member requester, final Member target) {
-        if (!requester.equals(target)) {
-            throw new MemberException(MemberExceptionType.FORBIDDEN_UPDATE);
-        }
-    }
+		final Member member = findMemberById(memberPayLoad.getId());
+		final Member targetMember = findMemberById(memberId);
 
-    @Transactional(readOnly = true)
-    public MemberBlockedPageResponse searchBlockedMembers(final MemberPayLoad memberPayLoad, final Long memberId, final MemberBlockedPageRequest memberBlockedPageRequest){
+		validateSearchAuthority(member, targetMember);
 
-        final Member member = findMemberById(memberPayLoad.getId());
-        final Member targetMember = findMemberById(memberId);
+		return memberBlockedRepository.searchList(memberId, memberBlockedPageRequest);
+	}
 
-        validateSearchAuthority(member, targetMember);
+	private void validateSearchAuthority(final Member requester, final Member target) {
+		if (!requester.equals(target)) {
+			throw new MemberBlockedException(MemberBlockedExceptionType.FORBIDDEN_SEARCH);
+		}
+	}
 
-        return memberBlockedRepository.searchList(memberId, memberBlockedPageRequest);
-    }
+	@Transactional(readOnly = true)
+	public MemberVotePageResponse searchMemberVotes(final MemberPayLoad memberPayLoad, final Long memberId,
+		final MemberVotePageRequest memberVotePageRequest) {
 
-    private void validateSearchAuthority(final Member requester, final Member target) {
-        if (!requester.equals(target)) {
-            throw new MemberBlockedException(MemberBlockedExceptionType.FORBIDDEN_SEARCH);
-        }
-    }
+		validateExistsById(memberId);
 
-    @Transactional(readOnly = true)
-    public MemberVotePageResponse searchMemberVotes(final MemberPayLoad memberPayLoad, final Long memberId, final MemberVotePageRequest memberVotePageRequest){
+		return voteRepository.searchMemberVoteList(memberId, memberVotePageRequest);
+	}
 
-        validateExistsById(memberId);
+	@Transactional(readOnly = true)
+	public Member findMemberById(final Long memberId) {
+		final Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new MemberException(MemberExceptionType.NOT_FOUND));
+		return member;
+	}
 
-        return voteRepository.searchMemberVoteList(memberId, memberVotePageRequest);
-    }
+	@Transactional(readOnly = true)
+	public MemberEvaluationVotePageResponse searchMemberEvaluatedVotes(final MemberPayLoad memberPayLoad,
+		final Long memberId, final MemberEvaluationVotePageRequest memberEvaluationVotePageRequest) {
 
-    @Transactional(readOnly = true)
-    public Member findMemberById(final Long memberId) {
-        final Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_FOUND));
-        return member;
-    }
+		validateExistsById(memberId);
 
-    @Transactional(readOnly = true)
-    public MemberEvaluationVotePageResponse searchMemberEvaluatedVotes(final MemberPayLoad memberPayLoad, final Long memberId, final MemberEvaluationVotePageRequest memberEvaluationVotePageRequest){
+		return voteRepository.searchMemberEvaluationVoteList(memberId, memberEvaluationVotePageRequest);
+	}
 
-        validateExistsById(memberId);
+	@Transactional(readOnly = true)
+	public MemberBookmarkVotePageResponse searchMemberBookmarkedVotes(final MemberPayLoad memberPayLoad,
+		final Long memberId, final MemberBookmarkVotePageRequest memberBookmarkVotePageRequest) {
 
-        return voteRepository.searchMemberEvaluationVoteList(memberId, memberEvaluationVotePageRequest);
-    }
+		validateExistsById(memberId);
 
-    @Transactional(readOnly = true)
-    public MemberBookmarkVotePageResponse searchMemberBookmarkedVotes(final MemberPayLoad memberPayLoad, final Long memberId, final MemberBookmarkVotePageRequest memberBookmarkVotePageRequest){
+		return voteRepository.searchMemberBookmarkVoteList(memberId, memberBookmarkVotePageRequest);
+	}
 
-        validateExistsById(memberId);
-
-        return voteRepository.searchMemberBookmarkVoteList(memberId, memberBookmarkVotePageRequest);
-    }
-
-
-    private void validateExistsById(final Long memberId) {
-        if (!memberRepository.existsById(memberId)) {
-            throw new MemberException(MemberExceptionType.NOT_FOUND);
-        }
-    }
+	private void validateExistsById(final Long memberId) {
+		if (!memberRepository.existsById(memberId)) {
+			throw new MemberException(MemberExceptionType.NOT_FOUND);
+		}
+	}
 
 }
