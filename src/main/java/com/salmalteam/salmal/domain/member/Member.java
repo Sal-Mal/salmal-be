@@ -82,4 +82,7 @@ public class Member extends BaseEntity {
 		this.memberImage = MemberImage.of(imageUrl);
 	}
 
+	public boolean isRemoved() {
+		return status.equals(Status.REMOVED);
+	}
 }
