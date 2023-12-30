@@ -1,5 +1,20 @@
 package com.salmalteam.salmal.application.member;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+
+import java.io.FileInputStream;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
+
 import com.salmalteam.salmal.domain.member.Member;
 import com.salmalteam.salmal.domain.member.MemberRepository;
 import com.salmalteam.salmal.domain.member.block.MemberBlockedRepository;
@@ -11,26 +26,6 @@ import com.salmalteam.salmal.exception.member.MemberException;
 import com.salmalteam.salmal.exception.member.MemberExceptionType;
 import com.salmalteam.salmal.exception.member.block.MemberBlockedException;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.lang.reflect.Field;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.anyOf;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
