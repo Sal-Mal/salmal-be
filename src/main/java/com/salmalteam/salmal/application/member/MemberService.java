@@ -72,7 +72,7 @@ public class MemberService {
 	 */
 	@Transactional
 	public void delete(final MemberPayLoad memberPayLoad, final Long memberId) {
-		final Member member = findMemberById(memberId);
+		final Member member = findMemberById(memberPayLoad.getId());
 		validateDeleteAuthority(memberId, memberPayLoad.getId());
 		member.remove();
 	}
