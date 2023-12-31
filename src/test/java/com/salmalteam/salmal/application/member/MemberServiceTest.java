@@ -30,309 +30,352 @@ import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
-    @InjectMocks
-    MemberService memberService;
-    @Mock
-    MemberRepository memberRepository;
-    @Mock
-    MemberBlockedRepository memberBlockedRepository;
+	@InjectMocks
+	MemberService memberService;
+	@Mock
+	MemberRepository memberRepository;
+	@Mock
+	MemberBlockedRepository memberBlockedRepository;
 
-    @Nested
-    class 회원_저장_테스트{
-        @Test
-        void 이미_존재하는_닉네임의_경우_예외가_발생한다(){
-            // given
-            final String provider = "KAKAO";
-            final String providerId = "providerId";
-            final String nickName = "닉네임";
-            final Boolean marketingInformationConsent = true;
-            final SignUpRequest signUpRequest = new SignUpRequest(providerId, nickName, marketingInformationConsent);
-            given(memberRepository.existsByNickName(any())).willReturn(true);
+	@Nested
+	class 회원_저장_테스트 {
+		@Test
+		void 이미_존재하는_닉네임의_경우_예외가_발생한다() {
+			// given
+			final String provider = "KAKAO";
+			final String providerId = "providerId";
+			final String nickName = "닉네임";
+			final Boolean marketingInformationConsent = true;
+			final SignUpRequest signUpRequest = new SignUpRequest(providerId, nickName, marketingInformationConsent);
+			given(memberRepository.existsByNickName(any())).willReturn(true);
 
-            // when & then
-            assertThatThrownBy(() -> memberService.save(provider, signUpRequest)).isInstanceOf(MemberException.class);
-        }
-    }
+			// when & then
+			assertThatThrownBy(() -> memberService.save(provider, signUpRequest)).isInstanceOf(MemberException.class);
+		}
+	}
 
-    @Nested
-    class providerId_로_회원_조회_테스트{
-        @Test
-        void 회원이_존재하지_않으면_예외가_발생한다(){
+	@Nested
+	class providerId_로_회원_조회_테스트 {
+		@Test
+		void 회원이_존재하지_않으면_예외가_발생한다() {
 
-            // given
-            final String providerId = "providerId";
-            given(memberRepository.findByProviderId(eq(providerId))).willReturn(Optional.empty());
+			// given
+			final String providerId = "providerId";
+			given(memberRepository.findByProviderId(eq(providerId))).willReturn(Optional.empty());
 
-            // when & then
-            assertThatThrownBy(() -> memberService.findMemberIdByProviderId(providerId)).isInstanceOf(MemberException.class);
-        }
-    }
+			// when & then
+			assertThatThrownBy(() -> memberService.findMemberIdByProviderId(providerId)).isInstanceOf(
+				MemberException.class);
+		}
+	}
 
-    @Nested
-    class Id_로_회원_조회_테스트{
-        @Test
-        void 회원이_존재하지_않으면_예외가_발생한다(){
-            // given
-            final Long id = 1L;
-            given(memberRepository.findById(eq(id))).willReturn(Optional.empty());
+	@Nested
+	class Id_로_회원_조회_테스트 {
+		@Test
+		void 회원이_존재하지_않으면_예외가_발생한다() {
+			// given
+			final Long id = 1L;
+			given(memberRepository.findById(eq(id))).willReturn(Optional.empty());
 
-            // when & then
-            assertThatThrownBy(() -> memberService.findMemberById(id))
-                    .isInstanceOf(MemberException.class);
-        }
-    }
+			// when & then
+			assertThatThrownBy(() -> memberService.findMemberById(id))
+				.isInstanceOf(MemberException.class);
+		}
+	}
 
-    @Nested
-    class 마이페이지_조회_테스트{
-        @Test
-        void 마이페이지를_조회할_회원이_존재하지_않으면_예외가_발생한다(){
-            // given
-            final Long memberId = 1L;
-            given(memberRepository.existsById(eq(memberId))).willReturn(false);
+	@Nested
+	class 마이페이지_조회_테스트 {
+		@Test
+		void 마이페이지를_조회할_회원이_존재하지_않으면_예외가_발생한다() {
+			// given
+			final Long memberId = 1L;
+			given(memberRepository.existsById(eq(memberId))).willReturn(false);
 
-            // when & then
-            assertThatThrownBy(() -> memberService.findMyPage(memberId))
-                    .isInstanceOf(MemberException.class);
-        }
-    }
+			// when & then
+			assertThatThrownBy(() -> memberService.findMyPage(memberId))
+				.isInstanceOf(MemberException.class);
+		}
+	}
 
-    @Nested
-    class 회원_차단_테스트{
-        @Test
-        void 이미_차단한_회원이면_예외가_발생한다(){
+	@Nested
+	class 회원_차단_테스트 {
+		@Test
+		void 이미_차단한_회원이면_예외가_발생한다() {
 
-            // given
-            final Long memberId = 1L;
-            final Long targetMemberId = 2L;
-            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			// given
+			final Long memberId = 1L;
+			final Long targetMemberId = 2L;
+			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
 
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(Member.createActivatedMember("kk", "닉네임 A", "kakao", true)));
-            given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(Member.createActivatedMember("ksk", "닉네임 B", "kakao", true)));
-            given(memberBlockedRepository.existsByBlockerAndTarget(any(), any())).willReturn(true);
+			given(memberRepository.findById(eq(memberId))).willReturn(
+				Optional.of(Member.createActivatedMember("kk", "닉네임 A", "kakao", true)));
+			given(memberRepository.findById(eq(targetMemberId))).willReturn(
+				Optional.of(Member.createActivatedMember("ksk", "닉네임 B", "kakao", true)));
+			given(memberBlockedRepository.existsByBlockerAndTarget(any(), any())).willReturn(true);
 
-            // when & then
-            assertThatThrownBy(() -> memberService.block(memberPayLoad, targetMemberId))
-                    .isInstanceOf(MemberBlockedException.class);
+			// when & then
+			assertThatThrownBy(() -> memberService.block(memberPayLoad, targetMemberId))
+				.isInstanceOf(MemberBlockedException.class);
 
-        }
-    }
+		}
+	}
 
-    @Nested
-    class 회원_차단_취소_테스트{
-        @Test
-        void 차단한_적이_없는_회원이라면_예외가_발생한다(){
+	@Nested
+	class 회원_차단_취소_테스트 {
+		@Test
+		void 차단한_적이_없는_회원이라면_예외가_발생한다() {
 
-            // given
-            final Long memberId = 1L;
-            final Long targetMemberId = 2L;
-            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			// given
+			final Long memberId = 1L;
+			final Long targetMemberId = 2L;
+			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
 
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(Member.createActivatedMember("kk", "닉네임 A", "kakao", true)));
-            given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(Member.createActivatedMember("ksk", "닉네임 B", "kakao", true)));
-            given(memberBlockedRepository.existsByBlockerAndTarget(any(), any())).willReturn(false);
+			given(memberRepository.findById(eq(memberId))).willReturn(
+				Optional.of(Member.createActivatedMember("kk", "닉네임 A", "kakao", true)));
+			given(memberRepository.findById(eq(targetMemberId))).willReturn(
+				Optional.of(Member.createActivatedMember("ksk", "닉네임 B", "kakao", true)));
+			given(memberBlockedRepository.existsByBlockerAndTarget(any(), any())).willReturn(false);
 
-            // when & then
-            assertThatThrownBy(() -> memberService.cancelBlocking(memberPayLoad, targetMemberId))
-                    .isInstanceOf(MemberBlockedException.class);
-        }
-    }
+			// when & then
+			assertThatThrownBy(() -> memberService.cancelBlocking(memberPayLoad, targetMemberId))
+				.isInstanceOf(MemberBlockedException.class);
+		}
+	}
 
-    @Nested
-    class 회원_차단_목록_조회_테스트{
-        @Test
-        void 요청자가_존재하지_않으면_예외가_발생한다(){
-            // given
-            final Long memberId = 1L;
-            final Long targetMemberId = 2L;
-            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
-            final MemberBlockedPageRequest memberBlockedPageRequest = MemberBlockedPageRequest.of(1L, 3);
+	@Nested
+	class 회원_차단_목록_조회_테스트 {
+		@Test
+		void 요청자가_존재하지_않으면_예외가_발생한다() {
+			// given
+			final Long memberId = 1L;
+			final Long targetMemberId = 2L;
+			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final MemberBlockedPageRequest memberBlockedPageRequest = MemberBlockedPageRequest.of(1L, 3);
 
-            // when & then
-            assertThatThrownBy(() -> memberService.searchBlockedMembers(memberPayLoad, targetMemberId, memberBlockedPageRequest))
-                    .isInstanceOf(MemberException.class);
-        }
+			// when & then
+			assertThatThrownBy(
+				() -> memberService.searchBlockedMembers(memberPayLoad, targetMemberId, memberBlockedPageRequest))
+				.isInstanceOf(MemberException.class);
+		}
 
-        @Test
-        void 차단_목록을_조회할_회원이_존재하지_않으면_예외가_발생한다(){
-            // given
-            final Long memberId = 1L;
-            final Long targetMemberId = 2L;
-            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
-            final MemberBlockedPageRequest memberBlockedPageRequest = MemberBlockedPageRequest.of(1L, 3);
-            final Member member = Member.createActivatedMember("LL", "닉네임", "kakao", true);
+		@Test
+		void 차단_목록을_조회할_회원이_존재하지_않으면_예외가_발생한다() {
+			// given
+			final Long memberId = 1L;
+			final Long targetMemberId = 2L;
+			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final MemberBlockedPageRequest memberBlockedPageRequest = MemberBlockedPageRequest.of(1L, 3);
+			final Member member = Member.createActivatedMember("LL", "닉네임", "kakao", true);
 
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
+			given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
 
-            // when & then
-            assertThatThrownBy(() -> memberService.searchBlockedMembers(memberPayLoad, targetMemberId, memberBlockedPageRequest))
-                    .isInstanceOf(MemberException.class);
-        }
+			// when & then
+			assertThatThrownBy(
+				() -> memberService.searchBlockedMembers(memberPayLoad, targetMemberId, memberBlockedPageRequest))
+				.isInstanceOf(MemberException.class);
+		}
 
-        @Test
-        void 본인이_아니면_예외가_발생한다(){
-            // given
-            final Long memberId = 1L;
-            final Long targetMemberId = 2L;
-            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
-            final MemberBlockedPageRequest memberBlockedPageRequest = MemberBlockedPageRequest.of(1L, 3);
-            final Member memberA = Member.createActivatedMember("LL", "닉네임", "kakao", true);
-            final Member memberB = Member.createActivatedMember("PP", "닉넴", "kakao", true);
+		@Test
+		void 본인이_아니면_예외가_발생한다() {
+			// given
+			final Long memberId = 1L;
+			final Long targetMemberId = 2L;
+			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final MemberBlockedPageRequest memberBlockedPageRequest = MemberBlockedPageRequest.of(1L, 3);
+			final Member memberA = Member.createActivatedMember("LL", "닉네임", "kakao", true);
+			final Member memberB = Member.createActivatedMember("PP", "닉넴", "kakao", true);
 
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(memberA));
-            given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(memberB));
+			given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(memberA));
+			given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(memberB));
 
-            // when & then
-            assertThatThrownBy(() -> memberService.searchBlockedMembers(memberPayLoad, targetMemberId, memberBlockedPageRequest))
-                    .isInstanceOf(MemberBlockedException.class);
-        }
-    }
+			// when & then
+			assertThatThrownBy(
+				() -> memberService.searchBlockedMembers(memberPayLoad, targetMemberId, memberBlockedPageRequest))
+				.isInstanceOf(MemberBlockedException.class);
+		}
+	}
 
-    @Nested
-    class 회원_마이페이지_수정_테스트{
+	@Nested
+	class 회원_마이페이지_수정_테스트 {
 
-        @Test
-        void 회원이_존재하지_않으면_예외가_발생한다(){
+		@Test
+		void 회원이_존재하지_않으면_예외가_발생한다() {
 
-            // given
-            final Long memberId = 1L;
-            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
-            final Long targetMemberId = 2L;
-            final MyPageUpdateRequest myPageUpdateRequest = new MyPageUpdateRequest("수정할 닉네임", "수정할 한줄 소개");
+			// given
+			final Long memberId = 1L;
+			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final Long targetMemberId = 2L;
+			final MyPageUpdateRequest myPageUpdateRequest = new MyPageUpdateRequest("수정할 닉네임", "수정할 한줄 소개");
 
-            // when & then
-            assertThatThrownBy(() -> memberService.updateMyPage(memberPayLoad, targetMemberId, myPageUpdateRequest))
-                    .isInstanceOf(MemberException.class);
-        }
+			// when & then
+			assertThatThrownBy(() -> memberService.updateMyPage(memberPayLoad, targetMemberId, myPageUpdateRequest))
+				.isInstanceOf(MemberException.class);
+		}
 
-        @Test
-        void 수정할_회원이_존재하지_않으면_예외가_발생한다(){
-            // given
-            final Long memberId = 1L;
-            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
-            final Long targetMemberId = 2L;
-            final MyPageUpdateRequest myPageUpdateRequest = new MyPageUpdateRequest("수정할 닉네임", "수정할 한줄 소개");
+		@Test
+		void 수정할_회원이_존재하지_않으면_예외가_발생한다() {
+			// given
+			final Long memberId = 1L;
+			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final Long targetMemberId = 2L;
+			final MyPageUpdateRequest myPageUpdateRequest = new MyPageUpdateRequest("수정할 닉네임", "수정할 한줄 소개");
 
-            final Member member = Member.createActivatedMember("123", "닉네임", "kakao", true);
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
+			final Member member = Member.createActivatedMember("123", "닉네임", "kakao", true);
+			given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
 
-            // when & then
-            assertThatThrownBy(() -> memberService.updateMyPage(memberPayLoad, targetMemberId, myPageUpdateRequest))
-                    .isInstanceOf(MemberException.class)
-                    .hasFieldOrPropertyWithValue("exceptionType", MemberExceptionType.NOT_FOUND);
-        }
+			// when & then
+			assertThatThrownBy(() -> memberService.updateMyPage(memberPayLoad, targetMemberId, myPageUpdateRequest))
+				.isInstanceOf(MemberException.class)
+				.hasFieldOrPropertyWithValue("exceptionType", MemberExceptionType.NOT_FOUND);
+		}
 
-        @Test
-        void 본인이_아니면_예외가_발생한다(){
-            // given
-            final Long memberId = 1L;
-            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
-            final Long targetMemberId = 2L;
-            final MyPageUpdateRequest myPageUpdateRequest = new MyPageUpdateRequest("수정할 닉네임", "수정할 한줄 소개");
+		@Test
+		void 본인이_아니면_예외가_발생한다() {
+			// given
+			final Long memberId = 1L;
+			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final Long targetMemberId = 2L;
+			final MyPageUpdateRequest myPageUpdateRequest = new MyPageUpdateRequest("수정할 닉네임", "수정할 한줄 소개");
 
-            final Member memberA = Member.createActivatedMember("123", "닉네임", "kakao", true);
-            final Member memberB = Member.createActivatedMember("321", "닉넴", "kakao", true);
+			final Member memberA = Member.createActivatedMember("123", "닉네임", "kakao", true);
+			final Member memberB = Member.createActivatedMember("321", "닉넴", "kakao", true);
 
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(memberA));
-            given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(memberB));
+			given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(memberA));
+			given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(memberB));
 
-            // when & then
-            assertThatThrownBy(() -> memberService.updateMyPage(memberPayLoad, targetMemberId, myPageUpdateRequest))
-                    .isInstanceOf(MemberException.class)
-                    .hasFieldOrPropertyWithValue("exceptionType", MemberExceptionType.FORBIDDEN_UPDATE);
+			// when & then
+			assertThatThrownBy(() -> memberService.updateMyPage(memberPayLoad, targetMemberId, myPageUpdateRequest))
+				.isInstanceOf(MemberException.class)
+				.hasFieldOrPropertyWithValue("exceptionType", MemberExceptionType.FORBIDDEN_UPDATE);
 
-        }
-        @Test
-        void 닉네임이_중복된다면_예외가_발생한다() {
-            // given
-            final Long memberId = 1L;
-            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
-            final Long targetMemberId = 1L;
-            final MyPageUpdateRequest myPageUpdateRequest = new MyPageUpdateRequest("수정할 닉네임", "수정할 한줄 소개");
+		}
 
-            final Member memberA = Member.createActivatedMember("123", "닉네임", "kakao", true);
+		@Test
+		void 닉네임이_중복된다면_예외가_발생한다() {
+			// given
+			final Long memberId = 1L;
+			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final Long targetMemberId = 1L;
+			final MyPageUpdateRequest myPageUpdateRequest = new MyPageUpdateRequest("수정할 닉네임", "수정할 한줄 소개");
 
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(memberA));
-            given(memberRepository.existsByNickName(any())).willReturn(true);
+			final Member memberA = Member.createActivatedMember("123", "닉네임", "kakao", true);
 
-            // when & then
-            assertThatThrownBy(() -> memberService.updateMyPage(memberPayLoad, targetMemberId, myPageUpdateRequest))
-                    .isInstanceOf(MemberException.class)
-                    .hasFieldOrPropertyWithValue("exceptionType", MemberExceptionType.DUPLICATED_NICKNAME);
-        }
-    }
+			given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(memberA));
+			given(memberRepository.existsByNickName(any())).willReturn(true);
 
-    @Nested
-    class 회원_이미지_수정_테스트{
+			// when & then
+			assertThatThrownBy(() -> memberService.updateMyPage(memberPayLoad, targetMemberId, myPageUpdateRequest))
+				.isInstanceOf(MemberException.class)
+				.hasFieldOrPropertyWithValue("exceptionType", MemberExceptionType.DUPLICATED_NICKNAME);
+		}
+	}
 
-        @Test
-        void 회원이_존재하지_않으면_예외가_발생한다() throws Exception {
-            // given
-            final Long memberId = 1L;
-            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
-            final Long targetMemberId = 2L;
-            final String name = "imageFile";
-            final String fileName = "testImage.jpg";
-            final String filePath = "src/test/resources/testImages/".concat(fileName);
-            final FileInputStream fileInputStream = new FileInputStream(filePath);
-            final String contentType = "image/jpeg";
-            final MockMultipartFile multipartFile = new MockMultipartFile(name, fileName, contentType, fileInputStream);
+	@Nested
+	class 회원_이미지_수정_테스트 {
 
-            final MemberImageUpdateRequest memberImageUpdateRequest = new MemberImageUpdateRequest(multipartFile);
+		@Test
+		void 회원이_존재하지_않으면_예외가_발생한다() throws Exception {
+			// given
+			final Long memberId = 1L;
+			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final Long targetMemberId = 2L;
+			final String name = "imageFile";
+			final String fileName = "testImage.jpg";
+			final String filePath = "src/test/resources/testImages/".concat(fileName);
+			final FileInputStream fileInputStream = new FileInputStream(filePath);
+			final String contentType = "image/jpeg";
+			final MockMultipartFile multipartFile = new MockMultipartFile(name, fileName, contentType, fileInputStream);
 
-            // when & then
-            assertThatThrownBy(() -> memberService.updateImage(memberPayLoad, targetMemberId, memberImageUpdateRequest))
-                    .isInstanceOf(MemberException.class)
-                    .hasFieldOrPropertyWithValue("exceptionType", MemberExceptionType.NOT_FOUND);
-        }
+			final MemberImageUpdateRequest memberImageUpdateRequest = new MemberImageUpdateRequest(multipartFile);
 
-        @Test
-        void 수정할_회원이_존재하지_않으면_예외가_발생한다() throws Exception{
-            // given
-            final Long memberId = 1L;
-            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
-            final Long targetMemberId = 2L;
-            final String name = "imageFile";
-            final String fileName = "testImage.jpg";
-            final String filePath = "src/test/resources/testImages/".concat(fileName);
-            final FileInputStream fileInputStream = new FileInputStream(filePath);
-            final String contentType = "image/jpeg";
-            final MockMultipartFile multipartFile = new MockMultipartFile(name, fileName, contentType, fileInputStream);
+			// when & then
+			assertThatThrownBy(() -> memberService.updateImage(memberPayLoad, targetMemberId, memberImageUpdateRequest))
+				.isInstanceOf(MemberException.class)
+				.hasFieldOrPropertyWithValue("exceptionType", MemberExceptionType.NOT_FOUND);
+		}
 
-            final MemberImageUpdateRequest memberImageUpdateRequest = new MemberImageUpdateRequest(multipartFile);
+		@Test
+		void 수정할_회원이_존재하지_않으면_예외가_발생한다() throws Exception {
+			// given
+			final Long memberId = 1L;
+			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final Long targetMemberId = 2L;
+			final String name = "imageFile";
+			final String fileName = "testImage.jpg";
+			final String filePath = "src/test/resources/testImages/".concat(fileName);
+			final FileInputStream fileInputStream = new FileInputStream(filePath);
+			final String contentType = "image/jpeg";
+			final MockMultipartFile multipartFile = new MockMultipartFile(name, fileName, contentType, fileInputStream);
 
-            final Member member = Member.createActivatedMember("123", "닉네임", "kakao", true);
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
+			final MemberImageUpdateRequest memberImageUpdateRequest = new MemberImageUpdateRequest(multipartFile);
 
-            // when & then
-            assertThatThrownBy(() -> memberService.updateImage(memberPayLoad, targetMemberId, memberImageUpdateRequest))
-                    .isInstanceOf(MemberException.class)
-                    .hasFieldOrPropertyWithValue("exceptionType", MemberExceptionType.NOT_FOUND);
+			final Member member = Member.createActivatedMember("123", "닉네임", "kakao", true);
+			given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
 
-        }
+			// when & then
+			assertThatThrownBy(() -> memberService.updateImage(memberPayLoad, targetMemberId, memberImageUpdateRequest))
+				.isInstanceOf(MemberException.class)
+				.hasFieldOrPropertyWithValue("exceptionType", MemberExceptionType.NOT_FOUND);
 
-        @Test
-        void 본인이_아니라면_수정할_수_없다() throws Exception{
-            // given
-            final Long memberId = 1L;
-            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
-            final Long targetMemberId = 2L;
-            final String name = "imageFile";
-            final String fileName = "testImage.jpg";
-            final String filePath = "src/test/resources/testImages/".concat(fileName);
-            final FileInputStream fileInputStream = new FileInputStream(filePath);
-            final String contentType = "image/jpeg";
-            final MockMultipartFile multipartFile = new MockMultipartFile(name, fileName, contentType, fileInputStream);
+		}
 
-            final MemberImageUpdateRequest memberImageUpdateRequest = new MemberImageUpdateRequest(multipartFile);
-            final Member memberA = Member.createActivatedMember("123", "닉네임", "kakao", true);
-            final Member memberB = Member.createActivatedMember("321", "닉넴", "kakao", true);
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(memberA));
-            given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(memberB));
+		@Test
+		void 본인이_아니라면_수정할_수_없다() throws Exception {
+			// given
+			final Long memberId = 1L;
+			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final Long targetMemberId = 2L;
+			final String name = "imageFile";
+			final String fileName = "testImage.jpg";
+			final String filePath = "src/test/resources/testImages/".concat(fileName);
+			final FileInputStream fileInputStream = new FileInputStream(filePath);
+			final String contentType = "image/jpeg";
+			final MockMultipartFile multipartFile = new MockMultipartFile(name, fileName, contentType, fileInputStream);
 
-            // when & then
-            assertThatThrownBy(() -> memberService.updateImage(memberPayLoad, targetMemberId, memberImageUpdateRequest))
-                    .isInstanceOf(MemberException.class)
-                    .hasFieldOrPropertyWithValue("exceptionType", MemberExceptionType.FORBIDDEN_UPDATE);
-        }
-    }
+			final MemberImageUpdateRequest memberImageUpdateRequest = new MemberImageUpdateRequest(multipartFile);
+			final Member memberA = Member.createActivatedMember("123", "닉네임", "kakao", true);
+			final Member memberB = Member.createActivatedMember("321", "닉넴", "kakao", true);
+			given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(memberA));
+			given(memberRepository.findById(eq(targetMemberId))).willReturn(Optional.of(memberB));
+
+			// when & then
+			assertThatThrownBy(() -> memberService.updateImage(memberPayLoad, targetMemberId, memberImageUpdateRequest))
+				.isInstanceOf(MemberException.class)
+				.hasFieldOrPropertyWithValue("exceptionType", MemberExceptionType.FORBIDDEN_UPDATE);
+		}
+	}
+
+	@Nested
+	class 회원_탈퇴_테스트 {
+		@Test
+		void 회원_탈퇴_시_활성상태가_remove_로_변경되어야한다() throws Exception {
+			//given
+			MemberPayLoad memberPayLoad = MemberPayLoad.from(100L);
+			Member activatedMember = Member.createActivatedMember("1111111", "tray", "Apple", true);
+			given(memberRepository.findById(anyLong()))
+				.willReturn(Optional.of(activatedMember));
+
+			//when
+			memberService.delete(memberPayLoad, 100L);
+
+			//then
+			then(memberRepository).should(times(1)).findById(anyLong());
+		}
+
+		@Test
+		void 회원_탈퇴_시_payload_와_path_회원_아이디가_일치하지_않을_시_예외_발생() throws Exception {
+			//given
+			MemberPayLoad memberPayLoad = MemberPayLoad.from(100L);
+			Member activatedMember = Member.createActivatedMember("1111111", "tray", "Apple", true);
+			given(memberRepository.findById(anyLong()))
+				.willReturn(Optional.of(activatedMember));
+
+			//expect
+			assertThatThrownBy(() -> memberService.delete(memberPayLoad, 500L))
+				.isInstanceOf(MemberException.class)
+				.hasFieldOrPropertyWithValue("exceptionType", MemberExceptionType.FORBIDDEN_DELETE);
+			then(memberRepository).should(times(1)).findById(anyLong());
+
+		}
+	}
 }
