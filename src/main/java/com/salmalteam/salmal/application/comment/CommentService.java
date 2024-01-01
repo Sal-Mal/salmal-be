@@ -1,5 +1,12 @@
 package com.salmalteam.salmal.application.comment;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.domain.comment.Comment;
 import com.salmalteam.salmal.domain.comment.CommentRepository;
@@ -26,13 +33,8 @@ import com.salmalteam.salmal.exception.comment.like.CommentLikeExceptionType;
 import com.salmalteam.salmal.exception.comment.report.CommentReportException;
 import com.salmalteam.salmal.exception.comment.report.CommentReportExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

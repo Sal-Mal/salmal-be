@@ -1,5 +1,15 @@
 package com.salmalteam.salmal.application.vote;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.salmalteam.salmal.application.ImageUploader;
 import com.salmalteam.salmal.application.comment.CommentService;
 import com.salmalteam.salmal.application.member.MemberService;
@@ -31,17 +41,8 @@ import com.salmalteam.salmal.exception.vote.bookmark.VoteBookmarkException;
 import com.salmalteam.salmal.exception.vote.bookmark.VoteBookmarkExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import com.salmalteam.salmal.presentation.vote.SearchTypeConstant;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -57,14 +58,14 @@ public class VoteService {
     private final ImageUploader imageUploader;
     private final String voteImagePath;
     public VoteService(final MemberService memberService,
-                       final VoteRepository voteRepository,
-                       final VoteEvaluationRepository voteEvaluationRepository,
-                       final VoteBookMarkRepository voteBookMarkRepository,
-                       final VoteReportRepository voteReportRepository,
-                       final CommentService commentService,
-                       final CommentRepository commentRepository,
-                       final ImageUploader imageUploader,
-                       @Value("${image.path.vote}") String voteImagePath){
+        final VoteRepository voteRepository,
+        final VoteEvaluationRepository voteEvaluationRepository,
+        final VoteBookMarkRepository voteBookMarkRepository,
+        final VoteReportRepository voteReportRepository,
+        final CommentService commentService,
+        final CommentRepository commentRepository,
+        final ImageUploader imageUploader,
+        @Value("${image.path.vote}") String voteImagePath){
         this.memberService = memberService;
         this.voteRepository = voteRepository;
         this.voteEvaluationRepository = voteEvaluationRepository;
@@ -106,24 +107,24 @@ public class VoteService {
     /**
      * 회원 삭제 이벤트 : 투표의 평가 개수 변경
      */
-//    @Transactional
-//    public void decreaseEvaluationCountByMemberDelete(final Long memberId){
-//
-//        // 회원이 평가한 평가 목록 조회
-//        final List<VoteEvaluation> voteEvaluations = voteEvaluationRepository.findAllByEvaluator_Id(memberId);
-//
-//        // 회원 평가 모두 취소 후 Count 변경
-//        for(VoteEvaluation voteEvaluation : voteEvaluations){
-//            final Vote vote = voteEvaluation.getVote();
-//            final VoteEvaluationType voteEvaluationType = voteEvaluation.getVoteEvaluationType();
-//            if(voteEvaluationType.equals(VoteEvaluationType.LIKE)){
-//                voteRepository.updateVoteEvaluationsStatisticsForEvaluationLikeDelete(vote.getId());
-//            }else {
-//                voteRepository.updateVoteEvaluationsStatisticsForEvaluationDisLikeDelete(vote.getId());
-//            }
-//        }
-//
-//    }
+    //    @Transactional
+    //    public void decreaseEvaluationCountByMemberDelete(final Long memberId){
+    //
+    //        // 회원이 평가한 평가 목록 조회
+    //        final List<VoteEvaluation> voteEvaluations = voteEvaluationRepository.findAllByEvaluator_Id(memberId);
+    //
+    //        // 회원 평가 모두 취소 후 Count 변경
+    //        for(VoteEvaluation voteEvaluation : voteEvaluations){
+    //            final Vote vote = voteEvaluation.getVote();
+    //            final VoteEvaluationType voteEvaluationType = voteEvaluation.getVoteEvaluationType();
+    //            if(voteEvaluationType.equals(VoteEvaluationType.LIKE)){
+    //                voteRepository.updateVoteEvaluationsStatisticsForEvaluationLikeDelete(vote.getId());
+    //            }else {
+    //                voteRepository.updateVoteEvaluationsStatisticsForEvaluationDisLikeDelete(vote.getId());
+    //            }
+    //        }
+    //
+    //    }
 
     /**
      * 회원 삭제 이벤트 : 투표의 댓글 개수 변경
@@ -135,7 +136,7 @@ public class VoteService {
 
         // 투표 기준으로 매핑
         final Map<Vote, List<Comment>> voteCommentsMap = comments.stream()
-                .collect(Collectors.groupingBy(Comment::getVote));
+            .collect(Collectors.groupingBy(Comment::getVote));
 
         // 투표 댓글 개수 변경
         voteCommentsMap.forEach((vote, commentList) -> {
@@ -208,7 +209,7 @@ public class VoteService {
 
         validateBookmarkExist(vote, member);
         final VoteBookMark voteBookMark = voteBookMarkRepository.findByVoteAndBookmaker(vote, member)
-                .orElse(VoteBookMark.of(member, vote));
+            .orElse(VoteBookMark.of(member, vote));
 
         voteBookMarkRepository.save(voteBookMark);
     }
@@ -286,7 +287,7 @@ public class VoteService {
 
     private Vote getVoteById(final Long voteId){
         return voteRepository.findById(voteId)
-                .orElseThrow(() -> new VoteException(VoteExceptionType.NOT_FOUND));
+            .orElseThrow(() -> new VoteException(VoteExceptionType.NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
