@@ -80,6 +80,6 @@ public class AuthService {
     }
 
     public TokenAvailableResponse validateToken(String accessToken) {
-        return null;
+        return new TokenAvailableResponse(tokenProvider.isValidAccessToken(accessToken));
     }
 }
