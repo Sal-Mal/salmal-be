@@ -1,5 +1,8 @@
 package com.salmalteam.salmal.application.auth;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.salmalteam.salmal.application.member.MemberService;
 import com.salmalteam.salmal.domain.auth.LogoutAccessToken;
 import com.salmalteam.salmal.domain.auth.RefreshToken;
@@ -8,13 +11,13 @@ import com.salmalteam.salmal.dto.request.auth.LoginRequest;
 import com.salmalteam.salmal.dto.request.auth.LogoutRequest;
 import com.salmalteam.salmal.dto.request.auth.SignUpRequest;
 import com.salmalteam.salmal.dto.response.auth.LoginResponse;
+import com.salmalteam.salmal.dto.response.auth.TokenAvailableResponse;
 import com.salmalteam.salmal.dto.response.auth.TokenResponse;
 import com.salmalteam.salmal.exception.auth.AuthException;
 import com.salmalteam.salmal.exception.auth.AuthExceptionType;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -76,4 +79,7 @@ public class AuthService {
         }
     }
 
+    public TokenAvailableResponse validateToken(String accessToken) {
+        return null;
+    }
 }
