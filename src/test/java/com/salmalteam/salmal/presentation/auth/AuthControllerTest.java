@@ -3,6 +3,7 @@ package com.salmalteam.salmal.presentation.auth;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -162,7 +163,7 @@ class AuthControllerTest extends PresentationTest {
 			.willReturn(new TokenAvailableResponse(true));
 
 		//expect
-		mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + "/tokens")
+		mockMvc.perform(get(BASE_URL + "/tokens")
 				.characterEncoding(StandardCharsets.UTF_8)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
 			.andExpect(status().isOk())
@@ -186,18 +187,11 @@ class AuthControllerTest extends PresentationTest {
 			.willReturn(new TokenAvailableResponse(false));
 
 		//expect
-		mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + "/tokens")
+		mockMvc.perform(get(BASE_URL + "/tokens")
 				.characterEncoding(StandardCharsets.UTF_8)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.available").value(false))
-			.andDo(restDocs.document(
-				requestHeaders(
-					headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입 AccessToken")),
-				responseFields(
-					fieldWithPath("available").type(JsonFieldType.BOOLEAN).description("토큰 유효한지 여부")
-				)
-			));
+			.andExpect(jsonPath("$.available").value(false));
 
 		then(authService).should(times(1)).validateToken(anyString());
 	}
