@@ -12,13 +12,13 @@ import com.salmalteam.salmal.infra.image.exception.ImageException;
 import com.salmalteam.salmal.infra.image.exception.ImageExceptionType;
 
 @Component
-public class S3Client implements ImageUploader {
+public class S3ImageUploadClient implements ImageUploader {
 
     private final AmazonS3 amazonS3;
     private final String bucketName;
     private final String bucketPath;
 
-    public S3Client(final AmazonS3 amazonS3,
+    public S3ImageUploadClient(final AmazonS3 amazonS3,
                     @Value("${cloud.aws.s3.bucket-name}") final String bucketName,
                     @Value("${cloud.aws.s3.bucket-path}") final String bucketPath) {
         this.amazonS3 = amazonS3;
