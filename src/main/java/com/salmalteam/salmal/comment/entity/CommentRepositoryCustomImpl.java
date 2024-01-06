@@ -1,7 +1,7 @@
 package com.salmalteam.salmal.comment.entity;
 
-import static com.salmalteam.salmal.domain.comment.entity.QComment.*;
-import static com.salmalteam.salmal.domain.comment.entity.like.QCommentLike.*;
+import static com.salmalteam.salmal.comment.entity.QComment.*;
+import static com.salmalteam.salmal.comment.entity.like.QCommentLike.*;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import com.salmalteam.salmal.comment.dto.request.CommentPageRequest;
 import com.salmalteam.salmal.comment.dto.request.ReplyPageRequest;
 import com.salmalteam.salmal.comment.dto.response.CommentPageResponse;
 import com.salmalteam.salmal.comment.dto.response.CommentResponse;
-import com.salmalteam.salmal.domain.comment.dto.response.QCommentResponse;
-import com.salmalteam.salmal.domain.comment.dto.response.QReplyResponse;
+import com.salmalteam.salmal.comment.dto.response.QCommentResponse;
+import com.salmalteam.salmal.comment.dto.response.QReplyResponse;
 import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
 import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
 
