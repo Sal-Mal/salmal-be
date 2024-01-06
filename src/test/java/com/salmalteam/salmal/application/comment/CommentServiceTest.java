@@ -13,21 +13,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.salmalteam.salmal.domain.member.application.MemberService;
-import com.salmalteam.salmal.domain.comment.application.CommentService;
-import com.salmalteam.salmal.domain.comment.entity.Comment;
-import com.salmalteam.salmal.domain.comment.entity.CommentRepository;
-import com.salmalteam.salmal.domain.comment.entity.like.CommentLikeRepository;
-import com.salmalteam.salmal.domain.comment.entity.report.CommentReportRepository;
-import com.salmalteam.salmal.domain.member.entity.Member;
-import com.salmalteam.salmal.domain.vote.entity.Vote;
-import com.salmalteam.salmal.domain.vote.dto.request.VoteCommentUpdateRequest;
-import com.salmalteam.salmal.domain.comment.exception.CommentException;
-import com.salmalteam.salmal.domain.comment.exception.like.CommentLikeException;
-import com.salmalteam.salmal.domain.comment.exception.report.CommentReportException;
-import com.salmalteam.salmal.domain.member.exception.MemberException;
-import com.salmalteam.salmal.domain.member.exception.MemberExceptionType;
-import com.salmalteam.salmal.domain.auth.infrastructure.dto.MemberPayLoad;
+import com.salmalteam.salmal.member.application.MemberService;
+import com.salmalteam.salmal.comment.application.CommentService;
+import com.salmalteam.salmal.comment.entity.Comment;
+import com.salmalteam.salmal.comment.entity.CommentRepository;
+import com.salmalteam.salmal.comment.entity.like.CommentLikeRepository;
+import com.salmalteam.salmal.comment.entity.report.CommentReportRepository;
+import com.salmalteam.salmal.member.entity.Member;
+import com.salmalteam.salmal.vote.entity.Vote;
+import com.salmalteam.salmal.vote.dto.request.VoteCommentUpdateRequest;
+import com.salmalteam.salmal.comment.exception.CommentException;
+import com.salmalteam.salmal.comment.exception.like.CommentLikeException;
+import com.salmalteam.salmal.comment.exception.report.CommentReportException;
+import com.salmalteam.salmal.member.exception.MemberException;
+import com.salmalteam.salmal.member.exception.MemberExceptionType;
+import com.salmalteam.salmal.auth.infrastructure.dto.MemberPayLoad;
 
 @ExtendWith(MockitoExtension.class)
 class CommentServiceTest {

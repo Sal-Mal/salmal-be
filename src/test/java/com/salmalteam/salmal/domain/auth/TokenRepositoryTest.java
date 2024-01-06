@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 
-import com.salmalteam.salmal.domain.auth.entity.LogoutAccessToken;
-import com.salmalteam.salmal.domain.auth.entity.RefreshToken;
-import com.salmalteam.salmal.domain.auth.entity.TokenRepository;
-import com.salmalteam.salmal.domain.auth.infrastructure.LogoutAccessTokenRepository;
-import com.salmalteam.salmal.domain.auth.infrastructure.RefreshTokenRepository;
-import com.salmalteam.salmal.domain.auth.infrastructure.TokenRepositoryImpl;
+import com.salmalteam.salmal.auth.entity.LogoutAccessToken;
+import com.salmalteam.salmal.auth.entity.RefreshToken;
+import com.salmalteam.salmal.auth.entity.TokenRepository;
+import com.salmalteam.salmal.auth.infrastructure.LogoutAccessTokenRepository;
+import com.salmalteam.salmal.auth.infrastructure.RefreshTokenRepository;
+import com.salmalteam.salmal.auth.infrastructure.TokenRepositoryImpl;
 
 @DataRedisTest
 class TokenRepositoryTest {

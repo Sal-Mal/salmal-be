@@ -1,7 +1,7 @@
 package com.salmalteam.salmal.presentation.http.vote;
 
-import com.salmalteam.salmal.domain.vote.exception.VoteException;
-import com.salmalteam.salmal.domain.vote.exception.VoteExceptionType;
+import com.salmalteam.salmal.vote.exception.VoteException;
+import com.salmalteam.salmal.vote.exception.VoteExceptionType;
 
 import java.util.Arrays;
 

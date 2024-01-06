@@ -13,17 +13,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.salmalteam.salmal.domain.member.application.MemberService;
-import com.salmalteam.salmal.domain.auth.application.AuthService;
-import com.salmalteam.salmal.domain.auth.infrastructure.TokenProvider;
-import com.salmalteam.salmal.domain.auth.entity.RefreshToken;
-import com.salmalteam.salmal.domain.auth.entity.TokenRepository;
-import com.salmalteam.salmal.domain.auth.dto.request.LoginRequest;
-import com.salmalteam.salmal.domain.auth.dto.request.SignUpRequest;
-import com.salmalteam.salmal.domain.auth.dto.response.LoginResponse;
-import com.salmalteam.salmal.domain.auth.dto.response.TokenAvailableResponse;
-import com.salmalteam.salmal.domain.auth.dto.response.TokenResponse;
-import com.salmalteam.salmal.domain.auth.exception.AuthException;
+import com.salmalteam.salmal.member.application.MemberService;
+import com.salmalteam.salmal.auth.application.AuthService;
+import com.salmalteam.salmal.auth.infrastructure.TokenProvider;
+import com.salmalteam.salmal.auth.entity.RefreshToken;
+import com.salmalteam.salmal.auth.entity.TokenRepository;
+import com.salmalteam.salmal.auth.dto.request.LoginRequest;
+import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
+import com.salmalteam.salmal.auth.dto.response.LoginResponse;
+import com.salmalteam.salmal.auth.dto.response.TokenAvailableResponse;
+import com.salmalteam.salmal.auth.dto.response.TokenResponse;
+import com.salmalteam.salmal.auth.exception.AuthException;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {

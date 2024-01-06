@@ -21,13 +21,13 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.salmalteam.salmal.config.RestDocsConfig;
-import com.salmalteam.salmal.domain.auth.application.AuthService;
-import com.salmalteam.salmal.domain.auth.application.TokenExtractor;
-import com.salmalteam.salmal.domain.auth.entity.TokenRepository;
-import com.salmalteam.salmal.domain.comment.application.CommentService;
-import com.salmalteam.salmal.domain.member.application.MemberService;
-import com.salmalteam.salmal.domain.vote.application.VoteService;
-import com.salmalteam.salmal.domain.auth.infrastructure.TokenProvider;
+import com.salmalteam.salmal.auth.application.AuthService;
+import com.salmalteam.salmal.auth.application.TokenExtractor;
+import com.salmalteam.salmal.auth.entity.TokenRepository;
+import com.salmalteam.salmal.comment.application.CommentService;
+import com.salmalteam.salmal.member.application.MemberService;
+import com.salmalteam.salmal.vote.application.VoteService;
+import com.salmalteam.salmal.auth.infrastructure.TokenProvider;
 
 @ExtendWith(RestDocumentationExtension.class)
 @Import(RestDocsConfig.class)

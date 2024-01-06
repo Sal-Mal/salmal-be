@@ -8,9 +8,9 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import com.salmalteam.salmal.domain.auth.application.TokenExtractor;
-import com.salmalteam.salmal.domain.auth.infrastructure.TokenProvider;
-import com.salmalteam.salmal.domain.auth.infrastructure.annotation.LoginMember;
+import com.salmalteam.salmal.auth.application.TokenExtractor;
+import com.salmalteam.salmal.auth.infrastructure.TokenProvider;
+import com.salmalteam.salmal.auth.infrastructure.annotation.LoginMember;
 
 import lombok.RequiredArgsConstructor;
 

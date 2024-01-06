@@ -1,7 +1,7 @@
 package com.salmalteam.salmal.domain.member;
 
-import com.salmalteam.salmal.domain.member.entity.Introduction;
-import com.salmalteam.salmal.domain.member.exception.MemberException;
+import com.salmalteam.salmal.member.entity.Introduction;
+import com.salmalteam.salmal.member.exception.MemberException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;

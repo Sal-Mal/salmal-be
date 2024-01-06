@@ -15,18 +15,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.salmalteam.salmal.domain.member.application.MemberService;
-import com.salmalteam.salmal.domain.member.entity.Member;
-import com.salmalteam.salmal.domain.member.entity.MemberRepository;
-import com.salmalteam.salmal.domain.member.entity.MemberBlockedRepository;
-import com.salmalteam.salmal.domain.auth.dto.request.SignUpRequest;
-import com.salmalteam.salmal.domain.member.dto.request.MemberImageUpdateRequest;
-import com.salmalteam.salmal.domain.member.dto.request.MyPageUpdateRequest;
-import com.salmalteam.salmal.domain.member.dto.request.block.MemberBlockedPageRequest;
-import com.salmalteam.salmal.domain.member.exception.MemberException;
-import com.salmalteam.salmal.domain.member.exception.MemberExceptionType;
-import com.salmalteam.salmal.domain.member.exception.block.MemberBlockedException;
-import com.salmalteam.salmal.domain.auth.infrastructure.dto.MemberPayLoad;
+import com.salmalteam.salmal.member.application.MemberService;
+import com.salmalteam.salmal.member.entity.Member;
+import com.salmalteam.salmal.member.entity.MemberRepository;
+import com.salmalteam.salmal.member.entity.MemberBlockedRepository;
+import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
+import com.salmalteam.salmal.member.dto.request.MemberImageUpdateRequest;
+import com.salmalteam.salmal.member.dto.request.MyPageUpdateRequest;
+import com.salmalteam.salmal.member.dto.request.block.MemberBlockedPageRequest;
+import com.salmalteam.salmal.member.exception.MemberException;
+import com.salmalteam.salmal.member.exception.MemberExceptionType;
+import com.salmalteam.salmal.member.exception.block.MemberBlockedException;
+import com.salmalteam.salmal.auth.infrastructure.dto.MemberPayLoad;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
