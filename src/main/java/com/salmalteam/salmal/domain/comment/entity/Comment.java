@@ -1,6 +1,6 @@
 package com.salmalteam.salmal.domain.comment.entity;
 
-import com.salmalteam.salmal.infra.jpa.BaseEntity;
+import com.salmalteam.salmal.common.entity.BaseEntity;
 import com.salmalteam.salmal.domain.comment.entity.like.CommentLike;
 import com.salmalteam.salmal.domain.comment.entity.report.CommentReport;
 import com.salmalteam.salmal.domain.member.entity.Member;

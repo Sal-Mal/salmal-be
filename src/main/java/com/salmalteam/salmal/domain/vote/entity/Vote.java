@@ -1,7 +1,7 @@
 package com.salmalteam.salmal.domain.vote.entity;
 
 import com.salmalteam.salmal.domain.vote.entity.report.VoteReport;
-import com.salmalteam.salmal.infra.jpa.BaseCreatedTimeEntity;
+import com.salmalteam.salmal.common.entity.BaseCreatedTimeEntity;
 import com.salmalteam.salmal.domain.comment.entity.Comment;
 import com.salmalteam.salmal.domain.member.entity.Member;
 import com.salmalteam.salmal.domain.vote.entity.evaluation.VoteEvaluation;

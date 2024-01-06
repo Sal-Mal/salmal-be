@@ -1,7 +1,7 @@
 package com.salmalteam.salmal.domain.vote.entity.evaluation;
 
 import com.salmalteam.salmal.domain.vote.entity.Vote;
-import com.salmalteam.salmal.infra.jpa.BaseCreatedTimeEntity;
+import com.salmalteam.salmal.common.entity.BaseCreatedTimeEntity;
 import com.salmalteam.salmal.domain.member.entity.Member;
 
 import lombok.AccessLevel;
