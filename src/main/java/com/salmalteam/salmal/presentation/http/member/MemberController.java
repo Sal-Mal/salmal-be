@@ -15,21 +15,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.salmalteam.salmal.domain.member.application.MemberService;
-import com.salmalteam.salmal.domain.member.dto.request.MemberImageUpdateRequest;
-import com.salmalteam.salmal.domain.member.dto.request.MyPageUpdateRequest;
-import com.salmalteam.salmal.domain.member.dto.request.block.MemberBlockedPageRequest;
-import com.salmalteam.salmal.domain.member.dto.request.vote.MemberBookmarkVotePageRequest;
-import com.salmalteam.salmal.domain.member.dto.request.vote.MemberEvaluationVotePageRequest;
-import com.salmalteam.salmal.domain.member.dto.request.vote.MemberVotePageRequest;
-import com.salmalteam.salmal.domain.member.dto.response.MyPageResponse;
-import com.salmalteam.salmal.domain.member.dto.response.block.MemberBlockedPageResponse;
-import com.salmalteam.salmal.domain.member.dto.response.vote.MemberBookmarkVotePageResponse;
-import com.salmalteam.salmal.domain.member.dto.response.vote.MemberEvaluationVotePageResponse;
-import com.salmalteam.salmal.domain.member.dto.response.vote.MemberVotePageResponse;
-import com.salmalteam.salmal.domain.auth.infrastructure.dto.MemberPayLoad;
-import com.salmalteam.salmal.domain.auth.infrastructure.annotation.Login;
-import com.salmalteam.salmal.domain.auth.infrastructure.annotation.LoginMember;
+import com.salmalteam.salmal.member.application.MemberService;
+import com.salmalteam.salmal.member.dto.request.MemberImageUpdateRequest;
+import com.salmalteam.salmal.member.dto.request.MyPageUpdateRequest;
+import com.salmalteam.salmal.member.dto.request.block.MemberBlockedPageRequest;
+import com.salmalteam.salmal.member.dto.request.vote.MemberBookmarkVotePageRequest;
+import com.salmalteam.salmal.member.dto.request.vote.MemberEvaluationVotePageRequest;
+import com.salmalteam.salmal.member.dto.request.vote.MemberVotePageRequest;
+import com.salmalteam.salmal.member.dto.response.MyPageResponse;
+import com.salmalteam.salmal.member.dto.response.block.MemberBlockedPageResponse;
+import com.salmalteam.salmal.member.dto.response.vote.MemberBookmarkVotePageResponse;
+import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVotePageResponse;
+import com.salmalteam.salmal.member.dto.response.vote.MemberVotePageResponse;
+import com.salmalteam.salmal.auth.infrastructure.dto.MemberPayLoad;
+import com.salmalteam.salmal.auth.infrastructure.annotation.Login;
+import com.salmalteam.salmal.auth.infrastructure.annotation.LoginMember;
 
 import lombok.RequiredArgsConstructor;
 

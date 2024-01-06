@@ -1,7 +1,7 @@
 package com.salmalteam.salmal.domain.member;
 
-import com.salmalteam.salmal.domain.member.entity.NickName;
-import com.salmalteam.salmal.domain.member.exception.MemberException;
+import com.salmalteam.salmal.member.entity.NickName;
+import com.salmalteam.salmal.member.exception.MemberException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 

@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.salmalteam.salmal.domain.auth.application.TokenExtractor;
-import com.salmalteam.salmal.domain.auth.entity.TokenRepository;
-import com.salmalteam.salmal.domain.auth.exception.AuthException;
-import com.salmalteam.salmal.domain.auth.exception.AuthExceptionType;
-import com.salmalteam.salmal.domain.auth.infrastructure.TokenProvider;
-import com.salmalteam.salmal.domain.auth.infrastructure.annotation.Login;
+import com.salmalteam.salmal.auth.application.TokenExtractor;
+import com.salmalteam.salmal.auth.entity.TokenRepository;
+import com.salmalteam.salmal.auth.exception.AuthException;
+import com.salmalteam.salmal.auth.exception.AuthExceptionType;
+import com.salmalteam.salmal.auth.infrastructure.TokenProvider;
+import com.salmalteam.salmal.auth.infrastructure.annotation.Login;
 
 import lombok.RequiredArgsConstructor;
 

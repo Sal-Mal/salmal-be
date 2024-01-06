@@ -1,7 +1,7 @@
 package com.salmalteam.salmal.domain.member;
 
-import com.salmalteam.salmal.domain.member.entity.Provider;
-import com.salmalteam.salmal.domain.auth.exception.AuthException;
+import com.salmalteam.salmal.member.entity.Provider;
+import com.salmalteam.salmal.auth.exception.AuthException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 

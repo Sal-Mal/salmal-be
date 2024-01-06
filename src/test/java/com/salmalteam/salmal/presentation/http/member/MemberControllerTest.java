@@ -1,11 +1,16 @@
 package com.salmalteam.salmal.presentation.http.member;
 
-import com.salmalteam.salmal.domain.member.dto.request.MyPageUpdateRequest;
-import com.salmalteam.salmal.domain.member.dto.response.MyPageResponse;
-import com.salmalteam.salmal.domain.member.dto.response.block.MemberBlockedPageResponse;
-import com.salmalteam.salmal.domain.member.dto.response.block.MemberBlockedResponse;
-import com.salmalteam.salmal.domain.member.dto.response.vote.*;
-import com.salmalteam.salmal.domain.auth.infrastructure.dto.MemberPayLoad;
+import com.salmalteam.salmal.member.dto.request.MyPageUpdateRequest;
+import com.salmalteam.salmal.member.dto.response.MyPageResponse;
+import com.salmalteam.salmal.member.dto.response.block.MemberBlockedPageResponse;
+import com.salmalteam.salmal.member.dto.response.block.MemberBlockedResponse;
+import com.salmalteam.salmal.auth.infrastructure.dto.MemberPayLoad;
+import com.salmalteam.salmal.member.dto.response.vote.MemberBookmarkVotePageResponse;
+import com.salmalteam.salmal.member.dto.response.vote.MemberBookmarkVoteResponse;
+import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVotePageResponse;
+import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVoteResponse;
+import com.salmalteam.salmal.member.dto.response.vote.MemberVotePageResponse;
+import com.salmalteam.salmal.member.dto.response.vote.MemberVoteResponse;
 import com.salmalteam.salmal.support.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

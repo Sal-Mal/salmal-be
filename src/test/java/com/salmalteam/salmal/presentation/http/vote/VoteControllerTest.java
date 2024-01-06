@@ -1,11 +1,11 @@
 package com.salmalteam.salmal.presentation.http.vote;
 
-import com.salmalteam.salmal.domain.vote.dto.request.VoteCommentCreateRequest;
-import com.salmalteam.salmal.domain.vote.dto.request.VoteEvaluateRequest;
-import com.salmalteam.salmal.domain.comment.dto.response.CommentPageResponse;
-import com.salmalteam.salmal.domain.comment.dto.response.CommentResponse;
-import com.salmalteam.salmal.domain.vote.dto.response.VotePageResponse;
-import com.salmalteam.salmal.domain.vote.dto.response.VoteResponse;
+import com.salmalteam.salmal.vote.dto.request.VoteCommentCreateRequest;
+import com.salmalteam.salmal.vote.dto.request.VoteEvaluateRequest;
+import com.salmalteam.salmal.comment.dto.response.CommentPageResponse;
+import com.salmalteam.salmal.comment.dto.response.CommentResponse;
+import com.salmalteam.salmal.vote.dto.response.VotePageResponse;
+import com.salmalteam.salmal.vote.dto.response.VoteResponse;
 import com.salmalteam.salmal.support.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

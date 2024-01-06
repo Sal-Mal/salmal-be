@@ -1,19 +1,19 @@
 package com.salmalteam.salmal.presentation.http.vote;
 
-import com.salmalteam.salmal.domain.vote.application.VoteService;
-import com.salmalteam.salmal.domain.vote.dto.request.VoteCommentCreateRequest;
-import com.salmalteam.salmal.domain.vote.dto.request.VoteCreateRequest;
-import com.salmalteam.salmal.domain.vote.dto.request.VoteEvaluateRequest;
-import com.salmalteam.salmal.domain.vote.dto.request.VotePageRequest;
-import com.salmalteam.salmal.domain.vote.entity.evaluation.VoteEvaluationType;
-import com.salmalteam.salmal.domain.comment.dto.request.CommentPageRequest;
-import com.salmalteam.salmal.domain.comment.dto.response.CommentPageResponse;
-import com.salmalteam.salmal.domain.comment.dto.response.CommentResponse;
-import com.salmalteam.salmal.domain.vote.dto.response.VotePageResponse;
-import com.salmalteam.salmal.domain.vote.dto.response.VoteResponse;
-import com.salmalteam.salmal.domain.auth.infrastructure.dto.MemberPayLoad;
-import com.salmalteam.salmal.domain.auth.infrastructure.annotation.Login;
-import com.salmalteam.salmal.domain.auth.infrastructure.annotation.LoginMember;
+import com.salmalteam.salmal.vote.application.VoteService;
+import com.salmalteam.salmal.vote.dto.request.VoteCommentCreateRequest;
+import com.salmalteam.salmal.vote.dto.request.VoteCreateRequest;
+import com.salmalteam.salmal.vote.dto.request.VoteEvaluateRequest;
+import com.salmalteam.salmal.vote.dto.request.VotePageRequest;
+import com.salmalteam.salmal.vote.entity.evaluation.VoteEvaluationType;
+import com.salmalteam.salmal.comment.dto.request.CommentPageRequest;
+import com.salmalteam.salmal.comment.dto.response.CommentPageResponse;
+import com.salmalteam.salmal.comment.dto.response.CommentResponse;
+import com.salmalteam.salmal.vote.dto.response.VotePageResponse;
+import com.salmalteam.salmal.vote.dto.response.VoteResponse;
+import com.salmalteam.salmal.auth.infrastructure.dto.MemberPayLoad;
+import com.salmalteam.salmal.auth.infrastructure.annotation.Login;
+import com.salmalteam.salmal.auth.infrastructure.annotation.LoginMember;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;

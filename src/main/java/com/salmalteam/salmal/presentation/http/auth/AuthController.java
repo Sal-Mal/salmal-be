@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.salmalteam.salmal.domain.auth.application.AuthService;
-import com.salmalteam.salmal.domain.auth.dto.request.LoginRequest;
-import com.salmalteam.salmal.domain.auth.dto.request.LogoutRequest;
-import com.salmalteam.salmal.domain.auth.dto.request.ReissueTokenRequest;
-import com.salmalteam.salmal.domain.auth.dto.request.SignUpRequest;
-import com.salmalteam.salmal.domain.auth.dto.response.LoginResponse;
-import com.salmalteam.salmal.domain.auth.dto.response.TokenAvailableResponse;
-import com.salmalteam.salmal.domain.auth.dto.response.TokenResponse;
+import com.salmalteam.salmal.auth.application.AuthService;
+import com.salmalteam.salmal.auth.dto.request.LoginRequest;
+import com.salmalteam.salmal.auth.dto.request.LogoutRequest;
+import com.salmalteam.salmal.auth.dto.request.ReissueTokenRequest;
+import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
+import com.salmalteam.salmal.auth.dto.response.LoginResponse;
+import com.salmalteam.salmal.auth.dto.response.TokenAvailableResponse;
+import com.salmalteam.salmal.auth.dto.response.TokenResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

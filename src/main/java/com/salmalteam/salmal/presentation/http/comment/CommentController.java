@@ -1,14 +1,14 @@
 package com.salmalteam.salmal.presentation.http.comment;
 
-import com.salmalteam.salmal.domain.comment.application.CommentService;
-import com.salmalteam.salmal.domain.comment.dto.request.CommentReplyCreateRequest;
-import com.salmalteam.salmal.domain.comment.dto.request.ReplyPageRequest;
-import com.salmalteam.salmal.domain.vote.dto.request.VoteCommentUpdateRequest;
-import com.salmalteam.salmal.domain.comment.dto.response.ReplyPageResponse;
-import com.salmalteam.salmal.domain.comment.dto.response.ReplyResponse;
-import com.salmalteam.salmal.domain.auth.infrastructure.dto.MemberPayLoad;
-import com.salmalteam.salmal.domain.auth.infrastructure.annotation.Login;
-import com.salmalteam.salmal.domain.auth.infrastructure.annotation.LoginMember;
+import com.salmalteam.salmal.comment.application.CommentService;
+import com.salmalteam.salmal.comment.dto.request.CommentReplyCreateRequest;
+import com.salmalteam.salmal.comment.dto.request.ReplyPageRequest;
+import com.salmalteam.salmal.vote.dto.request.VoteCommentUpdateRequest;
+import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
+import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
+import com.salmalteam.salmal.auth.infrastructure.dto.MemberPayLoad;
+import com.salmalteam.salmal.auth.infrastructure.annotation.Login;
+import com.salmalteam.salmal.auth.infrastructure.annotation.LoginMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
