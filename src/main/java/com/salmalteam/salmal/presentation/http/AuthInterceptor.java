@@ -1,7 +1,7 @@
 package com.salmalteam.salmal.presentation.http;
 
 import com.salmalteam.salmal.domain.auth.application.TokenExtractor;
-import com.salmalteam.salmal.domain.auth.application.TokenProvider;
+import com.salmalteam.salmal.infra.auth.TokenProvider;
 import com.salmalteam.salmal.domain.auth.entity.TokenRepository;
 import com.salmalteam.salmal.domain.auth.exception.AuthException;
 import com.salmalteam.salmal.domain.auth.exception.AuthExceptionType;

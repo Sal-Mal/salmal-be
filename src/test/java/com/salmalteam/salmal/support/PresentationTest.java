@@ -1,15 +1,9 @@
 package com.salmalteam.salmal.support;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.salmalteam.salmal.domain.auth.application.AuthService;
-import com.salmalteam.salmal.domain.auth.application.TokenExtractor;
-import com.salmalteam.salmal.domain.auth.application.TokenProvider;
-import com.salmalteam.salmal.domain.comment.application.CommentService;
-import com.salmalteam.salmal.domain.member.application.MemberService;
-import com.salmalteam.salmal.domain.vote.application.VoteService;
-import com.salmalteam.salmal.config.RestDocsConfig;
-import com.salmalteam.salmal.domain.auth.entity.TokenRepository;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +18,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.salmalteam.salmal.config.RestDocsConfig;
+import com.salmalteam.salmal.domain.auth.application.AuthService;
+import com.salmalteam.salmal.domain.auth.application.TokenExtractor;
+import com.salmalteam.salmal.domain.auth.entity.TokenRepository;
+import com.salmalteam.salmal.domain.comment.application.CommentService;
+import com.salmalteam.salmal.domain.member.application.MemberService;
+import com.salmalteam.salmal.domain.vote.application.VoteService;
+import com.salmalteam.salmal.infra.auth.TokenProvider;
 
 @ExtendWith(RestDocumentationExtension.class)
 @Import(RestDocsConfig.class)

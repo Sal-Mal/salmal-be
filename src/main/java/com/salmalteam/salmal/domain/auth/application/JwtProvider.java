@@ -1,6 +1,6 @@
-package com.salmalteam.salmal.infra.auth;
+package com.salmalteam.salmal.domain.auth.application;
 
-import com.salmalteam.salmal.domain.auth.application.TokenProvider;
+import com.salmalteam.salmal.infra.auth.TokenProvider;
 import com.salmalteam.salmal.domain.auth.exception.AuthException;
 import com.salmalteam.salmal.domain.auth.exception.AuthExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;

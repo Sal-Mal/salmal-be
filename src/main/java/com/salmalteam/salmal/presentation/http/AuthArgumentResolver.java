@@ -1,8 +1,5 @@
 package com.salmalteam.salmal.presentation.http;
 
-import com.salmalteam.salmal.domain.auth.application.TokenExtractor;
-import com.salmalteam.salmal.domain.auth.application.TokenProvider;
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -10,6 +7,11 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+
+import com.salmalteam.salmal.domain.auth.application.TokenExtractor;
+import com.salmalteam.salmal.infra.auth.TokenProvider;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
