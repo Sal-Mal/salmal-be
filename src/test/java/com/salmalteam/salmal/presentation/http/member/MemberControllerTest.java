@@ -5,7 +5,7 @@ import com.salmalteam.salmal.domain.member.dto.response.MyPageResponse;
 import com.salmalteam.salmal.domain.member.dto.response.block.MemberBlockedPageResponse;
 import com.salmalteam.salmal.domain.member.dto.response.block.MemberBlockedResponse;
 import com.salmalteam.salmal.domain.member.dto.response.vote.*;
-import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
+import com.salmalteam.salmal.domain.auth.infrastructure.dto.MemberPayLoad;
 import com.salmalteam.salmal.support.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

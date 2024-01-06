@@ -1,9 +1,9 @@
 package com.salmalteam.salmal.domain.auth.application;
 
-import com.salmalteam.salmal.infra.auth.TokenProvider;
+import com.salmalteam.salmal.domain.auth.infrastructure.TokenProvider;
 import com.salmalteam.salmal.domain.auth.exception.AuthException;
 import com.salmalteam.salmal.domain.auth.exception.AuthExceptionType;
-import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
+import com.salmalteam.salmal.domain.auth.infrastructure.dto.MemberPayLoad;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;

@@ -27,7 +27,7 @@ import com.salmalteam.salmal.domain.auth.entity.TokenRepository;
 import com.salmalteam.salmal.domain.comment.application.CommentService;
 import com.salmalteam.salmal.domain.member.application.MemberService;
 import com.salmalteam.salmal.domain.vote.application.VoteService;
-import com.salmalteam.salmal.infra.auth.TokenProvider;
+import com.salmalteam.salmal.domain.auth.infrastructure.TokenProvider;
 
 @ExtendWith(RestDocumentationExtension.class)
 @Import(RestDocsConfig.class)

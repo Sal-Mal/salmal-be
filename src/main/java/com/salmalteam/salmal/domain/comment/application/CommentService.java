@@ -32,7 +32,7 @@ import com.salmalteam.salmal.domain.comment.exception.like.CommentLikeException;
 import com.salmalteam.salmal.domain.comment.exception.like.CommentLikeExceptionType;
 import com.salmalteam.salmal.domain.comment.exception.report.CommentReportException;
 import com.salmalteam.salmal.domain.comment.exception.report.CommentReportExceptionType;
-import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
+import com.salmalteam.salmal.domain.auth.infrastructure.dto.MemberPayLoad;
 
 import lombok.RequiredArgsConstructor;
 

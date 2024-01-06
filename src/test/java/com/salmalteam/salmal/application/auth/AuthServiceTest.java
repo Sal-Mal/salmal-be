@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.salmalteam.salmal.domain.member.application.MemberService;
 import com.salmalteam.salmal.domain.auth.application.AuthService;
-import com.salmalteam.salmal.infra.auth.TokenProvider;
+import com.salmalteam.salmal.domain.auth.infrastructure.TokenProvider;
 import com.salmalteam.salmal.domain.auth.entity.RefreshToken;
 import com.salmalteam.salmal.domain.auth.entity.TokenRepository;
 import com.salmalteam.salmal.domain.auth.dto.request.LoginRequest;

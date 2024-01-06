@@ -11,9 +11,9 @@ import com.salmalteam.salmal.domain.comment.dto.response.CommentPageResponse;
 import com.salmalteam.salmal.domain.comment.dto.response.CommentResponse;
 import com.salmalteam.salmal.domain.vote.dto.response.VotePageResponse;
 import com.salmalteam.salmal.domain.vote.dto.response.VoteResponse;
-import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
-import com.salmalteam.salmal.infra.auth.annotation.Login;
-import com.salmalteam.salmal.infra.auth.annotation.LoginMember;
+import com.salmalteam.salmal.domain.auth.infrastructure.dto.MemberPayLoad;
+import com.salmalteam.salmal.domain.auth.infrastructure.annotation.Login;
+import com.salmalteam.salmal.domain.auth.infrastructure.annotation.LoginMember;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
