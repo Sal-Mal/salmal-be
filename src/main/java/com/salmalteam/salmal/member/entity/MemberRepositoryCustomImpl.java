@@ -1,15 +1,14 @@
 package com.salmalteam.salmal.member.entity;
 
-
-import static com.salmalteam.salmal.domain.member.entity.QMember.*;
-import static com.salmalteam.salmal.domain.member.entity.QMemberBlocked.*;
-import static com.salmalteam.salmal.domain.vote.entity.QVote.*;
+import static com.salmalteam.salmal.member.entity.QMember.*;
+import static com.salmalteam.salmal.member.entity.QMemberBlocked.*;
+import static com.salmalteam.salmal.vote.entity.QVote.*;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.salmalteam.salmal.member.dto.response.MyPageResponse;
-import com.salmalteam.salmal.domain.member.dto.response.QMyPageResponse;
+import com.salmalteam.salmal.member.dto.response.QMyPageResponse;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,8 +1,7 @@
 package com.salmalteam.salmal.vote.entity;
 
-
-import static com.salmalteam.salmal.domain.vote.entity.QVote.*;
-import static com.salmalteam.salmal.domain.vote.entity.QVoteBookMark.*;
+import static com.salmalteam.salmal.vote.entity.QVote.*;
+import static com.salmalteam.salmal.vote.entity.QVoteBookMark.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +21,15 @@ import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVotePageRe
 import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVoteResponse;
 import com.salmalteam.salmal.member.dto.response.vote.MemberVotePageResponse;
 import com.salmalteam.salmal.member.dto.response.vote.MemberVoteResponse;
-import com.salmalteam.salmal.domain.member.dto.response.vote.QMemberBookmarkVoteResponse;
-import com.salmalteam.salmal.domain.member.dto.response.vote.QMemberEvaluationVoteResponse;
-import com.salmalteam.salmal.domain.member.dto.response.vote.QMemberVoteResponse;
+import com.salmalteam.salmal.member.dto.response.vote.QMemberBookmarkVoteResponse;
+import com.salmalteam.salmal.member.dto.response.vote.QMemberEvaluationVoteResponse;
+import com.salmalteam.salmal.member.dto.response.vote.QMemberVoteResponse;
+import com.salmalteam.salmal.presentation.http.vote.SearchTypeConstant;
 import com.salmalteam.salmal.vote.dto.request.VotePageRequest;
-import com.salmalteam.salmal.domain.vote.dto.response.QVoteResponse;
+import com.salmalteam.salmal.vote.dto.response.QVoteResponse;
 import com.salmalteam.salmal.vote.dto.response.VotePageResponse;
 import com.salmalteam.salmal.vote.dto.response.VoteResponse;
-import com.salmalteam.salmal.domain.vote.entity.evaluation.QVoteEvaluation;
-import com.salmalteam.salmal.presentation.http.vote.SearchTypeConstant;
+import com.salmalteam.salmal.vote.entity.evaluation.QVoteEvaluation;
 
 import lombok.RequiredArgsConstructor;
 
