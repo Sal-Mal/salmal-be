@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.domain.auth.application;
+package com.salmalteam.salmal.infra.auth;
 
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 
