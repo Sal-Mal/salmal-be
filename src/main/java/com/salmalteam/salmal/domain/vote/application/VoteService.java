@@ -39,7 +39,7 @@ import com.salmalteam.salmal.domain.vote.exception.VoteException;
 import com.salmalteam.salmal.domain.vote.exception.VoteExceptionType;
 import com.salmalteam.salmal.domain.vote.exception.bookmark.VoteBookmarkException;
 import com.salmalteam.salmal.domain.vote.exception.bookmark.VoteBookmarkExceptionType;
-import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
+import com.salmalteam.salmal.domain.auth.infrastructure.dto.MemberPayLoad;
 import com.salmalteam.salmal.presentation.http.vote.SearchTypeConstant;
 
 import lombok.extern.slf4j.Slf4j;

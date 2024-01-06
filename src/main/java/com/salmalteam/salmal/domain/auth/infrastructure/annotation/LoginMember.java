@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.infra.auth.annotation;
+package com.salmalteam.salmal.domain.auth.infrastructure.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

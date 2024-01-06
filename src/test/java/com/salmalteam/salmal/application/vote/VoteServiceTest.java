@@ -32,7 +32,7 @@ import com.salmalteam.salmal.domain.member.exception.MemberException;
 import com.salmalteam.salmal.domain.member.exception.MemberExceptionType;
 import com.salmalteam.salmal.domain.vote.exception.VoteException;
 import com.salmalteam.salmal.domain.vote.exception.bookmark.VoteBookmarkException;
-import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
+import com.salmalteam.salmal.domain.auth.infrastructure.dto.MemberPayLoad;
 
 @ExtendWith(MockitoExtension.class)
 class VoteServiceTest {
