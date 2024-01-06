@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.config;
+package com.salmalteam.salmal.presentation.config;
 
 import java.util.List;
 
