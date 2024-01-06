@@ -10,7 +10,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.salmalteam.salmal.domain.auth.application.TokenExtractor;
 import com.salmalteam.salmal.infra.auth.TokenProvider;
-import com.salmalteam.salmal.infra.auth.annotaion.LoginMember;
+import com.salmalteam.salmal.infra.auth.annotation.LoginMember;
 
 import lombok.RequiredArgsConstructor;
 
