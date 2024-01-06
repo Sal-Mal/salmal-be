@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.infra.aws.s3;
+package com.salmalteam.salmal.domain.image.infrastructure.aws;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.salmalteam.salmal.infra.image.ImageFile;
-import com.salmalteam.salmal.infra.image.ImageUploader;
-import com.salmalteam.salmal.infra.image.exception.ImageException;
-import com.salmalteam.salmal.infra.image.exception.ImageExceptionType;
+import com.salmalteam.salmal.domain.image.entity.ImageFile;
+import com.salmalteam.salmal.domain.image.entity.ImageUploader;
+import com.salmalteam.salmal.domain.image.exception.ImageException;
+import com.salmalteam.salmal.domain.image.exception.ImageExceptionType;
 
 @Component
 public class S3ImageUploadClient implements ImageUploader {
