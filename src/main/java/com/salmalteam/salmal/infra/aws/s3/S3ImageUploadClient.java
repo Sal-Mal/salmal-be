@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.infra.s3;
+package com.salmalteam.salmal.infra.aws.s3;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
