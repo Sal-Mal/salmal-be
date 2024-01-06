@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.salmalteam.salmal.infra.image.ImageUploader;
-import com.salmalteam.salmal.domain.image.ImageFile;
+import com.salmalteam.salmal.infra.image.ImageFile;
 import com.salmalteam.salmal.domain.member.entity.Member;
 import com.salmalteam.salmal.domain.member.entity.MemberImage;
 import com.salmalteam.salmal.domain.member.entity.MemberRepository;

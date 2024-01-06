@@ -16,7 +16,7 @@ import com.salmalteam.salmal.domain.member.application.MemberService;
 import com.salmalteam.salmal.domain.comment.entity.Comment;
 import com.salmalteam.salmal.domain.comment.entity.CommentRepository;
 import com.salmalteam.salmal.domain.comment.entity.CommentType;
-import com.salmalteam.salmal.domain.image.ImageFile;
+import com.salmalteam.salmal.infra.image.ImageFile;
 import com.salmalteam.salmal.domain.member.entity.Member;
 import com.salmalteam.salmal.domain.vote.entity.Vote;
 import com.salmalteam.salmal.domain.vote.entity.VoteRepository;

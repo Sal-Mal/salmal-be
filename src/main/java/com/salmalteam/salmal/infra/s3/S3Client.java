@@ -1,14 +1,15 @@
 package com.salmalteam.salmal.infra.s3;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.salmalteam.salmal.infra.image.ImageFile;
 import com.salmalteam.salmal.infra.image.ImageUploader;
-import com.salmalteam.salmal.domain.image.ImageFile;
-import com.salmalteam.salmal.domain.image.exception.ImageException;
-import com.salmalteam.salmal.domain.image.exception.ImageExceptionType;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import com.salmalteam.salmal.infra.image.exception.ImageException;
+import com.salmalteam.salmal.infra.image.exception.ImageExceptionType;
 
 @Component
 public class S3Client implements ImageUploader {

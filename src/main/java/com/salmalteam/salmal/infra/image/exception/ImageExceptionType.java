@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.domain.image.exception;
+package com.salmalteam.salmal.infra.image.exception;
 
 import com.salmalteam.salmal.common.exception.ExceptionType;
 import com.salmalteam.salmal.common.exception.Status;
