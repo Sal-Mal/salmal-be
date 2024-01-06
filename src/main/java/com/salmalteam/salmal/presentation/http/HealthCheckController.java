@@ -1,4 +1,4 @@
-package com.salmalteam.salmal;
+package com.salmalteam.salmal.presentation.http;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
