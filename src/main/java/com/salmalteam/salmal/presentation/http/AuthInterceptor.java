@@ -1,18 +1,21 @@
 package com.salmalteam.salmal.presentation.http;
 
-import com.salmalteam.salmal.domain.auth.application.TokenExtractor;
-import com.salmalteam.salmal.infra.auth.TokenProvider;
-import com.salmalteam.salmal.domain.auth.entity.TokenRepository;
-import com.salmalteam.salmal.domain.auth.exception.AuthException;
-import com.salmalteam.salmal.domain.auth.exception.AuthExceptionType;
-import lombok.RequiredArgsConstructor;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.salmalteam.salmal.domain.auth.application.TokenExtractor;
+import com.salmalteam.salmal.domain.auth.entity.TokenRepository;
+import com.salmalteam.salmal.domain.auth.exception.AuthException;
+import com.salmalteam.salmal.domain.auth.exception.AuthExceptionType;
+import com.salmalteam.salmal.infra.auth.TokenProvider;
+import com.salmalteam.salmal.infra.auth.annotaion.Login;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

@@ -28,8 +28,8 @@ import com.salmalteam.salmal.domain.member.dto.response.vote.MemberBookmarkVoteP
 import com.salmalteam.salmal.domain.member.dto.response.vote.MemberEvaluationVotePageResponse;
 import com.salmalteam.salmal.domain.member.dto.response.vote.MemberVotePageResponse;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
-import com.salmalteam.salmal.presentation.http.Login;
-import com.salmalteam.salmal.presentation.http.LoginMember;
+import com.salmalteam.salmal.infra.auth.annotaion.Login;
+import com.salmalteam.salmal.infra.auth.annotaion.LoginMember;
 
 import lombok.RequiredArgsConstructor;
 
