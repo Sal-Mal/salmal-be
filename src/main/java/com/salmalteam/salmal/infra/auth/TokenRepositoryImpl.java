@@ -1,8 +1,8 @@
 package com.salmalteam.salmal.infra.auth;
 
-import com.salmalteam.salmal.domain.auth.LogoutAccessToken;
-import com.salmalteam.salmal.domain.auth.RefreshToken;
-import com.salmalteam.salmal.domain.auth.TokenRepository;
+import com.salmalteam.salmal.domain.auth.entity.LogoutAccessToken;
+import com.salmalteam.salmal.domain.auth.entity.RefreshToken;
+import com.salmalteam.salmal.domain.auth.entity.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

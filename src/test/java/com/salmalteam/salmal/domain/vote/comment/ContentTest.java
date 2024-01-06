@@ -1,8 +1,8 @@
 package com.salmalteam.salmal.domain.vote.comment;
 
-import com.salmalteam.salmal.domain.comment.Content;
-import com.salmalteam.salmal.exception.comment.CommentException;
-import com.salmalteam.salmal.exception.comment.CommentExceptionType;
+import com.salmalteam.salmal.domain.comment.entity.Content;
+import com.salmalteam.salmal.domain.comment.exception.CommentException;
+import com.salmalteam.salmal.domain.comment.exception.CommentExceptionType;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 

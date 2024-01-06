@@ -19,13 +19,13 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.salmalteam.salmal.dto.request.auth.LoginRequest;
-import com.salmalteam.salmal.dto.request.auth.LogoutRequest;
-import com.salmalteam.salmal.dto.request.auth.ReissueTokenRequest;
-import com.salmalteam.salmal.dto.request.auth.SignUpRequest;
-import com.salmalteam.salmal.dto.response.auth.LoginResponse;
-import com.salmalteam.salmal.dto.response.auth.TokenAvailableResponse;
-import com.salmalteam.salmal.dto.response.auth.TokenResponse;
+import com.salmalteam.salmal.domain.auth.dto.request.LoginRequest;
+import com.salmalteam.salmal.domain.auth.dto.request.LogoutRequest;
+import com.salmalteam.salmal.domain.auth.dto.request.ReissueTokenRequest;
+import com.salmalteam.salmal.domain.auth.dto.request.SignUpRequest;
+import com.salmalteam.salmal.domain.auth.dto.response.LoginResponse;
+import com.salmalteam.salmal.domain.auth.dto.response.TokenAvailableResponse;
+import com.salmalteam.salmal.domain.auth.dto.response.TokenResponse;
 import com.salmalteam.salmal.support.PresentationTest;
 
 class AuthControllerTest extends PresentationTest {

@@ -1,8 +1,8 @@
 package com.salmalteam.salmal.infra.auth;
 
-import com.salmalteam.salmal.application.auth.TokenProvider;
-import com.salmalteam.salmal.exception.auth.AuthException;
-import com.salmalteam.salmal.exception.auth.AuthExceptionType;
+import com.salmalteam.salmal.domain.auth.application.TokenProvider;
+import com.salmalteam.salmal.domain.auth.exception.AuthException;
+import com.salmalteam.salmal.domain.auth.exception.AuthExceptionType;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

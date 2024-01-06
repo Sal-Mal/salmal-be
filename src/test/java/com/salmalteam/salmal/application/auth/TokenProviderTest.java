@@ -1,7 +1,8 @@
 package com.salmalteam.salmal.application.auth;
 
+import com.salmalteam.salmal.domain.auth.application.TokenProvider;
 import com.salmalteam.salmal.infra.auth.JwtProvider;
-import org.assertj.core.api.Assertions;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
