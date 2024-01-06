@@ -1,8 +1,8 @@
 package com.salmalteam.salmal.domain.image;
 
-import com.salmalteam.salmal.exception.image.ImageException;
-import com.salmalteam.salmal.exception.image.ImageExceptionType;
-import lombok.extern.slf4j.Slf4j;
+import com.salmalteam.salmal.domain.image.exception.ImageException;
+import com.salmalteam.salmal.domain.image.exception.ImageExceptionType;
+
 import org.apache.tika.Tika;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;

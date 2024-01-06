@@ -13,18 +13,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
-import com.salmalteam.salmal.domain.comment.CommentRepository;
-import com.salmalteam.salmal.domain.member.Member;
-import com.salmalteam.salmal.domain.member.MemberRepository;
-import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMark;
-import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMarkRepository;
-import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluation;
-import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
-import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
-import com.salmalteam.salmal.dto.request.vote.VotePageRequest;
-import com.salmalteam.salmal.dto.response.vote.VotePageResponse;
-import com.salmalteam.salmal.dto.response.vote.VoteResponse;
-import com.salmalteam.salmal.presentation.vote.SearchTypeConstant;
+import com.salmalteam.salmal.domain.comment.entity.CommentRepository;
+import com.salmalteam.salmal.domain.member.entity.Member;
+import com.salmalteam.salmal.domain.member.entity.MemberRepository;
+import com.salmalteam.salmal.domain.vote.entity.Vote;
+import com.salmalteam.salmal.domain.vote.entity.VoteBookMark;
+import com.salmalteam.salmal.domain.vote.entity.VoteBookMarkRepository;
+import com.salmalteam.salmal.domain.vote.entity.VoteRepository;
+import com.salmalteam.salmal.domain.vote.entity.evaluation.VoteEvaluation;
+import com.salmalteam.salmal.domain.vote.entity.evaluation.VoteEvaluationRepository;
+import com.salmalteam.salmal.domain.vote.entity.evaluation.VoteEvaluationType;
+import com.salmalteam.salmal.domain.vote.dto.request.VotePageRequest;
+import com.salmalteam.salmal.domain.vote.dto.response.VotePageResponse;
+import com.salmalteam.salmal.domain.vote.dto.response.VoteResponse;
+import com.salmalteam.salmal.presentation.http.vote.SearchTypeConstant;
 import com.salmalteam.salmal.support.RepositoryTest;
 
 class VoteRepositoryTest extends RepositoryTest {

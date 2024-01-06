@@ -16,21 +16,22 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.salmalteam.salmal.application.ImageUploader;
-import com.salmalteam.salmal.application.member.MemberService;
-import com.salmalteam.salmal.domain.member.Member;
-import com.salmalteam.salmal.domain.vote.Vote;
-import com.salmalteam.salmal.domain.vote.VoteRepository;
-import com.salmalteam.salmal.domain.vote.bookmark.VoteBookMarkRepository;
-import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationRepository;
-import com.salmalteam.salmal.domain.vote.evaluation.VoteEvaluationType;
-import com.salmalteam.salmal.domain.vote.report.VoteReportRepository;
-import com.salmalteam.salmal.dto.request.vote.VoteCommentCreateRequest;
-import com.salmalteam.salmal.dto.request.vote.VoteCreateRequest;
-import com.salmalteam.salmal.exception.member.MemberException;
-import com.salmalteam.salmal.exception.member.MemberExceptionType;
-import com.salmalteam.salmal.exception.vote.VoteException;
-import com.salmalteam.salmal.exception.vote.bookmark.VoteBookmarkException;
+import com.salmalteam.salmal.infra.image.ImageUploader;
+import com.salmalteam.salmal.domain.member.application.MemberService;
+import com.salmalteam.salmal.domain.member.entity.Member;
+import com.salmalteam.salmal.domain.vote.application.VoteService;
+import com.salmalteam.salmal.domain.vote.entity.Vote;
+import com.salmalteam.salmal.domain.vote.entity.VoteRepository;
+import com.salmalteam.salmal.domain.vote.entity.VoteBookMarkRepository;
+import com.salmalteam.salmal.domain.vote.entity.evaluation.VoteEvaluationRepository;
+import com.salmalteam.salmal.domain.vote.entity.evaluation.VoteEvaluationType;
+import com.salmalteam.salmal.domain.vote.entity.report.VoteReportRepository;
+import com.salmalteam.salmal.domain.vote.dto.request.VoteCommentCreateRequest;
+import com.salmalteam.salmal.domain.vote.dto.request.VoteCreateRequest;
+import com.salmalteam.salmal.domain.member.exception.MemberException;
+import com.salmalteam.salmal.domain.member.exception.MemberExceptionType;
+import com.salmalteam.salmal.domain.vote.exception.VoteException;
+import com.salmalteam.salmal.domain.vote.exception.bookmark.VoteBookmarkException;
 import com.salmalteam.salmal.infra.auth.dto.MemberPayLoad;
 
 @ExtendWith(MockitoExtension.class)

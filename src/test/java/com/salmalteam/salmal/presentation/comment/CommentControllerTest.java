@@ -1,9 +1,9 @@
 package com.salmalteam.salmal.presentation.comment;
 
-import com.salmalteam.salmal.dto.request.comment.CommentReplyCreateRequest;
-import com.salmalteam.salmal.dto.request.vote.VoteCommentUpdateRequest;
-import com.salmalteam.salmal.dto.response.comment.ReplyPageResponse;
-import com.salmalteam.salmal.dto.response.comment.ReplyResponse;
+import com.salmalteam.salmal.domain.comment.dto.request.CommentReplyCreateRequest;
+import com.salmalteam.salmal.domain.vote.dto.request.VoteCommentUpdateRequest;
+import com.salmalteam.salmal.domain.comment.dto.response.ReplyPageResponse;
+import com.salmalteam.salmal.domain.comment.dto.response.ReplyResponse;
 import com.salmalteam.salmal.support.PresentationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
