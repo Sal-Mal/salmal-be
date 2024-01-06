@@ -1,6 +1,6 @@
 package com.salmalteam.salmal.domain.member.entity;
 
-import com.salmalteam.salmal.infra.jpa.BaseCreatedTimeEntity;
+import com.salmalteam.salmal.common.entity.BaseCreatedTimeEntity;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;

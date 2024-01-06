@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.salmalteam.salmal.infra.jpa.BaseEntity;
+import com.salmalteam.salmal.common.entity.BaseEntity;
 
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.infra.jpa;
+package com.salmalteam.salmal.common.entity;
 
 import lombok.Getter;
 import org.springframework.data.annotation.LastModifiedDate;
