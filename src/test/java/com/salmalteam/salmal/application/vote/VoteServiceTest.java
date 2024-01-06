@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.salmalteam.salmal.infra.image.ImageUploader;
+import com.salmalteam.salmal.domain.image.entity.ImageUploader;
 import com.salmalteam.salmal.domain.member.application.MemberService;
 import com.salmalteam.salmal.domain.member.entity.Member;
 import com.salmalteam.salmal.domain.vote.application.VoteService;
