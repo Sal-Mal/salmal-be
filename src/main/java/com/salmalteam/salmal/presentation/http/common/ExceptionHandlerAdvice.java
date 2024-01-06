@@ -1,6 +1,8 @@
-package com.salmalteam.salmal.common.exception;
+package com.salmalteam.salmal.presentation.http.common;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -8,8 +10,12 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.salmalteam.salmal.common.exception.CustomException;
+import com.salmalteam.salmal.common.exception.ExceptionResponse;
+import com.salmalteam.salmal.common.exception.ExceptionStatus;
+import com.salmalteam.salmal.common.exception.ExceptionType;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
