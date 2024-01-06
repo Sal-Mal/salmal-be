@@ -1,17 +1,17 @@
-package com.salmalteam.salmal.domain.image;
-
-import com.salmalteam.salmal.domain.image.exception.ImageException;
-import com.salmalteam.salmal.domain.image.exception.ImageExceptionType;
-
-import org.apache.tika.Tika;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
+package com.salmalteam.salmal.infra.image;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import org.apache.tika.Tika;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.salmalteam.salmal.infra.image.exception.ImageException;
+import com.salmalteam.salmal.infra.image.exception.ImageExceptionType;
 
 public class ImageFile {
     private final static Set<String> IMAGE_EXTENSIONS = new HashSet<>(Set.of("jpg","jpeg", "JPG", "JPEG", "png", "PNG", "heif", "HEIF"));

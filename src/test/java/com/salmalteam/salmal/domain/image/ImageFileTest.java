@@ -1,7 +1,8 @@
 package com.salmalteam.salmal.domain.image;
 
-import com.salmalteam.salmal.domain.image.exception.ImageException;
-import com.salmalteam.salmal.domain.image.exception.ImageExceptionType;
+import com.salmalteam.salmal.infra.image.ImageFile;
+import com.salmalteam.salmal.infra.image.exception.ImageException;
+import com.salmalteam.salmal.infra.image.exception.ImageExceptionType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
