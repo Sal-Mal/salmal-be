@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.salmalteam.salmal.image.entity.ImageUploader;
+import com.salmalteam.salmal.image.application.ImageUploader;
 import com.salmalteam.salmal.comment.application.CommentService;
 import com.salmalteam.salmal.member.application.MemberService;
 import com.salmalteam.salmal.comment.entity.Comment;
