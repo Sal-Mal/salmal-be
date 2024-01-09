@@ -4,7 +4,7 @@ import com.salmalteam.salmal.member.dto.request.MyPageUpdateRequest;
 import com.salmalteam.salmal.member.dto.response.MyPageResponse;
 import com.salmalteam.salmal.member.dto.response.block.MemberBlockedPageResponse;
 import com.salmalteam.salmal.member.dto.response.block.MemberBlockedResponse;
-import com.salmalteam.salmal.auth.infrastructure.dto.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.MemberPayLoad;
 import com.salmalteam.salmal.member.dto.response.vote.MemberBookmarkVotePageResponse;
 import com.salmalteam.salmal.member.dto.response.vote.MemberBookmarkVoteResponse;
 import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVotePageResponse;

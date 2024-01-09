@@ -1,20 +1,32 @@
 package com.salmalteam.salmal.presentation.http.comment;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.salmalteam.salmal.auth.annotation.Login;
+import com.salmalteam.salmal.auth.annotation.LoginMember;
+import com.salmalteam.salmal.auth.entity.MemberPayLoad;
 import com.salmalteam.salmal.comment.application.CommentService;
 import com.salmalteam.salmal.comment.dto.request.CommentReplyCreateRequest;
 import com.salmalteam.salmal.comment.dto.request.ReplyPageRequest;
-import com.salmalteam.salmal.vote.dto.request.VoteCommentUpdateRequest;
 import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
 import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
-import com.salmalteam.salmal.auth.infrastructure.dto.MemberPayLoad;
-import com.salmalteam.salmal.auth.infrastructure.annotation.Login;
-import com.salmalteam.salmal.auth.infrastructure.annotation.LoginMember;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import com.salmalteam.salmal.vote.dto.request.VoteCommentUpdateRequest;
 
-import javax.validation.Valid;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor

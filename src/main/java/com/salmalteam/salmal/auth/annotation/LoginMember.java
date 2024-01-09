@@ -1,11 +1,11 @@
-package com.salmalteam.salmal.auth.infrastructure.annotation;
+package com.salmalteam.salmal.auth.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.METHOD)
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Login {
+public @interface LoginMember {
 }

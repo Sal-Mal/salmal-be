@@ -29,7 +29,7 @@ import com.salmalteam.salmal.member.exception.MemberException;
 import com.salmalteam.salmal.member.exception.MemberExceptionType;
 import com.salmalteam.salmal.member.exception.block.MemberBlockedException;
 import com.salmalteam.salmal.member.exception.block.MemberBlockedExceptionType;
-import com.salmalteam.salmal.auth.infrastructure.dto.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.MemberPayLoad;
 
 @Service
 public class MemberService {

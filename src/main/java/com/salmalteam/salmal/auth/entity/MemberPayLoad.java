@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.auth.infrastructure.dto;
+package com.salmalteam.salmal.auth.entity;
 
 import lombok.Getter;
 

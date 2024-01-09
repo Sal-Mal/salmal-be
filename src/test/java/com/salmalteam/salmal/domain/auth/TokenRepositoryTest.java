@@ -9,8 +9,8 @@ import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import com.salmalteam.salmal.auth.entity.LogoutAccessToken;
 import com.salmalteam.salmal.auth.entity.RefreshToken;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
-import com.salmalteam.salmal.auth.infrastructure.LogoutAccessTokenRepository;
-import com.salmalteam.salmal.auth.infrastructure.RefreshTokenRepository;
+import com.salmalteam.salmal.auth.entity.LogoutAccessTokenRepository;
+import com.salmalteam.salmal.auth.entity.RefreshTokenRepository;
 import com.salmalteam.salmal.auth.infrastructure.TokenRepositoryImpl;
 
 @DataRedisTest

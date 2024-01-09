@@ -1,12 +1,15 @@
 package com.salmalteam.salmal.auth.infrastructure;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.salmalteam.salmal.auth.entity.LogoutAccessToken;
+import com.salmalteam.salmal.auth.entity.LogoutAccessTokenRepository;
 import com.salmalteam.salmal.auth.entity.RefreshToken;
+import com.salmalteam.salmal.auth.entity.RefreshTokenRepository;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
