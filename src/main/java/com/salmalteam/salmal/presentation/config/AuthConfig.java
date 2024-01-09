@@ -8,7 +8,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.salmalteam.salmal.presentation.http.AuthArgumentResolver;
+import com.salmalteam.salmal.presentation.http.auth.AuthArgumentResolver;
 
 import lombok.RequiredArgsConstructor;
 

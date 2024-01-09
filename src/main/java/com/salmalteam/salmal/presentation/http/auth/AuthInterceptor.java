@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.presentation.http;
+package com.salmalteam.salmal.presentation.http.auth;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

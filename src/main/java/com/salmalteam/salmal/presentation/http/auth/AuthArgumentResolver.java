@@ -1,4 +1,4 @@
-package com.salmalteam.salmal.presentation.http;
+package com.salmalteam.salmal.presentation.http.auth;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
