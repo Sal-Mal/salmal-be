@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.salmalteam.salmal.image.entity.ImageUploader;
+import com.salmalteam.salmal.image.application.ImageUploader;
 import com.salmalteam.salmal.image.entity.ImageFile;
 import com.salmalteam.salmal.member.entity.Member;
 import com.salmalteam.salmal.member.entity.MemberImage;

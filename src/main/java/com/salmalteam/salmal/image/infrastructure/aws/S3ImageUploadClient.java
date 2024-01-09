@@ -7,7 +7,7 @@ import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.salmalteam.salmal.image.entity.ImageFile;
-import com.salmalteam.salmal.image.entity.ImageUploader;
+import com.salmalteam.salmal.image.application.ImageUploader;
 import com.salmalteam.salmal.image.exception.ImageException;
 import com.salmalteam.salmal.image.exception.ImageExceptionType;
 
