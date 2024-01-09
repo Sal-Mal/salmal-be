@@ -2,8 +2,6 @@ package com.salmalteam.salmal.auth.application;
 
 import org.springframework.stereotype.Component;
 
-import com.salmalteam.salmal.auth.infrastructure.TokenProvider;
-
 import lombok.RequiredArgsConstructor;
 
 @Component

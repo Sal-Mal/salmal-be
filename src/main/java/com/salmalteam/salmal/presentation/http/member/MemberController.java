@@ -27,9 +27,9 @@ import com.salmalteam.salmal.member.dto.response.block.MemberBlockedPageResponse
 import com.salmalteam.salmal.member.dto.response.vote.MemberBookmarkVotePageResponse;
 import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVotePageResponse;
 import com.salmalteam.salmal.member.dto.response.vote.MemberVotePageResponse;
-import com.salmalteam.salmal.auth.infrastructure.dto.MemberPayLoad;
-import com.salmalteam.salmal.auth.infrastructure.annotation.Login;
-import com.salmalteam.salmal.auth.infrastructure.annotation.LoginMember;
+import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.auth.annotation.Login;
+import com.salmalteam.salmal.auth.annotation.LoginMember;
 
 import lombok.RequiredArgsConstructor;
 

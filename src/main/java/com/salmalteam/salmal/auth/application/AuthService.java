@@ -15,7 +15,6 @@ import com.salmalteam.salmal.auth.dto.response.LoginResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenResponse;
 import com.salmalteam.salmal.auth.exception.AuthException;
 import com.salmalteam.salmal.auth.exception.AuthExceptionType;
-import com.salmalteam.salmal.auth.infrastructure.TokenProvider;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

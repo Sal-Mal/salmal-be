@@ -9,8 +9,8 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.salmalteam.salmal.auth.application.TokenExtractor;
-import com.salmalteam.salmal.auth.infrastructure.TokenProvider;
-import com.salmalteam.salmal.auth.infrastructure.annotation.LoginMember;
+import com.salmalteam.salmal.auth.application.TokenProvider;
+import com.salmalteam.salmal.auth.annotation.LoginMember;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,16 +1,22 @@
-package com.salmalteam.salmal.auth.application;
-
-import com.salmalteam.salmal.auth.exception.AuthException;
-import com.salmalteam.salmal.auth.exception.AuthExceptionType;
-import com.salmalteam.salmal.auth.infrastructure.TokenProvider;
-import com.salmalteam.salmal.auth.infrastructure.dto.MemberPayLoad;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+package com.salmalteam.salmal.auth.infrastructure;
 
 import java.security.Key;
 import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.auth.application.TokenProvider;
+import com.salmalteam.salmal.auth.exception.AuthException;
+import com.salmalteam.salmal.auth.exception.AuthExceptionType;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.RequiredTypeException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtProvider implements TokenProvider {

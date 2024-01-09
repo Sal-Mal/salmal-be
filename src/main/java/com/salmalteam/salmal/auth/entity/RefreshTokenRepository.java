@@ -1,6 +1,4 @@
-package com.salmalteam.salmal.auth.infrastructure;
-
-import com.salmalteam.salmal.auth.entity.RefreshToken;
+package com.salmalteam.salmal.auth.entity;
 
 import org.springframework.data.repository.CrudRepository;
 

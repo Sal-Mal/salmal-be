@@ -27,7 +27,7 @@ import com.salmalteam.salmal.comment.exception.like.CommentLikeException;
 import com.salmalteam.salmal.comment.exception.report.CommentReportException;
 import com.salmalteam.salmal.member.exception.MemberException;
 import com.salmalteam.salmal.member.exception.MemberExceptionType;
-import com.salmalteam.salmal.auth.infrastructure.dto.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.MemberPayLoad;
 
 @ExtendWith(MockitoExtension.class)
 class CommentServiceTest {

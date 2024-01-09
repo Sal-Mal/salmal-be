@@ -32,7 +32,7 @@ import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
 import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
 import com.salmalteam.salmal.comment.exception.CommentException;
 import com.salmalteam.salmal.comment.exception.CommentExceptionType;
-import com.salmalteam.salmal.auth.infrastructure.dto.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.MemberPayLoad;
 
 import lombok.RequiredArgsConstructor;
 

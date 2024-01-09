@@ -1,6 +1,6 @@
-package com.salmalteam.salmal.auth.infrastructure;
+package com.salmalteam.salmal.auth.application;
 
-import com.salmalteam.salmal.auth.infrastructure.dto.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.MemberPayLoad;
 
 public interface TokenProvider {
     String createAccessToken(Long id);

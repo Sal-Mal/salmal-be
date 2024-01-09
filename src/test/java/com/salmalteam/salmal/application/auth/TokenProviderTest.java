@@ -1,7 +1,7 @@
 package com.salmalteam.salmal.application.auth;
 
-import com.salmalteam.salmal.auth.infrastructure.TokenProvider;
-import com.salmalteam.salmal.auth.application.JwtProvider;
+import com.salmalteam.salmal.auth.application.TokenProvider;
+import com.salmalteam.salmal.auth.infrastructure.JwtProvider;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

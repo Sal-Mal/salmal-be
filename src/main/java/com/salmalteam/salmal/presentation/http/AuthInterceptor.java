@@ -12,8 +12,8 @@ import com.salmalteam.salmal.auth.application.TokenExtractor;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
 import com.salmalteam.salmal.auth.exception.AuthException;
 import com.salmalteam.salmal.auth.exception.AuthExceptionType;
-import com.salmalteam.salmal.auth.infrastructure.TokenProvider;
-import com.salmalteam.salmal.auth.infrastructure.annotation.Login;
+import com.salmalteam.salmal.auth.application.TokenProvider;
+import com.salmalteam.salmal.auth.annotation.Login;
 
 import lombok.RequiredArgsConstructor;
 
