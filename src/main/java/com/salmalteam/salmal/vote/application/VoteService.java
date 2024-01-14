@@ -1,46 +1,42 @@
 package com.salmalteam.salmal.vote.application;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.salmalteam.salmal.image.application.ImageUploader;
+import com.salmalteam.salmal.auth.entity.MemberPayLoad;
 import com.salmalteam.salmal.comment.application.CommentService;
-import com.salmalteam.salmal.member.application.MemberService;
-import com.salmalteam.salmal.comment.entity.Comment;
+import com.salmalteam.salmal.comment.dto.request.CommentPageRequest;
+import com.salmalteam.salmal.comment.dto.response.CommentPageResponse;
+import com.salmalteam.salmal.comment.dto.response.CommentResponse;
 import com.salmalteam.salmal.comment.entity.CommentRepository;
-import com.salmalteam.salmal.comment.entity.CommentType;
+import com.salmalteam.salmal.image.application.ImageUploader;
 import com.salmalteam.salmal.image.entity.ImageFile;
+import com.salmalteam.salmal.member.application.MemberService;
 import com.salmalteam.salmal.member.entity.Member;
+import com.salmalteam.salmal.presentation.http.vote.SearchTypeConstant;
+import com.salmalteam.salmal.vote.dto.request.VoteCommentCreateRequest;
+import com.salmalteam.salmal.vote.dto.request.VoteCreateRequest;
+import com.salmalteam.salmal.vote.dto.request.VotePageRequest;
+import com.salmalteam.salmal.vote.dto.response.VotePageResponse;
+import com.salmalteam.salmal.vote.dto.response.VoteResponse;
 import com.salmalteam.salmal.vote.entity.Vote;
-import com.salmalteam.salmal.vote.entity.VoteRepository;
 import com.salmalteam.salmal.vote.entity.VoteBookMark;
 import com.salmalteam.salmal.vote.entity.VoteBookMarkRepository;
+import com.salmalteam.salmal.vote.entity.VoteRepository;
 import com.salmalteam.salmal.vote.entity.evaluation.VoteEvaluation;
 import com.salmalteam.salmal.vote.entity.evaluation.VoteEvaluationRepository;
 import com.salmalteam.salmal.vote.entity.evaluation.VoteEvaluationType;
 import com.salmalteam.salmal.vote.entity.report.VoteReport;
 import com.salmalteam.salmal.vote.entity.report.VoteReportRepository;
-import com.salmalteam.salmal.comment.dto.request.CommentPageRequest;
-import com.salmalteam.salmal.vote.dto.request.VoteCommentCreateRequest;
-import com.salmalteam.salmal.vote.dto.request.VoteCreateRequest;
-import com.salmalteam.salmal.vote.dto.request.VotePageRequest;
-import com.salmalteam.salmal.comment.dto.response.CommentPageResponse;
-import com.salmalteam.salmal.comment.dto.response.CommentResponse;
-import com.salmalteam.salmal.vote.dto.response.VotePageResponse;
-import com.salmalteam.salmal.vote.dto.response.VoteResponse;
 import com.salmalteam.salmal.vote.exception.VoteException;
 import com.salmalteam.salmal.vote.exception.VoteExceptionType;
 import com.salmalteam.salmal.vote.exception.bookmark.VoteBookmarkException;
 import com.salmalteam.salmal.vote.exception.bookmark.VoteBookmarkExceptionType;
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
-import com.salmalteam.salmal.presentation.http.vote.SearchTypeConstant;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -102,47 +98,6 @@ public class VoteService {
         if(writerId == null || writerId != requesterId){
             throw new VoteException(VoteExceptionType.FORBIDDEN_DELETE);
         }
-    }
-
-    /**
-     * 회원 삭제 이벤트 : 투표의 평가 개수 변경
-     */
-    //    @Transactional
-    //    public void decreaseEvaluationCountByMemberDelete(final Long memberId){
-    //
-    //        // 회원이 평가한 평가 목록 조회
-    //        final List<VoteEvaluation> voteEvaluations = voteEvaluationRepository.findAllByEvaluator_Id(memberId);
-    //
-    //        // 회원 평가 모두 취소 후 Count 변경
-    //        for(VoteEvaluation voteEvaluation : voteEvaluations){
-    //            final Vote vote = voteEvaluation.getVote();
-    //            final VoteEvaluationType voteEvaluationType = voteEvaluation.getVoteEvaluationType();
-    //            if(voteEvaluationType.equals(VoteEvaluationType.LIKE)){
-    //                voteRepository.updateVoteEvaluationsStatisticsForEvaluationLikeDelete(vote.getId());
-    //            }else {
-    //                voteRepository.updateVoteEvaluationsStatisticsForEvaluationDisLikeDelete(vote.getId());
-    //            }
-    //        }
-    //
-    //    }
-
-    /**
-     * 회원 삭제 이벤트 : 투표의 댓글 개수 변경
-     */
-    @Transactional
-    public void decreaseCommentCountByMemberDelete(final Long memberId){
-        // 회원이 작성한 댓글 목록 모두 조회
-        final List<Comment> comments = commentRepository.findALlByCommenter_idAndCommentType(memberId, CommentType.COMMENT);
-
-        // 투표 기준으로 매핑
-        final Map<Vote, List<Comment>> voteCommentsMap = comments.stream()
-            .collect(Collectors.groupingBy(Comment::getVote));
-
-        // 투표 댓글 개수 변경
-        voteCommentsMap.forEach((vote, commentList) -> {
-            vote.decreaseCommentCount(commentList.size());
-        });
-
     }
 
     @Transactional
