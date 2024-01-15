@@ -31,7 +31,7 @@ public class VotePageResponse {
 			.collect(toList());
 	}
 
-	public Predicate<VoteResponse> filterBlockedMemberPredicate(List<Long> ids) {
+	private Predicate<VoteResponse> filterBlockedMemberPredicate(List<Long> ids) {
 		return voteResponse -> ids.stream()
 			.noneMatch(id -> id.equals(voteResponse.getMemberId()));
 	}
