@@ -216,7 +216,10 @@ public class VoteService {
     @Transactional(readOnly = true)
     public CommentPageResponse searchComments(final Long voteId, final MemberPayLoad memberPayLoad, final CommentPageRequest commentPageRequest){
         validateVoteExist(voteId);
-        return commentService.searchList(voteId, memberPayLoad, commentPageRequest);
+        List<Long> ids = memberService.findBlockedMembers(memberPayLoad.getId());
+        CommentPageResponse commentPageResponse = commentService.searchList(voteId, memberPayLoad, commentPageRequest);
+        commentPageResponse.filteringBlockedMembers(ids);
+        return commentPageResponse;
     }
 
     @Transactional(readOnly = true)
