@@ -247,8 +247,10 @@ public class VoteService {
 
     @Transactional(readOnly = true)
     public VotePageResponse searchList(final MemberPayLoad memberPayLoad, final VotePageRequest votePageRequest, final SearchTypeConstant searchTypeConstant){
-
         final Long memberId = memberPayLoad.getId();
-        return voteRepository.searchList(memberId, votePageRequest, searchTypeConstant);
+        List<Long> blockedMembers = memberService.findBlockedMembers(memberId);
+        VotePageResponse votePageResponse = voteRepository.searchList(memberId, votePageRequest, searchTypeConstant);
+        votePageResponse.filteringBlockedMembers(blockedMembers);
+        return votePageResponse;
     }
 }
