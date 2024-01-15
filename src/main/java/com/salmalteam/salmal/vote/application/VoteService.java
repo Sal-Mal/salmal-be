@@ -1,7 +1,10 @@
 package com.salmalteam.salmal.vote.application;
 
+import static java.util.stream.Collectors.*;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -44,216 +47,236 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class VoteService {
 
-    private final MemberService memberService;
-    private final VoteRepository voteRepository;
-    private final VoteEvaluationRepository voteEvaluationRepository;
-    private final VoteBookMarkRepository voteBookMarkRepository;
-    private final VoteReportRepository voteReportRepository;
-    private final CommentService commentService;
-    private final CommentRepository commentRepository;
-    private final ImageUploader imageUploader;
-    private final String voteImagePath;
-    public VoteService(final MemberService memberService,
-        final VoteRepository voteRepository,
-        final VoteEvaluationRepository voteEvaluationRepository,
-        final VoteBookMarkRepository voteBookMarkRepository,
-        final VoteReportRepository voteReportRepository,
-        final CommentService commentService,
-        final CommentRepository commentRepository,
-        final ImageUploader imageUploader,
-        @Value("${image.path.vote}") String voteImagePath){
-        this.memberService = memberService;
-        this.voteRepository = voteRepository;
-        this.voteEvaluationRepository = voteEvaluationRepository;
-        this.voteBookMarkRepository = voteBookMarkRepository;
-        this.voteReportRepository = voteReportRepository;
-        this.commentService = commentService;
-        this.commentRepository = commentRepository;
-        this.imageUploader = imageUploader;
-        this.voteImagePath = voteImagePath;
-    }
+	private final MemberService memberService;
+	private final VoteRepository voteRepository;
+	private final VoteEvaluationRepository voteEvaluationRepository;
+	private final VoteBookMarkRepository voteBookMarkRepository;
+	private final VoteReportRepository voteReportRepository;
+	private final CommentService commentService;
+	private final CommentRepository commentRepository;
+	private final ImageUploader imageUploader;
+	private final String voteImagePath;
 
-    @Transactional
-    public void register(final MemberPayLoad memberPayLoad, final VoteCreateRequest voteCreateRequest){
-        final MultipartFile multipartFile = voteCreateRequest.getImageFile();
-        final String imageUrl = imageUploader.uploadImage(ImageFile.of(multipartFile, voteImagePath));
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
-        voteRepository.save(Vote.of(imageUrl, member));
-    }
+	public VoteService(final MemberService memberService,
+		final VoteRepository voteRepository,
+		final VoteEvaluationRepository voteEvaluationRepository,
+		final VoteBookMarkRepository voteBookMarkRepository,
+		final VoteReportRepository voteReportRepository,
+		final CommentService commentService,
+		final CommentRepository commentRepository,
+		final ImageUploader imageUploader,
+		@Value("${image.path.vote}") String voteImagePath) {
+		this.memberService = memberService;
+		this.voteRepository = voteRepository;
+		this.voteEvaluationRepository = voteEvaluationRepository;
+		this.voteBookMarkRepository = voteBookMarkRepository;
+		this.voteReportRepository = voteReportRepository;
+		this.commentService = commentService;
+		this.commentRepository = commentRepository;
+		this.imageUploader = imageUploader;
+		this.voteImagePath = voteImagePath;
+	}
 
-    /**
-     * TODO: 비동기로 S3 에 올라가있는 투표 이미지 삭제하기
-     */
-    @Transactional
-    public void delete(final MemberPayLoad memberPayLoad, final Long voteId){
-        final Vote vote = getVoteById(voteId);
+	@Transactional
+	public void register(final MemberPayLoad memberPayLoad, final VoteCreateRequest voteCreateRequest) {
+		final MultipartFile multipartFile = voteCreateRequest.getImageFile();
+		final String imageUrl = imageUploader.uploadImage(ImageFile.of(multipartFile, voteImagePath));
+		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		voteRepository.save(Vote.of(imageUrl, member));
+	}
 
-        final Long writerId = vote.getMember().getId();
-        final Long requesterId = memberPayLoad.getId();
-        validateDeleteAuthority(writerId, requesterId);
+	/**
+	 * TODO: 비동기로 S3 에 올라가있는 투표 이미지 삭제하기
+	 */
+	@Transactional
+	public void delete(final MemberPayLoad memberPayLoad, final Long voteId) {
+		final Vote vote = getVoteById(voteId);
 
-        voteRepository.delete(vote);
-    }
-    private void validateDeleteAuthority(final Long writerId, final Long requesterId){
-        if(writerId == null || writerId != requesterId){
-            throw new VoteException(VoteExceptionType.FORBIDDEN_DELETE);
-        }
-    }
+		final Long writerId = vote.getMember().getId();
+		final Long requesterId = memberPayLoad.getId();
+		validateDeleteAuthority(writerId, requesterId);
 
-    @Transactional
-    public void evaluate(final MemberPayLoad memberPayLoad, final Long voteId, final VoteEvaluationType voteEvaluationType){
+		voteRepository.delete(vote);
+	}
 
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
-        final Vote vote = getVoteById(voteId);
+	private void validateDeleteAuthority(final Long writerId, final Long requesterId) {
+		if (writerId == null || writerId != requesterId) {
+			throw new VoteException(VoteExceptionType.FORBIDDEN_DELETE);
+		}
+	}
 
-        validateEvaluationVoteDuplicated(member, vote, voteEvaluationType);
-        deleteExistsEvaluation(member, vote);
+	@Transactional
+	public void evaluate(final MemberPayLoad memberPayLoad, final Long voteId,
+		final VoteEvaluationType voteEvaluationType) {
 
-        switch (voteEvaluationType){
-            case LIKE:
-                voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(voteId);
-                break;
-            case DISLIKE:
-                voteRepository.updateVoteEvaluationStatisticsForEvaluationDisLikeInsert(voteId);
-                break;
-        }
+		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Vote vote = getVoteById(voteId);
 
-        voteEvaluationRepository.save(VoteEvaluation.of(vote, member, voteEvaluationType));
-    }
+		validateEvaluationVoteDuplicated(member, vote, voteEvaluationType);
+		deleteExistsEvaluation(member, vote);
 
-    private void validateEvaluationVoteDuplicated(final Member member,final Vote vote, final VoteEvaluationType voteEvaluationType) {
-        if(voteEvaluationRepository.existsByEvaluatorAndVoteAndVoteEvaluationType(member, vote, voteEvaluationType)){
-            throw new VoteException(VoteExceptionType.DUPLICATED_VOTE_EVALUATION);
-        }
-    }
+		switch (voteEvaluationType) {
+			case LIKE:
+				voteRepository.updateVoteEvaluationStatisticsForEvaluationLikeInsert(voteId);
+				break;
+			case DISLIKE:
+				voteRepository.updateVoteEvaluationStatisticsForEvaluationDisLikeInsert(voteId);
+				break;
+		}
 
-    @Transactional
-    public void cancelEvaluation(final MemberPayLoad memberPayLoad, final Long voteId){
+		voteEvaluationRepository.save(VoteEvaluation.of(vote, member, voteEvaluationType));
+	}
 
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
-        final Vote vote = getVoteById(voteId);
+	private void validateEvaluationVoteDuplicated(final Member member, final Vote vote,
+		final VoteEvaluationType voteEvaluationType) {
+		if (voteEvaluationRepository.existsByEvaluatorAndVoteAndVoteEvaluationType(member, vote, voteEvaluationType)) {
+			throw new VoteException(VoteExceptionType.DUPLICATED_VOTE_EVALUATION);
+		}
+	}
 
-        deleteExistsEvaluation(member, vote);
-        voteEvaluationRepository.deleteByEvaluatorAndVote(member, vote);
-    }
+	@Transactional
+	public void cancelEvaluation(final MemberPayLoad memberPayLoad, final Long voteId) {
 
-    private void deleteExistsEvaluation(final Member member, final Vote vote){
+		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Vote vote = getVoteById(voteId);
 
-        final Optional<VoteEvaluation> evaluationOptional = voteEvaluationRepository.findByEvaluatorAndVote(member, vote);
-        if(evaluationOptional.isPresent()){
-            final VoteEvaluation voteEvaluation = evaluationOptional.get();
-            final VoteEvaluationType voteEvaluationType = voteEvaluation.getVoteEvaluationType();
-            final Long voteId = vote.getId();
-            switch(voteEvaluationType){
-                case LIKE:
-                    voteRepository.updateVoteEvaluationsStatisticsForEvaluationLikeDelete(voteId);
-                    break;
-                case DISLIKE:
-                    voteRepository.updateVoteEvaluationsStatisticsForEvaluationDisLikeDelete(voteId);
-                    break;
-            }
-            voteEvaluationRepository.deleteByEvaluatorAndVote(member, vote);
-        }
-    }
+		deleteExistsEvaluation(member, vote);
+		voteEvaluationRepository.deleteByEvaluatorAndVote(member, vote);
+	}
 
-    @Transactional
-    public void bookmark(final MemberPayLoad memberPayLoad, final Long voteId){
+	private void deleteExistsEvaluation(final Member member, final Vote vote) {
 
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
-        final Vote vote = getVoteById(voteId);
+		final Optional<VoteEvaluation> evaluationOptional = voteEvaluationRepository.findByEvaluatorAndVote(member,
+			vote);
+		if (evaluationOptional.isPresent()) {
+			final VoteEvaluation voteEvaluation = evaluationOptional.get();
+			final VoteEvaluationType voteEvaluationType = voteEvaluation.getVoteEvaluationType();
+			final Long voteId = vote.getId();
+			switch (voteEvaluationType) {
+				case LIKE:
+					voteRepository.updateVoteEvaluationsStatisticsForEvaluationLikeDelete(voteId);
+					break;
+				case DISLIKE:
+					voteRepository.updateVoteEvaluationsStatisticsForEvaluationDisLikeDelete(voteId);
+					break;
+			}
+			voteEvaluationRepository.deleteByEvaluatorAndVote(member, vote);
+		}
+	}
 
-        validateBookmarkExist(vote, member);
-        final VoteBookMark voteBookMark = voteBookMarkRepository.findByVoteAndBookmaker(vote, member)
-            .orElse(VoteBookMark.of(member, vote));
+	@Transactional
+	public void bookmark(final MemberPayLoad memberPayLoad, final Long voteId) {
 
-        voteBookMarkRepository.save(voteBookMark);
-    }
+		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Vote vote = getVoteById(voteId);
 
-    private void validateBookmarkExist(final Vote vote, final Member member){
-        if(voteBookMarkRepository.existsByVoteAndBookmaker(vote, member)){
-            throw new VoteBookmarkException(VoteBookmarkExceptionType.DUPLICATED_BOOKMARK);
-        }
-    }
+		validateBookmarkExist(vote, member);
+		final VoteBookMark voteBookMark = voteBookMarkRepository.findByVoteAndBookmaker(vote, member)
+			.orElse(VoteBookMark.of(member, vote));
 
-    @Transactional
-    public void cancelBookmark(final MemberPayLoad memberPayLoad, final Long voteId){
+		voteBookMarkRepository.save(voteBookMark);
+	}
 
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
-        final Vote vote = getVoteById(voteId);
+	private void validateBookmarkExist(final Vote vote, final Member member) {
+		if (voteBookMarkRepository.existsByVoteAndBookmaker(vote, member)) {
+			throw new VoteBookmarkException(VoteBookmarkExceptionType.DUPLICATED_BOOKMARK);
+		}
+	}
 
-        voteBookMarkRepository.deleteByVoteAndBookmaker(vote, member);
-    }
+	@Transactional
+	public void cancelBookmark(final MemberPayLoad memberPayLoad, final Long voteId) {
 
-    @Transactional
-    public void report(final MemberPayLoad memberPayLoad, final Long voteId){
+		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Vote vote = getVoteById(voteId);
 
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
-        final Vote vote = getVoteById(voteId);
+		voteBookMarkRepository.deleteByVoteAndBookmaker(vote, member);
+	}
 
-        validateVoteReportDuplicated(vote, member);
-        final VoteReport voteReport = VoteReport.of(vote, member);
+	@Transactional
+	public void report(final MemberPayLoad memberPayLoad, final Long voteId) {
 
-        voteReportRepository.save(voteReport);
-    }
+		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Vote vote = getVoteById(voteId);
 
-    private void validateVoteReportDuplicated(final Vote vote, final Member member){
-        if(voteReportRepository.existsByVoteAndReporter(vote, member)){
-            throw new VoteException(VoteExceptionType.DUPLICATED_VOTE_REPORT);
-        }
-    }
+		validateVoteReportDuplicated(vote, member);
+		final VoteReport voteReport = VoteReport.of(vote, member);
 
-    @Transactional
-    public void comment(final MemberPayLoad memberPayLoad, final Long voteId, final VoteCommentCreateRequest voteCommentCreateRequest){
+		voteReportRepository.save(voteReport);
+	}
 
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
-        final Vote vote = getVoteById(voteId);
-        final String content = voteCommentCreateRequest.getContent();
+	private void validateVoteReportDuplicated(final Vote vote, final Member member) {
+		if (voteReportRepository.existsByVoteAndReporter(vote, member)) {
+			throw new VoteException(VoteExceptionType.DUPLICATED_VOTE_REPORT);
+		}
+	}
 
-        voteRepository.increaseCommentCount(voteId);
-        commentService.save(content, vote, member);
-    }
+	@Transactional
+	public void comment(final MemberPayLoad memberPayLoad, final Long voteId,
+		final VoteCommentCreateRequest voteCommentCreateRequest) {
 
-    @Transactional(readOnly = true)
-    public CommentPageResponse searchComments(final Long voteId, final MemberPayLoad memberPayLoad, final CommentPageRequest commentPageRequest){
-        validateVoteExist(voteId);
-        List<Long> ids = memberService.findBlockedMembers(memberPayLoad.getId());
-        CommentPageResponse commentPageResponse = commentService.searchList(voteId, memberPayLoad, commentPageRequest);
-        commentPageResponse.filteringBlockedMembers(ids);
-        return commentPageResponse;
-    }
+		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Vote vote = getVoteById(voteId);
+		final String content = voteCommentCreateRequest.getContent();
 
-    @Transactional(readOnly = true)
-    public List<CommentResponse> searchAllComments(final Long voteId, final MemberPayLoad memberPayLoad){
-        validateVoteExist(voteId);
-        return commentService.searchAllList(voteId, memberPayLoad);
-    }
+		voteRepository.increaseCommentCount(voteId);
+		commentService.save(content, vote, member);
+	}
 
-    @Transactional(readOnly = true)
-    public VoteResponse search(final MemberPayLoad memberPayLoad, final Long voteId){
+	@Transactional(readOnly = true)
+	public CommentPageResponse searchComments(final Long voteId, final MemberPayLoad memberPayLoad,
+		final CommentPageRequest commentPageRequest) {
+		validateVoteExist(voteId);
+		List<Long> ids = memberService.findBlockedMembers(memberPayLoad.getId());
+		CommentPageResponse commentPageResponse = commentService.searchList(voteId, memberPayLoad, commentPageRequest);
+		commentPageResponse.filteringBlockedMembers(ids);
+		return commentPageResponse;
+	}
 
-        final Long memberId = memberPayLoad.getId();
-        validateVoteExist(voteId);
+	@Transactional(readOnly = true)
+	public List<CommentResponse> searchAllComments(final Long voteId, final MemberPayLoad memberPayLoad) {
+		validateVoteExist(voteId);
+		List<CommentResponse> commentResponses = commentService.searchAllList(voteId, memberPayLoad);
+		return filteringBlockedMembers(commentResponses, memberService.findBlockedMembers(memberPayLoad.getId()));
+	}
 
-        return voteRepository.search(voteId, memberId);
-    }
+	public List<CommentResponse> filteringBlockedMembers(List<CommentResponse> commentResponses, List<Long> ids) {
+		return commentResponses.stream()
+			.filter(filterBlockedMemberPredicate(ids))
+			.collect(toList());
+	}
 
-    private void validateVoteExist(final Long voteId){
-        if(!voteRepository.existsById(voteId)){
-            throw new VoteException(VoteExceptionType.NOT_FOUND);
-        }
-    }
+	private Predicate<CommentResponse> filterBlockedMemberPredicate(List<Long> ids) {
+		return voteResponse -> ids.stream()
+			.noneMatch(id -> id.equals(voteResponse.getMemberId()));
+	}
 
-    private Vote getVoteById(final Long voteId){
-        return voteRepository.findById(voteId)
-            .orElseThrow(() -> new VoteException(VoteExceptionType.NOT_FOUND));
-    }
+	@Transactional(readOnly = true)
+	public VoteResponse search(final MemberPayLoad memberPayLoad, final Long voteId) {
 
-    @Transactional(readOnly = true)
-    public VotePageResponse searchList(final MemberPayLoad memberPayLoad, final VotePageRequest votePageRequest, final SearchTypeConstant searchTypeConstant){
-        final Long memberId = memberPayLoad.getId();
-        List<Long> blockedMembers = memberService.findBlockedMembers(memberId);
-        VotePageResponse votePageResponse = voteRepository.searchList(memberId, votePageRequest, searchTypeConstant);
-        votePageResponse.filteringBlockedMembers(blockedMembers);
-        return votePageResponse;
-    }
+		final Long memberId = memberPayLoad.getId();
+		validateVoteExist(voteId);
+
+		return voteRepository.search(voteId, memberId);
+	}
+
+	private void validateVoteExist(final Long voteId) {
+		if (!voteRepository.existsById(voteId)) {
+			throw new VoteException(VoteExceptionType.NOT_FOUND);
+		}
+	}
+
+	private Vote getVoteById(final Long voteId) {
+		return voteRepository.findById(voteId)
+			.orElseThrow(() -> new VoteException(VoteExceptionType.NOT_FOUND));
+	}
+
+	@Transactional(readOnly = true)
+	public VotePageResponse searchList(final MemberPayLoad memberPayLoad, final VotePageRequest votePageRequest,
+		final SearchTypeConstant searchTypeConstant) {
+		final Long memberId = memberPayLoad.getId();
+		List<Long> blockedMembers = memberService.findBlockedMembers(memberId);
+		VotePageResponse votePageResponse = voteRepository.searchList(memberId, votePageRequest, searchTypeConstant);
+		votePageResponse.filteringBlockedMembers(blockedMembers);
+		return votePageResponse;
+	}
 }
