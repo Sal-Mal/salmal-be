@@ -1,19 +1,15 @@
 package com.salmalteam.salmal.member.application;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
+import com.salmalteam.salmal.auth.entity.MemberPayLoad;
 import com.salmalteam.salmal.image.application.ImageUploader;
 import com.salmalteam.salmal.image.entity.ImageFile;
-import com.salmalteam.salmal.member.entity.Member;
-import com.salmalteam.salmal.member.entity.MemberImage;
-import com.salmalteam.salmal.member.entity.MemberRepository;
-import com.salmalteam.salmal.member.entity.NickName;
-import com.salmalteam.salmal.member.entity.MemberBlocked;
-import com.salmalteam.salmal.member.entity.MemberBlockedRepository;
-import com.salmalteam.salmal.vote.entity.VoteRepository;
-import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
 import com.salmalteam.salmal.member.dto.request.MemberImageUpdateRequest;
 import com.salmalteam.salmal.member.dto.request.MyPageUpdateRequest;
 import com.salmalteam.salmal.member.dto.request.block.MemberBlockedPageRequest;
@@ -25,11 +21,17 @@ import com.salmalteam.salmal.member.dto.response.block.MemberBlockedPageResponse
 import com.salmalteam.salmal.member.dto.response.vote.MemberBookmarkVotePageResponse;
 import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVotePageResponse;
 import com.salmalteam.salmal.member.dto.response.vote.MemberVotePageResponse;
+import com.salmalteam.salmal.member.entity.Member;
+import com.salmalteam.salmal.member.entity.MemberBlocked;
+import com.salmalteam.salmal.member.entity.MemberBlockedRepository;
+import com.salmalteam.salmal.member.entity.MemberImage;
+import com.salmalteam.salmal.member.entity.MemberRepository;
+import com.salmalteam.salmal.member.entity.NickName;
 import com.salmalteam.salmal.member.exception.MemberException;
 import com.salmalteam.salmal.member.exception.MemberExceptionType;
 import com.salmalteam.salmal.member.exception.block.MemberBlockedException;
 import com.salmalteam.salmal.member.exception.block.MemberBlockedExceptionType;
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.vote.entity.VoteRepository;
 
 @Service
 public class MemberService {
@@ -251,4 +253,8 @@ public class MemberService {
 		}
 	}
 
+	@Transactional(readOnly = true)
+	public List<Long> findBlockedMembers(Long memberId) {
+		return memberBlockedRepository.findTargetMemberIdByMemberId(memberId);
+	}
 }
