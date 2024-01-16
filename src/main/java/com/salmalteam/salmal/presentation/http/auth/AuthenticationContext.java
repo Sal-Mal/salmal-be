@@ -17,8 +17,8 @@ public class AuthenticationContext {
 	}
 
 	public void setAuthContext(Long id, Role role) {
-		Assert.notNull(id, "id must be not null!");
-		Assert.notNull(role, "role must be not null!");
+		Assert.notNull(id, "The Id must not be null!");
+		Assert.notNull(role, "The Role must not be null!");
 		this.id = id;
 		this.role = role;
 	}
