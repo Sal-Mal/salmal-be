@@ -9,7 +9,8 @@ public enum AuthExceptionType implements ExceptionType {
     NOT_VALID_REFRESH_TOKEN(Status.UNAUTHORIZED, 4003, "재발급 토큰이 유효하지 않습니다.", "유효하지 않은 재발급 토큰 요청"),
     NOT_VALID_ACCESS_TOKEN(Status.UNAUTHORIZED, 4004, "접근 토큰이 유효하지 않습니다.", "유효하지 않은 접근 토큰 요청"),
     LOGGED_OUT_ACCESS_TOKEN(Status.UNAUTHORIZED, 4005, "이미 로그아웃 처리된 접근 토큰입니다. 접근 토큰을 다시 발급해주세요", "로그아웃된 접근 토큰 요청"),
-    UNAUTHORIZED_NO_ACCESS_TOKEN(Status.UNAUTHORIZED, 4006, "해당 요청은 인증이 필요합니다. (인증을 위한 접근 토큰이 존재하지 않습니다)", "미인증 요청")
+    UNAUTHORIZED_NO_ACCESS_TOKEN(Status.UNAUTHORIZED, 4006, "해당 요청은 인증이 필요합니다. (인증을 위한 접근 토큰이 존재하지 않습니다)", "미인증 요청"),
+	PERMISSION_DOSE_NOT_EXIST(Status.FORBIDDEN, 4007, "옳바른 접근 권한이 존재하지 않습니다.", "권한에 맞지 않는 요청"),
     ;
 
     private final Status status;
