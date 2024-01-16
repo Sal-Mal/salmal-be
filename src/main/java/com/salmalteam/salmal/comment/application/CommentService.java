@@ -1,7 +1,10 @@
 package com.salmalteam.salmal.comment.application;
 
+import static java.util.stream.Collectors.*;
+
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -87,19 +90,32 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public ReplyPageResponse searchReplies(final MemberPayLoad memberPayLoad, final Long commentId, final ReplyPageRequest replyPageRequest){
-
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
         validateCommentExist(commentId);
-
-        return commentRepository.searchReplies(commentId, member.getId(), replyPageRequest);
+        final Member member = memberService.findMemberById(memberPayLoad.getId());
+        List<Long> ids = memberService.findBlockedMembers(member.getId());
+        ReplyPageResponse replyPageResponse = commentRepository.searchReplies(commentId, member.getId(), replyPageRequest);
+        replyPageResponse.filteringBlockedMembers(ids);
+        return replyPageResponse;
     }
 
     @Transactional(readOnly = true)
     public List<ReplyResponse> searchAllReplies(final MemberPayLoad memberPayLoad, final Long commentId){
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
         validateCommentExist(commentId);
+        final Member member = memberService.findMemberById(memberPayLoad.getId());
+        List<Long> ids = memberService.findBlockedMembers(member.getId());
+        List<ReplyResponse> replyResponses = commentRepository.searchAllReplies(commentId, member.getId());
+        return filteringBlockedMembers(replyResponses,ids);
+    }
 
-        return commentRepository.searchAllReplies(commentId, member.getId());
+    public List<ReplyResponse> filteringBlockedMembers(List<ReplyResponse> commentResponses, List<Long> ids) {
+        return commentResponses.stream()
+            .filter(filterBlockedMemberPredicate(ids))
+            .collect(toList());
+    }
+
+    private Predicate<ReplyResponse> filterBlockedMemberPredicate(List<Long> ids) {
+        return voteResponse -> ids.stream()
+            .noneMatch(id -> id.equals(voteResponse.getMemberId()));
     }
 
     private void validateCommentExist(final Long commentId){
