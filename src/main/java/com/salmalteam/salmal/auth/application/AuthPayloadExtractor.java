@@ -33,7 +33,7 @@ public class AuthPayloadExtractor {
 			String role = parseBody(token, ROLE_KEY, String.class);
 			return MemberPayLoad.of(id, Role.of(role));
 		} catch (Exception e) {
-			throw new RuntimeException();
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
