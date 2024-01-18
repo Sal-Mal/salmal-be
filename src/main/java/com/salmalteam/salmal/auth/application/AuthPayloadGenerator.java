@@ -26,7 +26,7 @@ public class AuthPayloadGenerator {
 			.build();
 	}
 
-	public MemberPayLoad generatorByToken(String token) {
+	public MemberPayLoad generateByToken(String token) {
 		validateNotLoggedOutAccessToken(token);
 		try {
 			Long id = parseBody(token, ID_KEY, Long.class);

@@ -29,7 +29,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 		String token = tokenExtractor.extractByHeader(request.getHeader(AUTHORIZATION))
 			.orElseThrow(() -> new AuthException(UNAUTHORIZED_NO_ACCESS_TOKEN));
 
-		MemberPayLoad memberPayLoad = authPayloadGenerator.generatorByToken(token);
+		MemberPayLoad memberPayLoad = authPayloadGenerator.generateByToken(token);
 		authenticationContext.setAuthContext(memberPayLoad.getId(), memberPayLoad.getRole());
 		return true;
 	}
