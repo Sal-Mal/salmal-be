@@ -12,21 +12,21 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
-public class AuthPayloadExtractor {
+public class AuthPayloadGenerator {
 
 	private static final String ID_KEY = "id";
 	private static final String ROLE_KEY = "role";
 	private final TokenRepository tokenRepository;
 	private final JwtParser jwtParser;
 
-	public AuthPayloadExtractor(TokenRepository tokenRepository, String secretKey) {
+	public AuthPayloadGenerator(TokenRepository tokenRepository, String secretKey) {
 		this.tokenRepository = tokenRepository;
 		jwtParser = Jwts.parserBuilder()
 			.setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
 			.build();
 	}
 
-	public MemberPayLoad extractByToken(String token) {
+	public MemberPayLoad generatorByToken(String token) {
 		validateNotLoggedOutAccessToken(token);
 		try {
 			Long id = parseBody(token, ID_KEY, Long.class);

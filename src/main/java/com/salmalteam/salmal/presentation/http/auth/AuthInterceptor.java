@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.salmalteam.salmal.auth.application.AuthPayloadExtractor;
+import com.salmalteam.salmal.auth.application.AuthPayloadGenerator;
 import com.salmalteam.salmal.auth.application.TokenExtractor;
 import com.salmalteam.salmal.auth.entity.MemberPayLoad;
 import com.salmalteam.salmal.auth.exception.AuthException;
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthInterceptor implements HandlerInterceptor {
 
 	private final TokenExtractor tokenExtractor;
-	private final AuthPayloadExtractor authPayloadExtractor;
+	private final AuthPayloadGenerator authPayloadGenerator;
 	private final AuthenticationContext authenticationContext;
 
 	@Override
@@ -29,7 +29,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 		String token = tokenExtractor.extractByHeader(request.getHeader(AUTHORIZATION))
 			.orElseThrow(() -> new AuthException(UNAUTHORIZED_NO_ACCESS_TOKEN));
 
-		MemberPayLoad memberPayLoad = authPayloadExtractor.extractByToken(token);
+		MemberPayLoad memberPayLoad = authPayloadGenerator.generatorByToken(token);
 		authenticationContext.setAuthContext(memberPayLoad.getId(), memberPayLoad.getRole());
 		return true;
 	}
