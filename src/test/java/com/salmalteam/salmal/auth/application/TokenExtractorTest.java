@@ -2,8 +2,6 @@ package com.salmalteam.salmal.auth.application;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
-import java.security.Key;
-import java.util.Date;
 import java.util.Optional;
 
 import javax.crypto.SecretKey;
@@ -13,11 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
 import com.salmalteam.salmal.auth.exception.AuthException;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 class TokenExtractorTest {
@@ -67,70 +62,4 @@ class TokenExtractorTest {
 			.isInstanceOf(AuthException.class)
 			.hasMessage("유효하지 않은 접근 토큰 요청 -> [ type = UNAUTHORIZED ] [ code = 4004 ] ");
 	}
-
-	static class FixedTokenProvider implements TokenProvider {
-
-		private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
-		private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-		private final String ID = "id";
-		private final long accessTokenExpiry;
-		private final long refreshTokenExpiry;
-		private final Key secretKey;
-
-		public FixedTokenProvider(long accessTokenExpiry, long refreshTokenExpiry, Key secretKey) {
-			this.accessTokenExpiry = accessTokenExpiry;
-			this.refreshTokenExpiry = refreshTokenExpiry;
-			this.secretKey = secretKey;
-		}
-
-		@Override
-		public String createAccessToken(Long id) {
-			final Date nowDate = new Date();
-			final Date endDate = new Date(nowDate.getTime() + accessTokenExpiry);
-
-			return Jwts.builder()
-				.setSubject(ACCESS_TOKEN_SUBJECT)
-				.setIssuedAt(nowDate)
-				.setExpiration(endDate)
-				.claim(ID, id)
-				.signWith(secretKey, SignatureAlgorithm.HS256)
-				.compact();
-		}
-
-		@Override
-		public String createRefreshToken(Long id) {
-			return null;
-		}
-
-		@Override
-		public Long getTokenExpiry(String token) {
-			return null;
-		}
-
-		@Override
-		public boolean isValidRefreshToken(String refreshToken) {
-			return false;
-		}
-
-		@Override
-		public boolean isValidAccessToken(String accessToken) {
-			return false;
-		}
-
-		@Override
-		public Long getMemberIdFromToken(String token) {
-			return null;
-		}
-
-		@Override
-		public String getTokenType() {
-			return null;
-		}
-
-		@Override
-		public MemberPayLoad getPayLoad(String accessToken) {
-			return null;
-		}
-	}
-
 }
