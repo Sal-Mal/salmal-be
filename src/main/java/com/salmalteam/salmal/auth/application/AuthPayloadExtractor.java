@@ -44,7 +44,7 @@ public class AuthPayloadExtractor {
 	}
 
 	private <T> T parseBody(String token, String id, Class<T> type) {
-		return jwtParser.parseClaimsJwt(token)
+		return jwtParser.parseClaimsJws(token)
 			.getBody()
 			.get(id, type);
 	}
