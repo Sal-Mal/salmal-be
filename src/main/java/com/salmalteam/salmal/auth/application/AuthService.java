@@ -3,7 +3,6 @@ package com.salmalteam.salmal.auth.application;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,17 +30,14 @@ public class AuthService {
 	private final TokenRepository tokenRepository;
 	private final MemberService memberService;
 	private final TokenValidator tokenValidator;
-	private final long refreshTokenExpiry;
 
-	public AuthService(TokenProvider jwtProvider, TokenProvider refreshTokenProvider,
-		TokenRepository tokenRepository, MemberService memberService, TokenValidator tokenValidator,
-		@Value("${jwt.refresh-token-expiry}") long refreshTokenExpiry) {
+	public AuthService(TokenProvider jwtProvider, TokenProvider refreshTokenProvider, TokenRepository tokenRepository,
+		MemberService memberService, TokenValidator tokenValidator) {
 		this.jwtProvider = jwtProvider;
 		this.refreshTokenProvider = refreshTokenProvider;
 		this.tokenRepository = tokenRepository;
 		this.memberService = memberService;
 		this.tokenValidator = tokenValidator;
-		this.refreshTokenExpiry = refreshTokenExpiry;
 	}
 
 	@Transactional
