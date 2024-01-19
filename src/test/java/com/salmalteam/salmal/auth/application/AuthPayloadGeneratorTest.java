@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.crypto.SecretKey;
 
@@ -45,7 +43,7 @@ class AuthPayloadGeneratorTest {
 	void generate() {
 		//given
 		given(tokenRepository.existsLogoutAccessTokenById(anyString())).willReturn(false);
-		String refreshToken = fixedTokenProvider.provide(createPayloadWithIdClaim(100L));
+		String refreshToken = fixedTokenProvider.provideWithIdClaim(100L);
 
 		//when
 		MemberPayLoad memberPayLoad = authPayloadGenerator.generateByToken(refreshToken);
@@ -62,7 +60,7 @@ class AuthPayloadGeneratorTest {
 	void generate_logout_token() {
 		//given
 		given(tokenRepository.existsLogoutAccessTokenById(anyString())).willReturn(true);
-		String refreshToken = fixedTokenProvider.provide(createPayloadWithIdClaim(100L));
+		String refreshToken = fixedTokenProvider.provideWithIdClaim(100L);
 
 		//expect
 		assertThatThrownBy(() -> authPayloadGenerator.generateByToken(refreshToken))
@@ -72,43 +70,36 @@ class AuthPayloadGeneratorTest {
 		then(tokenRepository).should(times(1)).existsRefreshTokenById(anyString());
 	}
 
-
 	//TODO
 	@Test
 	@DisplayName("만료된 토큰이면 예외가 발생한다.")
 	void generate_expired_token() throws Exception {
-	    //given
+		//given
 
-	    //when
+		//when
 
-	    //then
+		//then
 	}
 
 	@Test
 	@DisplayName("JWT 토큰 타입이 아니면 예외가 발생한다.")
 	void generate_invalid_jwt_type() throws Exception {
-	    //given
+		//given
 
-	    //when
+		//when
 
-	    //then
+		//then
 
 	}
 
 	@Test
 	@DisplayName("페이로드에 id 와 role 이 존재하지 않으면 예외가 발생한다.")
 	void generate_payload_does_not_exist() throws Exception {
-	    //given
+		//given
 
-	    //when
+		//when
 
-	    //then
+		//then
 
-	}
-
-	private Map<String, Object> createPayloadWithIdClaim(Long id) {
-		HashMap<String, Object> payload = new HashMap<>();
-		payload.put("id", id);
-		return payload;
 	}
 }

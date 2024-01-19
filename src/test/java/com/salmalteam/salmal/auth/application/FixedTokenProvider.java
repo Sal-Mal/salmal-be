@@ -2,6 +2,7 @@ package com.salmalteam.salmal.auth.application;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import io.jsonwebtoken.Jwts;
@@ -31,5 +32,11 @@ public class FixedTokenProvider implements TokenProvider {
 			.setClaims(payload)
 			.signWith(secretKey, SignatureAlgorithm.HS256)
 			.compact();
+	}
+
+	public String provideWithIdClaim(Long id) {
+		HashMap<String, Object> payload = new HashMap<>();
+		payload.put("id", id);
+		return provide(payload);
 	}
 }

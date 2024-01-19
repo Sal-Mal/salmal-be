@@ -17,13 +17,13 @@ import io.jsonwebtoken.security.Keys;
 
 class TokenExtractorTest {
 
-	TokenProvider tokenProvider;
+	FixedTokenProvider tokenProvider;
 	TokenExtractor tokenExtractor;
 
 	@BeforeEach
 	void setUp() {
 		SecretKey secretKey = Keys.hmacShaKeyFor("testSecretKeytestSecretKeytestSecretKeytestSecretKey".getBytes());
-		tokenProvider = new FixedTokenProvider(100000L, 100000L, secretKey);
+		tokenProvider = new FixedTokenProvider(100000L, secretKey);
 		tokenExtractor = new TokenExtractor();
 	}
 
@@ -31,7 +31,7 @@ class TokenExtractorTest {
 	@DisplayName("인증헤더를 받아 토큰을 추출해야 한다.")
 	void extract() {
 		//given
-		String accessToken = tokenProvider.createAccessToken(10L);
+		String accessToken = tokenProvider.provideWithIdClaim(10L);
 
 		//when
 		String token = tokenExtractor.extractByHeader("Bearer " + accessToken)
@@ -55,7 +55,7 @@ class TokenExtractorTest {
 	@DisplayName("인증헤더에 존재하는 인증 타입이 Bearer 가 아니면 예외가 발생한다.")
 	void extract_invalid_auth_type() throws Exception {
 		//given
-		String accessToken = tokenProvider.createAccessToken(10L);
+		String accessToken = tokenProvider.provideWithIdClaim(10L);
 
 		//expect
 		assertThatThrownBy(() -> tokenExtractor.extractByHeader("Basic " + accessToken))
