@@ -61,7 +61,7 @@ public class AuthService {
 
 		String accessToken = jwtProvider.provide(payload);
 		String refreshToken = refreshTokenProvider.provide(payload);
-		tokenRepository.saveRefreshToken(RefreshToken.of(refreshToken, refreshTokenExpiry));
+		tokenRepository.saveRefreshToken(RefreshToken.of(refreshToken));
 		return LoginResponse.of(accessToken, refreshToken);
 	}
 
