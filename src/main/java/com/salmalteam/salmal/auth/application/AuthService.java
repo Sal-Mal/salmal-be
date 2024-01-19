@@ -56,16 +56,16 @@ public class AuthService {
 		return generateTokenById(memberId);
 	}
 
-	//TODO 리프레시 토큰 만료시간 덜어내기
+	//TODO 리프래시 토큰 저장타입 개선
 	private LoginResponse generateTokenById(final Long memberId) {
 		Map<String, Object> payload = createPayloadWithIdClaim(memberId);
-
 		String accessToken = jwtProvider.provide(payload);
 		String refreshToken = refreshTokenProvider.provide(payload);
 		tokenRepository.saveRefreshToken(RefreshToken.of(refreshToken));
 		return LoginResponse.of(accessToken, refreshToken);
 	}
 
+	//TODO logout 로직 개선
 	@Transactional
 	public void logout(final String accessToken, final LogoutRequest logoutRequest) {
 		final String refreshToken = logoutRequest.getRefreshToken();
@@ -76,7 +76,6 @@ public class AuthService {
 	//TODO 리프래시 토큰발급 개선
 	@Transactional
 	public TokenResponse reissueAccessToken(final String refreshToken) {
-		validateRefreshToken(refreshToken);
 		validateRefreshTokenExists(refreshToken);
 		final String accessToken = jwtProvider.provide(createPayloadWithIdClaim(1L));
 		return TokenResponse.from(accessToken);
@@ -86,12 +85,6 @@ public class AuthService {
 		Map<String, Object> payload = new HashMap<>();
 		payload.put("id", memberId);
 		return payload;
-	}
-
-	private void validateRefreshToken(final String refreshToken) {
-		if (!tokenValidator.isValidRefreshToken(refreshToken)) {
-			throw new AuthException(AuthExceptionType.NOT_VALID_REFRESH_TOKEN);
-		}
 	}
 
 	private void validateRefreshTokenExists(final String refreshToken) {
