@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.crypto.SecretKey;
 
@@ -35,7 +37,7 @@ class AuthPayloadGeneratorTest {
 		String secret = "testSecKeytestSecKeytestSecKey123";
 		SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 		authPayloadGenerator = new AuthPayloadGenerator(tokenRepository, "testSecKeytestSecKeytestSecKey123");
-		fixedTokenProvider = new FixedTokenProvider(100000000L, 1000000L, secretKey);
+		fixedTokenProvider = new FixedTokenProvider(100000000L, secretKey);
 	}
 
 	@Test
@@ -43,7 +45,7 @@ class AuthPayloadGeneratorTest {
 	void generate() {
 		//given
 		given(tokenRepository.existsLogoutAccessTokenById(anyString())).willReturn(false);
-		String refreshToken = fixedTokenProvider.createAccessToken(100L);
+		String refreshToken = fixedTokenProvider.provide(createPayloadWithIdClaim(100L));
 
 		//when
 		MemberPayLoad memberPayLoad = authPayloadGenerator.generateByToken(refreshToken);
@@ -60,7 +62,7 @@ class AuthPayloadGeneratorTest {
 	void generate_logout_token() {
 		//given
 		given(tokenRepository.existsLogoutAccessTokenById(anyString())).willReturn(true);
-		String refreshToken = fixedTokenProvider.createAccessToken(100L);
+		String refreshToken = fixedTokenProvider.provide(createPayloadWithIdClaim(100L));
 
 		//expect
 		assertThatThrownBy(() -> authPayloadGenerator.generateByToken(refreshToken))
@@ -102,5 +104,11 @@ class AuthPayloadGeneratorTest {
 
 	    //then
 
+	}
+
+	private Map<String, Object> createPayloadWithIdClaim(Long id) {
+		HashMap<String, Object> payload = new HashMap<>();
+		payload.put("id", id);
+		return payload;
 	}
 }
