@@ -13,6 +13,7 @@ import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
 import com.salmalteam.salmal.auth.dto.response.LoginResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenAvailableResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenResponse;
+import com.salmalteam.salmal.auth.entity.LogoutAccessToken;
 import com.salmalteam.salmal.auth.entity.RefreshToken;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
 import com.salmalteam.salmal.auth.exception.AuthException;
@@ -68,7 +69,7 @@ public class AuthService {
 	@Transactional
 	public void logout(final String accessToken, final LogoutRequest logoutRequest) {
 		final String refreshToken = logoutRequest.getRefreshToken();
-		//tokenRepository.saveLogoutAccessToken(LogoutAccessToken.of(accessToken, accessTokenExpiry));
+		tokenRepository.saveLogoutAccessToken(LogoutAccessToken.of(accessToken));
 		tokenRepository.deleteRefreshTokenById(refreshToken);
 	}
 
