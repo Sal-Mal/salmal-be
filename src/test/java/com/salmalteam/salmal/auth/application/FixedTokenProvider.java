@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.salmalteam.salmal.auth.entity.Role;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -37,6 +39,7 @@ public class FixedTokenProvider implements TokenProvider {
 	public String provideWithIdClaim(Long id) {
 		HashMap<String, Object> payload = new HashMap<>();
 		payload.put("id", id);
+		payload.put("role", Role.MEMBER);
 		return provide(payload);
 	}
 }
