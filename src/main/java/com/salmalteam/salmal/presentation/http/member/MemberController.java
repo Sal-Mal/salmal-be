@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.salmalteam.salmal.auth.annotation.LoginMember;
+import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.member.application.MemberService;
 import com.salmalteam.salmal.member.dto.request.MemberImageUpdateRequest;
 import com.salmalteam.salmal.member.dto.request.MyPageUpdateRequest;
@@ -27,9 +29,6 @@ import com.salmalteam.salmal.member.dto.response.block.MemberBlockedPageResponse
 import com.salmalteam.salmal.member.dto.response.vote.MemberBookmarkVotePageResponse;
 import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVotePageResponse;
 import com.salmalteam.salmal.member.dto.response.vote.MemberVotePageResponse;
-import com.salmalteam.salmal.auth.entity.AuthPayload;
-import com.salmalteam.salmal.auth.annotation.Login;
-import com.salmalteam.salmal.auth.annotation.LoginMember;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,14 +41,12 @@ public class MemberController {
 
     @GetMapping("/{member-id}")
     @ResponseStatus(HttpStatus.OK)
-    @Login
     public MyPageResponse findMyPage(@PathVariable("member-id") final Long memberId) {
         return memberService.findMyPage(memberId);
     }
 
     @PutMapping("/{member-id}")
     @ResponseStatus(HttpStatus.OK)
-    @Login
     public void updateMyPage(@LoginMember AuthPayload authPayload,
                              @PathVariable("member-id") final Long memberId,
                              @RequestBody @Valid MyPageUpdateRequest myPageUpdateRequest) {
@@ -58,7 +55,6 @@ public class MemberController {
 
     @DeleteMapping("/{member-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Login
     public void deleteMember(@LoginMember AuthPayload authPayload,
                              @PathVariable("member-id") final Long memberId){
         memberService.delete(authPayload, memberId);
@@ -66,7 +62,6 @@ public class MemberController {
 
     @PostMapping("/{member-id}/images")
     @ResponseStatus(HttpStatus.OK)
-    @Login
     public void updateImage(@LoginMember AuthPayload authPayload,
                             @PathVariable("member-id") final Long memberId,
                             @ModelAttribute @Valid MemberImageUpdateRequest memberImageUpdateRequest){
@@ -75,7 +70,6 @@ public class MemberController {
 
     @DeleteMapping("/{member-id}/images")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Login
     public void deleteImage(@LoginMember AuthPayload authPayload,
                             @PathVariable("member-id") final Long memberId){
         memberService.deleteImage(authPayload, memberId);
@@ -83,7 +77,6 @@ public class MemberController {
 
     @PostMapping("/{member-id}/blocks")
     @ResponseStatus(HttpStatus.CREATED)
-    @Login
     public void blockMember(@LoginMember final AuthPayload authPayload,
                             @PathVariable("member-id") final Long memberId) {
         memberService.block(authPayload, memberId);
@@ -91,7 +84,6 @@ public class MemberController {
 
     @DeleteMapping("/{member-id}/blocks")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Login
     public void cancelBlocking(@LoginMember final AuthPayload authPayload,
                                @PathVariable("member-id") final Long memberId) {
         memberService.cancelBlocking(authPayload, memberId);
@@ -99,7 +91,6 @@ public class MemberController {
 
     @GetMapping("/{member-id}/blocks")
     @ResponseStatus(HttpStatus.OK)
-    @Login
     public MemberBlockedPageResponse searchBlockMembers(@LoginMember final AuthPayload authPayload,
                                                         @PathVariable("member-id") final Long memberId,
                                                         @RequestParam(value = "cursor-id", required = false) final Long cursorId,
@@ -110,7 +101,6 @@ public class MemberController {
 
     @GetMapping("/{member-id}/votes")
     @ResponseStatus(HttpStatus.OK)
-    @Login
     public MemberVotePageResponse searchMemberVotes(@LoginMember final AuthPayload authPayload,
                                                     @PathVariable("member-id") final Long memberId,
                                                     @RequestParam(value = "cursor-id", required = false) final Long cursorId,
@@ -121,7 +111,6 @@ public class MemberController {
 
     @GetMapping("/{member-id}/evaluations")
     @ResponseStatus(HttpStatus.OK)
-    @Login
     public MemberEvaluationVotePageResponse searchMemberEvaluationVotes(@LoginMember final AuthPayload authPayload,
                                                                        @PathVariable("member-id") final Long memberId,
                                                                        @RequestParam(value = "cursor-id", required = false) final Long cursorId,
@@ -132,7 +121,6 @@ public class MemberController {
 
     @GetMapping("/{member-id}/bookmarks")
     @ResponseStatus(HttpStatus.OK)
-    @Login
     public MemberBookmarkVotePageResponse searchMemberBookmarkVotes(@LoginMember final AuthPayload authPayload,
                                                                     @PathVariable("member-id") final Long memberId,
                                                                     @RequestParam(value = "cursor-id", required = false) final Long cursorId,

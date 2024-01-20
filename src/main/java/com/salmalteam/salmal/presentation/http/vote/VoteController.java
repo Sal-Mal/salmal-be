@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.salmalteam.salmal.auth.annotation.Login;
 import com.salmalteam.salmal.auth.annotation.LoginMember;
 import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.comment.dto.request.CommentPageRequest;
@@ -41,7 +40,6 @@ public class VoteController {
     private final VoteService voteService;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Login
     public void registerVote(@LoginMember final AuthPayload authPayload,
                              @ModelAttribute @Valid final VoteCreateRequest voteCreateRequest){
         voteService.register(authPayload, voteCreateRequest);
@@ -49,7 +47,6 @@ public class VoteController {
 
     @PostMapping("/{vote-id}/evaluations")
     @ResponseStatus(HttpStatus.CREATED)
-    @Login
     public void evaluateVote(@LoginMember final AuthPayload authPayload,
                              @PathVariable(name = "vote-id") final Long voteId,
                              @RequestBody @Valid final VoteEvaluateRequest voteEvaluateRequest){
@@ -59,7 +56,6 @@ public class VoteController {
 
     @DeleteMapping("/{vote-id}/evaluations")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Login
     public void cancelEvaluation(@LoginMember final AuthPayload authPayload,
                                  @PathVariable(name = "vote-id") final Long voteId){
         voteService.cancelEvaluation(authPayload, voteId);
@@ -67,7 +63,6 @@ public class VoteController {
 
     @PostMapping("/{vote-id}/bookmarks")
     @ResponseStatus(HttpStatus.CREATED)
-    @Login
     public void bookmarkVote(@LoginMember final AuthPayload authPayload,
                              @PathVariable(name = "vote-id") final Long voteId){
         voteService.bookmark(authPayload, voteId);
@@ -75,7 +70,6 @@ public class VoteController {
 
     @DeleteMapping("/{vote-id}/bookmarks")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Login
     public void cancelBookmark(@LoginMember final AuthPayload authPayload,
                                @PathVariable(name = "vote-id") final Long voteId){
         voteService.cancelBookmark(authPayload, voteId);
@@ -83,7 +77,6 @@ public class VoteController {
 
     @PostMapping("/{vote-id}/reports")
     @ResponseStatus(HttpStatus.CREATED)
-    @Login
     public void reportVote(@LoginMember final AuthPayload authPayload,
                            @PathVariable(name = "vote-id") final Long voteId){
         voteService.report(authPayload, voteId);
@@ -91,7 +84,6 @@ public class VoteController {
 
     @PostMapping("/{vote-id}/comments")
     @ResponseStatus(HttpStatus.CREATED)
-    @Login
     public void commentVote(@LoginMember final AuthPayload authPayload,
                             @PathVariable(name = "vote-id") final Long voteId,
                             @RequestBody @Valid final VoteCommentCreateRequest voteCommentCreateRequest){
@@ -100,7 +92,6 @@ public class VoteController {
 
     @GetMapping("/{vote-id}/comments")
     @ResponseStatus(HttpStatus.OK)
-    @Login
     public CommentPageResponse searchComments(@LoginMember final AuthPayload authPayload,
                                               @PathVariable(name = "vote-id") final Long voteId,
                                               @RequestParam(value = "cursor-id", required = false) final Long cursorId,
@@ -114,7 +105,6 @@ public class VoteController {
      */
     @GetMapping("/{vote-id}/comments/all")
     @ResponseStatus(HttpStatus.OK)
-    @Login
     public List<CommentResponse> searchAllComments(@LoginMember final AuthPayload authPayload,
                                                    @PathVariable(name = "vote-id") final Long voteId){
         return voteService.searchAllComments(voteId, authPayload);
@@ -122,7 +112,6 @@ public class VoteController {
 
     @GetMapping("/{vote-id}")
     @ResponseStatus(HttpStatus.OK)
-    @Login
     public VoteResponse searchVote(@LoginMember final AuthPayload authPayload,
                                    @PathVariable(name = "vote-id") final Long voteId){
         return voteService.search(authPayload, voteId);
@@ -130,7 +119,6 @@ public class VoteController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @Login
     public VotePageResponse searchVotes(@LoginMember final AuthPayload authPayload,
                                         @ModelAttribute final VotePageRequest votePageRequest){
 
@@ -140,7 +128,6 @@ public class VoteController {
 
     @DeleteMapping("/{vote-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Login
     public void deleteVote(@LoginMember final AuthPayload authPayload,
                            @PathVariable(name = "vote-id") final Long voteId){
         voteService.delete(authPayload, voteId);

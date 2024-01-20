@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.salmalteam.salmal.auth.annotation.Login;
 import com.salmalteam.salmal.auth.annotation.LoginMember;
 import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.comment.application.CommentService;
@@ -43,65 +42,58 @@ public class CommentController {
 
 	@PutMapping("/{comment-id}")
 	@ResponseStatus(HttpStatus.OK)
-	@Login
 	public void updateComment(@LoginMember final AuthPayload authPayload,
 		@PathVariable(name = "comment-id") final Long commentId,
 		@RequestBody @Valid final VoteCommentUpdateRequest voteCommentUpdateRequest) {
 		commentService.updateComment(authPayload, commentId, voteCommentUpdateRequest);
 	}
 
-	@DeleteMapping("/{comment-id}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@Login
-	public void deleteComment(@LoginMember final AuthPayload authPayload,
-		@PathVariable(name = "comment-id") final Long commentId) {
-		commentService.deleteComment(authPayload, commentId);
-	}
+    @DeleteMapping("/{comment-id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteComment(@LoginMember final AuthPayload authPayload,
+                              @PathVariable(name = "comment-id") final Long commentId){
+        commentService.deleteComment(authPayload, commentId);
+    }
 
-	@PostMapping("/{comment-id}/likes")
-	@ResponseStatus(HttpStatus.OK)
-	@Login
-	public void likeComment(@LoginMember final AuthPayload authPayload,
-		@PathVariable(name = "comment-id") final Long commentId) {
-		commentService.likeComment(authPayload, commentId);
-	}
+    @PostMapping("/{comment-id}/likes")
+    @ResponseStatus(HttpStatus.OK)
+    public void likeComment(@LoginMember final AuthPayload authPayload,
+                            @PathVariable(name = "comment-id") final Long commentId){
+        commentService.likeComment(authPayload, commentId);
+    }
 
-	@DeleteMapping("/{comment-id}/likes")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@Login
-	public void cancelLikeComment(@LoginMember final AuthPayload authPayload,
-		@PathVariable(name = "comment-id") final Long commentId) {
-		commentService.unLikeComment(authPayload, commentId);
-	}
+    @DeleteMapping("/{comment-id}/likes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void cancelLikeComment(@LoginMember final AuthPayload authPayload,
+                                  @PathVariable(name = "comment-id") final Long commentId){
+        commentService.unLikeComment(authPayload, commentId);
+    }
 
-	@PostMapping("/{comment-id}/reports")
-	@ResponseStatus(HttpStatus.CREATED)
-	@Login
-	public void reportComment(@LoginMember final AuthPayload authPayload,
-		@PathVariable(name = "comment-id") final Long commentId) {
-		commentService.report(authPayload, commentId);
-	}
+    @PostMapping("/{comment-id}/reports")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void reportComment(@LoginMember final AuthPayload authPayload,
+                              @PathVariable(name = "comment-id") final Long commentId){
+        commentService.report(authPayload, commentId);
+    }
 
-	@PostMapping("/{comment-id}/replies")
-	@ResponseStatus(HttpStatus.CREATED)
-	@Login
-	public void replyComment(@LoginMember final AuthPayload authPayload,
-		@PathVariable(name = "comment-id") final Long commentId,
-		@RequestBody @Valid CommentReplyCreateRequest request) {
-		ReplayCommentDto replayComment = commentService.replyComment(authPayload, commentId, request);
-		if (replayComment.isSameCommenter()) {
-			return;
-		}
-		MessageSpec messageSpec = notificationService.save(
-			replayComment.getCommentOwnerId(), replayComment.getCommentId(),
-			replayComment.getNickName(), replayComment.getContent(), replayComment.getVoteId(),
-			replayComment.getReplyerImageUrl(), replayComment.getVoteImageUrl());
-		notificationPublisher.pub(messageSpec);
-	}
+    @PostMapping("/{comment-id}/replies")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void replyComment(@LoginMember final AuthPayload authPayload,
+        @PathVariable(name = "comment-id") final Long commentId,
+        @RequestBody @Valid CommentReplyCreateRequest request) {
+        ReplayCommentDto replayComment = commentService.replyComment(authPayload, commentId, request);
+        if (replayComment.isSameCommenter()) {
+            return;
+        }
+        MessageSpec messageSpec = notificationService.save(
+            replayComment.getCommentOwnerId(), replayComment.getCommentId(),
+            replayComment.getNickName(), replayComment.getContent(), replayComment.getVoteId(),
+            replayComment.getReplyerImageUrl(), replayComment.getVoteImageUrl());
+        notificationPublisher.pub(messageSpec);
+    }
 
     @GetMapping("/{comment-id}/replies")
     @ResponseStatus(HttpStatus.OK)
-    @Login
     public ReplyPageResponse searchReplies(@LoginMember final AuthPayload authPayload,
                                            @PathVariable(name = "comment-id") final Long commentId,
                                            @RequestParam(value = "cursor-id", required = false) final Long cursorId,
@@ -112,7 +104,6 @@ public class CommentController {
 
     @GetMapping("/{comment-id}/replies/all")
     @ResponseStatus(HttpStatus.OK)
-    @Login
     public List<ReplyResponse> searchAllReplies(@LoginMember final AuthPayload authPayload,
                                                 @PathVariable(name = "comment-id") final Long commentId){
 
