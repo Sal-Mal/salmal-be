@@ -75,7 +75,7 @@ class AuthControllerTest extends PresentationTest {
 		final Boolean marketingInformationConsent = true;
 		final SignUpRequest signUpRequest = new SignUpRequest(providerId, nickName, marketingInformationConsent);
 		final LoginResponse loginResponse = LoginResponse.of(accessToken, refreshToken);
-		given(authService.signUp(eq(provider), any())).willReturn(loginResponse);
+		given(authService.signUp(any(), any())).willReturn(loginResponse);
 
 		// when
 		final ResultActions resultActions = mockMvc.perform(
