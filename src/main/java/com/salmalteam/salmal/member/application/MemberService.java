@@ -73,9 +73,9 @@ public class MemberService {
 	 * TODO: S3 스토리지에 올라가있는 회원 데이터(이미지) 삭제
 	 */
 	@Transactional
-	public void delete(final AuthPayload authPayload, final Long memberId) {
-		final Member member = findMemberById(authPayload.getId());
-		validateDeleteAuthority(memberId, authPayload.getId());
+	public void delete(final Long memberId, final Long targetId) {
+		final Member member = findMemberById(memberId);
+		validateDeleteAuthority(memberId, targetId);
 		member.remove();
 	}
 
@@ -92,10 +92,10 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void block(final AuthPayload authPayload, final Long memberId) {
+	public void block(final Long memberId, final Long targetId) {
 
-		final Member blocker = findMemberById(authPayload.getId());
-		final Member target = findMemberById(memberId);
+		final Member blocker = findMemberById(memberId);
+		final Member target = findMemberById(targetId);
 		final MemberBlocked blockedMember = MemberBlocked.of(blocker, target);
 
 		validateMemberBlockSelf(blocker, target);
@@ -134,11 +134,11 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updateMyPage(final AuthPayload authPayload, final Long memberId,
+	public void updateMyPage(final Long memberId, final Long targetId,
 		final MyPageUpdateRequest myPageUpdateRequest) {
 
-		final Member member = findMemberById(authPayload.getId());
-		final Member targetMember = findMemberById(memberId);
+		final Member member = findMemberById(memberId);
+		final Member targetMember = findMemberById(targetId);
 
 		validateUpdateAuthority(member, targetMember);
 		validateNickNameChangeValidity(myPageUpdateRequest.getNickName(), member.getNickName().getValue());
@@ -154,14 +154,12 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updateImage(final AuthPayload authPayload, final Long memberId,
+	public void updateImage(final Long memberId, final Long targetId,
 		final MemberImageUpdateRequest memberImageUpdateRequest) {
 
-		final Member member = findMemberById(authPayload.getId());
-		final Member targetMember = findMemberById(memberId);
-
+		final Member member = findMemberById(memberId);
+		final Member targetMember = findMemberById(targetId);
 		validateUpdateAuthority(member, targetMember);
-
 		final ImageFile imageFile = ImageFile.of(memberImageUpdateRequest.getImageFile(), memberImagePath);
 		final String imageUrl = imageUploader.uploadImage(imageFile);
 
@@ -173,9 +171,9 @@ public class MemberService {
 	 * TODO: S3 비동기 삭제 로직 구현
 	 */
 	@Transactional
-	public void deleteImage(final AuthPayload authPayload, final Long memberId) {
-		final Member member = findMemberById(authPayload.getId());
-		final Member targetMember = findMemberById(memberId);
+	public void deleteImage(final Long memberId, final Long targetId) {
+		final Member member = findMemberById(memberId);
+		final Member targetMember = findMemberById(targetId);
 
 		validateUpdateAuthority(member, targetMember);
 
@@ -196,15 +194,15 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = true)
-	public MemberBlockedPageResponse searchBlockedMembers(final AuthPayload authPayload, final Long memberId,
+	public MemberBlockedPageResponse searchBlockedMembers(final Long memberId, final Long targetId,
 		final MemberBlockedPageRequest memberBlockedPageRequest) {
 
-		final Member member = findMemberById(authPayload.getId());
-		final Member targetMember = findMemberById(memberId);
+		final Member member = findMemberById(memberId);
+		final Member targetMember = findMemberById(targetId);
 
 		validateSearchAuthority(member, targetMember);
 
-		return memberBlockedRepository.searchList(memberId, memberBlockedPageRequest);
+		return memberBlockedRepository.searchList(targetId, memberBlockedPageRequest);
 	}
 
 	private void validateSearchAuthority(final Member requester, final Member target) {
@@ -214,12 +212,10 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = true)
-	public MemberVotePageResponse searchMemberVotes(final AuthPayload authPayload, final Long memberId,
+	public MemberVotePageResponse searchMemberVotes(final Long memberId, final Long targetId,
 		final MemberVotePageRequest memberVotePageRequest) {
-
-		validateExistsById(memberId);
-
-		return voteRepository.searchMemberVoteList(memberId, memberVotePageRequest);
+		validateExistsById(targetId);
+		return voteRepository.searchMemberVoteList(targetId, memberVotePageRequest);
 	}
 
 	@Transactional(readOnly = true)
@@ -237,21 +233,21 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = true)
-	public MemberEvaluationVotePageResponse searchMemberEvaluatedVotes(final AuthPayload authPayload,
-		final Long memberId, final MemberEvaluationVotePageRequest memberEvaluationVotePageRequest) {
+	public MemberEvaluationVotePageResponse searchMemberEvaluatedVotes(final Long memberId,
+		final Long targetId, final MemberEvaluationVotePageRequest memberEvaluationVotePageRequest) {
 
 		validateExistsById(memberId);
 
-		return voteRepository.searchMemberEvaluationVoteList(memberId, memberEvaluationVotePageRequest);
+		return voteRepository.searchMemberEvaluationVoteList(targetId, memberEvaluationVotePageRequest);
 	}
 
 	@Transactional(readOnly = true)
-	public MemberBookmarkVotePageResponse searchMemberBookmarkedVotes(final AuthPayload authPayload,
-		final Long memberId, final MemberBookmarkVotePageRequest memberBookmarkVotePageRequest) {
+	public MemberBookmarkVotePageResponse searchMemberBookmarkedVotes(final Long memberId,
+		final Long targetId, final MemberBookmarkVotePageRequest memberBookmarkVotePageRequest) {
 
 		validateExistsById(memberId);
 
-		return voteRepository.searchMemberBookmarkVoteList(memberId, memberBookmarkVotePageRequest);
+		return voteRepository.searchMemberBookmarkVoteList(targetId, memberBookmarkVotePageRequest);
 	}
 
 	private void validateExistsById(final Long memberId) {
