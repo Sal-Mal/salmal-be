@@ -236,7 +236,7 @@ public class VoteService {
 		return filteringBlockedMembers(commentResponses, memberService.findBlockedMembers(memberId));
 	}
 
-	public List<CommentResponse> filteringBlockedMembers(List<CommentResponse> commentResponses, List<Long> ids) {
+	private List<CommentResponse> filteringBlockedMembers(List<CommentResponse> commentResponses, List<Long> ids) {
 		return commentResponses.stream()
 			.filter(filterBlockedMemberPredicate(ids))
 			.collect(toList());
