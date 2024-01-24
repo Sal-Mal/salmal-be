@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
-import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.image.application.ImageUploader;
 import com.salmalteam.salmal.image.entity.ImageFile;
 import com.salmalteam.salmal.member.dto.request.MemberImageUpdateRequest;
@@ -117,10 +116,9 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void cancelBlocking(final AuthPayload authPayload, final Long memberId) {
-
-		final Member blocker = findMemberById(authPayload.getId());
-		final Member target = findMemberById(memberId);
+	public void cancelBlocking(final Long memberId, final Long targetId) {
+		final Member blocker = findMemberById(memberId);
+		final Member target = findMemberById(targetId);
 
 		validateMemberBlockedExists(blocker, target);
 

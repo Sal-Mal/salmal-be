@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.salmalteam.salmal.auth.annotation.LoginMember;
-import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.member.application.MemberService;
 import com.salmalteam.salmal.member.dto.request.MemberImageUpdateRequest;
 import com.salmalteam.salmal.member.dto.request.MyPageUpdateRequest;
@@ -79,9 +78,8 @@ public class MemberController {
 
 	@DeleteMapping("/{member-id}/blocks")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void cancelBlocking(@LoginMember final AuthPayload authPayload,
-		@PathVariable("member-id") final Long memberId) {
-		memberService.cancelBlocking(authPayload, memberId);
+	public void cancelBlocking(@LoginMember final Long memberId, @PathVariable("member-id") final Long targetId) {
+		memberService.cancelBlocking(memberId, memberId);
 	}
 
 	@GetMapping("/{member-id}/blocks")

@@ -16,18 +16,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.salmalteam.salmal.member.application.MemberService;
-import com.salmalteam.salmal.member.entity.Member;
-import com.salmalteam.salmal.member.entity.MemberRepository;
-import com.salmalteam.salmal.member.entity.MemberBlockedRepository;
 import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
+import com.salmalteam.salmal.member.application.MemberService;
 import com.salmalteam.salmal.member.dto.request.MemberImageUpdateRequest;
 import com.salmalteam.salmal.member.dto.request.MyPageUpdateRequest;
 import com.salmalteam.salmal.member.dto.request.block.MemberBlockedPageRequest;
+import com.salmalteam.salmal.member.entity.Member;
+import com.salmalteam.salmal.member.entity.MemberBlockedRepository;
+import com.salmalteam.salmal.member.entity.MemberRepository;
 import com.salmalteam.salmal.member.exception.MemberException;
 import com.salmalteam.salmal.member.exception.MemberExceptionType;
 import com.salmalteam.salmal.member.exception.block.MemberBlockedException;
-import com.salmalteam.salmal.auth.entity.AuthPayload;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -149,7 +148,6 @@ class MemberServiceTest {
 			// given
 			final Long memberId = 1L;
 			final Long targetMemberId = 2L;
-			final AuthPayload authPayload = AuthPayload.from(memberId);
 
 			given(memberRepository.findById(eq(memberId))).willReturn(
 				Optional.of(Member.createActivatedMember("kk", "닉네임 A", "kakao", true)));
@@ -158,7 +156,7 @@ class MemberServiceTest {
 			given(memberBlockedRepository.existsByBlockerAndTarget(any(), any())).willReturn(false);
 
 			// when & then
-			assertThatThrownBy(() -> memberService.cancelBlocking(authPayload, targetMemberId))
+			assertThatThrownBy(() -> memberService.cancelBlocking(memberId, targetMemberId))
 				.isInstanceOf(MemberBlockedException.class);
 		}
 	}
