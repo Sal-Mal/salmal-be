@@ -152,12 +152,13 @@ class AuthServiceTest {
 		void 재발급_토큰을_통해서_접근_토큰을_재발급_한다() {
 			// given
 			HashMap<String, Object> payload = new HashMap<>();
-			payload.put("id", 1000L);
+			long memberId = 1000L;
+			payload.put("id", memberId);
 			given(tokenRepository.existsRefreshTokenById(any())).willReturn(true);
 			given(jwtProvider.provide(any())).willReturn(accessToken);
 
 			// when
-			final TokenResponse tokenResponse = authService.reissueAccessToken(refreshToken);
+			final TokenResponse tokenResponse = authService.reissueAccessToken(memberId, refreshToken);
 
 			// then
 			assertAll(
@@ -171,7 +172,7 @@ class AuthServiceTest {
 			given(tokenRepository.existsRefreshTokenById(any())).willReturn(false);
 
 			// when & then
-			assertThatThrownBy(() -> authService.reissueAccessToken(refreshToken))
+			assertThatThrownBy(() -> authService.reissueAccessToken(12345612352L, refreshToken))
 				.isInstanceOf(AuthException.class);
 		}
 	}

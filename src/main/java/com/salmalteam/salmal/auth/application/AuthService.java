@@ -14,6 +14,7 @@ import com.salmalteam.salmal.auth.dto.response.TokenAvailableResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenResponse;
 import com.salmalteam.salmal.auth.entity.LogoutAccessToken;
 import com.salmalteam.salmal.auth.entity.RefreshToken;
+import com.salmalteam.salmal.auth.entity.Role;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
 import com.salmalteam.salmal.auth.exception.AuthException;
 import com.salmalteam.salmal.auth.exception.AuthExceptionType;
@@ -71,15 +72,16 @@ public class AuthService {
 
 	//TODO 리프래시 토큰발급 개선
 	@Transactional
-	public TokenResponse reissueAccessToken(final String refreshToken) {
+	public TokenResponse reissueAccessToken(Long memberId, final String refreshToken) {
 		validateRefreshTokenExists(refreshToken);
-		final String accessToken = jwtProvider.provide(createPayloadWithIdClaim(1L));
+		final String accessToken = jwtProvider.provide(createPayloadWithIdClaim(memberId));
 		return TokenResponse.from(accessToken);
 	}
 
 	private Map<String, Object> createPayloadWithIdClaim(Long memberId) {
 		Map<String, Object> payload = new HashMap<>();
 		payload.put("id", memberId);
+		payload.put("role", Role.MEMBER);
 		return payload;
 	}
 

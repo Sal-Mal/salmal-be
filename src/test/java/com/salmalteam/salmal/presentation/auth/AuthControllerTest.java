@@ -136,7 +136,8 @@ class AuthControllerTest extends PresentationTest {
 		final String refreshToken = "refreshToken";
 		final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(refreshToken);
 		final TokenResponse tokenResponse = TokenResponse.from(accessToken);
-		given(authService.reissueAccessToken(any())).willReturn(tokenResponse);
+		Long memberId = 13123123L;
+		given(authService.reissueAccessToken(memberId, any())).willReturn(tokenResponse);
 
 		final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "/reissue")
 				.contentType(MediaType.APPLICATION_JSON)

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.salmalteam.salmal.auth.annotation.LoginMember;
 import com.salmalteam.salmal.auth.application.AuthService;
 import com.salmalteam.salmal.auth.dto.request.LoginRequest;
 import com.salmalteam.salmal.auth.dto.request.LogoutRequest;
@@ -48,9 +49,10 @@ public class AuthController {
 
 	@PostMapping("/reissue")
 	@ResponseStatus(HttpStatus.OK)
-	public TokenResponse reissue(@RequestBody final ReissueTokenRequest reissueTokenRequest) {
+	public TokenResponse reissue(@LoginMember Long memberId,
+		@RequestBody final ReissueTokenRequest reissueTokenRequest) {
 		final String refreshToken = reissueTokenRequest.getRefreshToken();
-		return authService.reissueAccessToken(refreshToken);
+		return authService.	reissueAccessToken(memberId, refreshToken);
 	}
 
 	@PostMapping("/logout")
