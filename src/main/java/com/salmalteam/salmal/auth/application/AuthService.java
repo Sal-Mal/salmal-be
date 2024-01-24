@@ -70,7 +70,7 @@ public class AuthService {
 		tokenRepository.deleteRefreshTokenById(refreshToken);
 	}
 
-	//TODO 리프래시 토큰발급 개선
+	//TODO 리프래시 토큰발급 개선 (저장 타입 개선, 리프레시토큰 인증헤더 사용)
 	@Transactional
 	public TokenResponse reissueAccessToken(Long memberId, final String refreshToken) {
 		validateRefreshTokenExists(refreshToken);
