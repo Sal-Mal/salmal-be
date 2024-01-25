@@ -262,6 +262,8 @@ public class MemberService {
 
 	@Transactional(readOnly = true)
 	public boolean isActivatedId(Long memberId) {
-		return !findMemberById(memberId).isRemoved();
+		return memberRepository.findById(memberId)
+			.map(member -> !member.isRemoved())
+			.orElse(false);
 	}
 }
