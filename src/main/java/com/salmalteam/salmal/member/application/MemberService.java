@@ -258,4 +258,9 @@ public class MemberService {
 	public List<Long> findBlockedMembers(Long memberId) {
 		return memberBlockedRepository.findTargetMemberIdByMemberId(memberId);
 	}
+
+	@Transactional(readOnly = true)
+	public boolean isActivatedId(Long memberId) {
+		return !findMemberById(memberId).isRemoved();
+	}
 }
