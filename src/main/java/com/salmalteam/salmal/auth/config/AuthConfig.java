@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.salmalteam.salmal.auth.application.AuthPayloadGenerator;
 import com.salmalteam.salmal.auth.application.TokenProvider;
-import com.salmalteam.salmal.auth.application.TokenValidator;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
 import com.salmalteam.salmal.auth.infrastructure.JwtProvider;
 import com.salmalteam.salmal.auth.infrastructure.RefreshTokenProvider;
@@ -41,11 +40,6 @@ public class AuthConfig {
 	@Bean
 	public TokenProvider refreshTokenProvider() {
 		return new RefreshTokenProvider(secretKey, REFRESH_TOKEN_SUBJECT, refreshTokenExpireMillis);
-	}
-
-	@Bean
-	public TokenValidator tokenValidator() {
-		return new TokenValidator(secretKey);
 	}
 
 	@Bean
