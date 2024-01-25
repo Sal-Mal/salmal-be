@@ -1,6 +1,7 @@
 package com.salmalteam.salmal.member.application;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -79,7 +80,7 @@ public class MemberService {
 	}
 
 	private void validateDeleteAuthority(final Long memberId, final Long requesterId) {
-		if (memberId != requesterId) {
+		if (!Objects.equals(memberId, requesterId)) {
 			throw new MemberException(MemberExceptionType.FORBIDDEN_DELETE);
 		}
 	}
