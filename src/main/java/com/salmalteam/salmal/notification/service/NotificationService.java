@@ -20,6 +20,7 @@ public class NotificationService {
 
 	@Transactional(readOnly = true)
 	public FindNotificationResponse findAll(Long memberId) {
+		validateMember(memberId);
 		return new FindNotificationResponse(notificationRepository.findByMemberId(memberId).stream()
 			.map(NotificationDto::create)
 			.collect(Collectors.toList()));
