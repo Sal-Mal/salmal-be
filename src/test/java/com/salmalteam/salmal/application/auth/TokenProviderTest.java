@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.salmalteam.salmal.auth.infrastructure.JwtProvider;
+import com.salmalteam.salmal.support.TokenValidator;
 
 public class TokenProviderTest {
 
@@ -17,23 +18,35 @@ public class TokenProviderTest {
 	private final String SECRET_KEY = "K".repeat(32);
 	private final Long ACCESS_TOKEN_EXPIRY = 100000L;
 
+	private TokenValidator tokenValidator;
+
+	private String subject = "accessToken";
+
 	@BeforeEach
 	void setUp() {
-		tokenProvider = new JwtProvider(SECRET_KEY, "accessToken", ACCESS_TOKEN_EXPIRY);
+		tokenProvider = new JwtProvider(SECRET_KEY, subject, ACCESS_TOKEN_EXPIRY);
+		tokenValidator = new TokenValidator(SECRET_KEY);
 	}
 
 	@Nested
 	class 접근_토큰_생성_테스트 {
 		@Test
 		void 전달받은_ID_를_페이로드에_넣어_접근토큰을_생성_한다() {
-			// given
-			final Long id = 32L;
-			Map<String, Object> payload = createPayloadWithIdClaim(id);
-			// when
-			final String accessToken = tokenProvider.provide(payload);
+			//given
+			HashMap<String, Object> payload = new HashMap<>();
+			payload.put("id", 500L);
+			payload.put("name", "재현");
 
-			// then
-			assertThat(accessToken).isNotNull();
+			// when
+			String actual = tokenProvider.provide(payload);
+
+			//then
+			assertThat(actual).isNotNull();
+			assertThat(tokenValidator.isValidate(actual)).isTrue();
+			assertThat(tokenValidator.hasClaims(actual, "id", 500L, Long.class)).isTrue();
+			assertThat(tokenValidator.hasClaims(actual, "name", "재현", String.class)).isTrue();
+			assertThat(tokenValidator.hasClaims(actual, "sub", subject, String.class)).isTrue();
+
 		}
 	}
 
