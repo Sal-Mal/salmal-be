@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.salmalteam.salmal.auth.annotation.Login;
 import com.salmalteam.salmal.auth.annotation.LoginMember;
 import com.salmalteam.salmal.auth.entity.MemberPayLoad;
 import com.salmalteam.salmal.notification.dto.request.ReadNotificationRequest;
@@ -22,11 +23,13 @@ public class NotificationController {
 	private final NotificationService notificationService;
 
 	@GetMapping("/api/notification")
+	@Login
 	public ResponseEntity<FindNotificationResponse> findAlarms(@LoginMember MemberPayLoad memberPayLoad) {
 		return ResponseEntity.ok(notificationService.findAll(memberPayLoad.getId()));
 	}
 
 	@DeleteMapping("/api/notification")
+	@Login
 	public ResponseEntity<?> delete(@LoginMember MemberPayLoad memberPayLoad, DeleteNotificationRequest request) {
 		notificationService.delete(memberPayLoad.getId(), request.getUuid());
 		return ResponseEntity.ok()
@@ -34,6 +37,7 @@ public class NotificationController {
 	}
 
 	@PostMapping("api/notification/read")
+	@Login
 	public ResponseEntity<?> readAlarm(@LoginMember MemberPayLoad memberPayLoad, ReadNotificationRequest request) {
 		notificationService.read(memberPayLoad.getId(), request.getUuid());
 		return ResponseEntity.ok()
