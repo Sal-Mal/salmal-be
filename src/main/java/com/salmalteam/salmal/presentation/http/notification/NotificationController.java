@@ -38,7 +38,7 @@ public class NotificationController {
 
 	@PostMapping("api/notification/read")
 	@Login
-	public ResponseEntity<?> readAlarm(@LoginMember MemberPayLoad memberPayLoad, ReadNotificationRequest request) {
+	public ResponseEntity<?> readNotification(@LoginMember MemberPayLoad memberPayLoad, ReadNotificationRequest request) {
 		notificationService.read(memberPayLoad.getId(), request.getUuid());
 		return ResponseEntity.ok()
 			.build();

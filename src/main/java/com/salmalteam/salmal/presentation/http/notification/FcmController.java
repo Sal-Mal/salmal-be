@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.salmalteam.salmal.auth.annotation.Login;
 import com.salmalteam.salmal.auth.annotation.LoginMember;
 import com.salmalteam.salmal.auth.entity.MemberPayLoad;
-import com.salmalteam.salmal.notification.dto.request.AddFcmRequest;
+import com.salmalteam.salmal.fcm.dto.request.AddFcmRequest;
 import com.salmalteam.salmal.notification.service.MemberNotificationService;
 
 import lombok.RequiredArgsConstructor;
