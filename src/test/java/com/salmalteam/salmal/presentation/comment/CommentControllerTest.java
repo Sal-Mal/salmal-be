@@ -276,7 +276,7 @@ class CommentControllerTest extends PresentationTest {
             ));
 
             verify(commentService, times(1)).replyComment(any(), any(), any());
-            verify(notificationService, times(1)).save(anyLong(),anyLong(),anyString(),anyString());
+            verify(notificationService, times(1)).save(anyLong(),anyLong(),anyString(),anyString(),anyLong());
             verify(fcmClient, times(1)).pub(any());
 
         }
