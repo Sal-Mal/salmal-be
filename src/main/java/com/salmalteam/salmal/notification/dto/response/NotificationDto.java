@@ -3,6 +3,7 @@ package com.salmalteam.salmal.notification.dto.response;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.salmalteam.salmal.notification.entity.Notification;
 import com.salmalteam.salmal.notification.entity.Type;
 
 import lombok.AllArgsConstructor;
@@ -18,4 +19,8 @@ public class NotificationDto {
 	@JsonFormat(pattern = "yy-MM-ddTHH:mm")
 	private final LocalDateTime createAt;
 
+	public static NotificationDto create(Notification notification) {
+		return new NotificationDto(notification.getUuid(), notification.getMarkId(), notification.getType(),
+			notification.getMessage(), notification.getCreatedAt());
+	}
 }
