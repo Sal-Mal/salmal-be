@@ -89,8 +89,12 @@ public class CommentController {
 		@PathVariable(name = "comment-id") final Long commentId,
 		@RequestBody @Valid CommentReplyCreateRequest request) {
 		ReplayCommentDto replayComment = commentService.replyComment(memberPayLoad, commentId, request);
-		MessageSpec messageSpec = notificationService.save(replayComment.getCommentOwnerId(), replayComment.getCommentId(),
-			replayComment.getNickName(), replayComment.getContent());
+		if (replayComment.isSameCommenter()) {
+			return;
+		}
+		MessageSpec messageSpec = notificationService.save(
+			replayComment.getCommentOwnerId(), replayComment.getCommentId(),
+			replayComment.getNickName(),replayComment.getContent(), replayComment.getCommenterId());
 		notificationPublisher.pub(messageSpec);
 	}
 

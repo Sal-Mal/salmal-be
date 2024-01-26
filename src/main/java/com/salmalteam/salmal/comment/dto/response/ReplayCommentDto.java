@@ -11,4 +11,8 @@ public class ReplayCommentDto {
 	private final Long commentId;
 	private final String nickName;
 	private final String content;
+
+	public boolean isSameCommenter() {
+		return commentOwnerId.equals(commenterId);
+	}
 }

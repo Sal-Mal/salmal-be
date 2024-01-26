@@ -54,7 +54,7 @@ public class NotificationService {
 	}
 
 	@Transactional
-	public MessageSpec save(Long targetId, Long issuedContentId, String nickName, String content) {
+	public MessageSpec save(Long targetId, Long issuedContentId, String nickName, String content, Long memberId) {
 
 		String message = String.format("%s님의 답댓글:%s", nickName, content);
 
@@ -63,7 +63,7 @@ public class NotificationService {
 			.orElse("token");
 
 		Notification notification = notificationRepository.save(
-			Notification.createNewReplyType(targetId, issuedContentId, uuidGenerator.generate(), message));
+			Notification.createNewReplyType(memberId, issuedContentId, uuidGenerator.generate(), message));
 
 		HashMap<String, String> data = new HashMap<>();
 
