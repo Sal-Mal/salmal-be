@@ -20,4 +20,8 @@ public class NotificationService {
 			.map(NotificationDto::create)
 			.collect(Collectors.toList()));
 	}
+
+	public void delete(Long id, String uuid) {
+
+	}
 }
