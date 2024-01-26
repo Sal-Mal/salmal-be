@@ -1,6 +1,7 @@
 package com.salmalteam.salmal.notification.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.salmalteam.salmal.member.application.MemberService;
 import com.salmalteam.salmal.notification.entity.MemberNotification;
@@ -15,6 +16,7 @@ public class MemberNotificationService {
 	private final MemberService memberService;
 	private final MemberNotificationRepository memberNotificationRepository;
 
+	@Transactional
 	public void addToken(Long memberId, String token) {
 		validateMember(memberId);
 		if (memberNotificationRepository.existsByMemberId(memberId)) {

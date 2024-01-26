@@ -18,6 +18,7 @@ public class NotificationService {
 	private final NotificationRepository notificationRepository;
 	private final MemberService memberService;
 
+	@Transactional(readOnly = true)
 	public FindNotificationResponse findAll(Long memberId) {
 		return new FindNotificationResponse(notificationRepository.findByMemberId(memberId).stream()
 			.map(NotificationDto::create)
