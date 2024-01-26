@@ -98,9 +98,16 @@ public class MemberService {
 		final Member target = findMemberById(memberId);
 		final MemberBlocked blockedMember = MemberBlocked.of(blocker, target);
 
+		validateMemberBlockSelf(blocker, target);
 		validateDuplicateMemberBlocked(blocker, target);
 
 		memberBlockedRepository.save(blockedMember);
+	}
+
+	private void validateMemberBlockSelf(Member blocker, Member target) {
+		if(blocker.getId().equals(target.getId())){
+			throw new MemberBlockedException(MemberBlockedExceptionType.SELF_BLOCK);
+		}
 	}
 
 	private void validateDuplicateMemberBlocked(final Member blocker, final Member target) {
