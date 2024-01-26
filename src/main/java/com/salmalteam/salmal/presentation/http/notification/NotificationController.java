@@ -21,19 +21,19 @@ public class NotificationController {
 
 	private final NotificationService notificationService;
 
-	@GetMapping("/api/alarm")
+	@GetMapping("/api/notification")
 	public ResponseEntity<FindNotificationResponse> findAlarms(@LoginMember MemberPayLoad memberPayLoad) {
 		return ResponseEntity.ok(notificationService.findAll(memberPayLoad.getId()));
 	}
 
-	@DeleteMapping("/api/alarm")
+	@DeleteMapping("/api/notification")
 	public ResponseEntity<?> delete(@LoginMember MemberPayLoad memberPayLoad, DeleteNotificationRequest request) {
 		notificationService.delete(memberPayLoad.getId(), request.getUuid());
 		return ResponseEntity.ok()
 			.build();
 	}
 
-	@PostMapping("api/alarm/read")
+	@PostMapping("api/notification/read")
 	public ResponseEntity<?> readAlarm(@LoginMember MemberPayLoad memberPayLoad, ReadNotificationRequest request) {
 		notificationService.read(memberPayLoad.getId(), request.getUuid());
 		return ResponseEntity.ok()
