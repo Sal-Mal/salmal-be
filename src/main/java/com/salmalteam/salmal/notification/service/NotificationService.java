@@ -31,11 +31,15 @@ public class NotificationService {
 		notificationRepository.deleteByUuid(uuid);
 	}
 
-	private void validateMember(Long memberId) {
-		memberService.findMemberById(memberId);
+	@Transactional
+	public void read(Long memberId, String uuid) {
+		validateMember(memberId);
+		notificationRepository.findByUuid(uuid)
+			.orElseThrow(() -> new IllegalArgumentException("해당하는 알림이 존재하지 않습니다."))
+			.read();
 	}
 
-	public void read(Long memberId, String uuid) {
-
+	private void validateMember(Long memberId) {
+		memberService.findMemberById(memberId);
 	}
 }
