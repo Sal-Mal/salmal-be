@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.salmalteam.salmal.comment.dto.response.ReplayCommentDto;
 import com.salmalteam.salmal.comment.exception.like.CommentLikeException;
 import com.salmalteam.salmal.comment.exception.like.CommentLikeExceptionType;
 import com.salmalteam.salmal.comment.exception.report.CommentReportException;
@@ -43,217 +44,230 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CommentService {
 
-    private final MemberService memberService;
-    private final CommentRepository commentRepository;
-    private final CommentReportRepository commentReportRepository;
-    private final CommentLikeRepository commentLikeRepository;
-    private final VoteRepository voteRepository;
+	private final MemberService memberService;
+	private final CommentRepository commentRepository;
+	private final CommentReportRepository commentReportRepository;
+	private final CommentLikeRepository commentLikeRepository;
+	private final VoteRepository voteRepository;
 
-    @Transactional
-    public void save(final String content, final Vote vote, final Member member) {
-        final Comment comment = Comment.of(content, vote, member);
-        commentRepository.save(comment);
-    }
+	@Transactional
+	public void save(final String content, final Vote vote, final Member member) {
+		final Comment comment = Comment.of(content, vote, member);
+		commentRepository.save(comment);
+	}
 
-    @Transactional
-    public void deleteComment(final MemberPayLoad memberPayLoad, final Long commentId){
-        final Comment comment = getCommentById(commentId);
-        validateDeleteAuthority(comment.getCommenter().getId(), memberPayLoad.getId());
-        
-        switch (comment.getCommentType()){
-            case COMMENT:
-                commentRepository.deleteAllRepliesByParentCommentId(commentId);
-                voteRepository.decreaseCommentCount(comment.getVote().getId());
-            case REPLY:
-                commentRepository.decreaseReplyCount(commentId);
-        }
-        commentRepository.delete(comment);
-    }
+	@Transactional
+	public void deleteComment(final MemberPayLoad memberPayLoad, final Long commentId) {
+		final Comment comment = getCommentById(commentId);
+		validateDeleteAuthority(comment.getCommenter().getId(), memberPayLoad.getId());
 
-    private void validateDeleteAuthority(final Long commenterId, final Long requesterId){
-        if(commenterId != requesterId){
-            throw new CommentException(CommentExceptionType.FORBIDDEN_DELETE);
-        }
-    }
+		switch (comment.getCommentType()) {
+			case COMMENT:
+				commentRepository.deleteAllRepliesByParentCommentId(commentId);
+				voteRepository.decreaseCommentCount(comment.getVote().getId());
+			case REPLY:
+				commentRepository.decreaseReplyCount(commentId);
+		}
+		commentRepository.delete(comment);
+	}
 
-    @Transactional
-    public void replyComment(final MemberPayLoad memberPayLoad, final Long commentId, final CommentReplyCreateRequest commentReplyCreateRequest){
+	private void validateDeleteAuthority(final Long commenterId, final Long requesterId) {
+		if (commenterId != requesterId) {
+			throw new CommentException(CommentExceptionType.FORBIDDEN_DELETE);
+		}
+	}
 
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
+	@Transactional
+	public ReplayCommentDto replyComment(final MemberPayLoad memberPayLoad, final Long commentId,
+		final CommentReplyCreateRequest commentReplyCreateRequest) {
 
-        final Comment comment = getCommentById(commentId);
-        final Comment reply = Comment.ofReply(commentReplyCreateRequest.getContent(), comment, member);
+		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Comment comment = getCommentById(commentId);
+		final Member commenterOwner = comment.getCommenter();
 
-        commentRepository.save(reply);
-        commentRepository.increaseReplyCount(commentId);
-    }
+		final Comment reply = Comment.ofReply(commentReplyCreateRequest.getContent(), comment, member);
 
-    @Transactional(readOnly = true)
-    public ReplyPageResponse searchReplies(final MemberPayLoad memberPayLoad, final Long commentId, final ReplyPageRequest replyPageRequest){
-        validateCommentExist(commentId);
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
-        List<Long> ids = memberService.findBlockedMembers(member.getId());
-        ReplyPageResponse replyPageResponse = commentRepository.searchReplies(commentId, member.getId(), replyPageRequest);
-        replyPageResponse.filteringBlockedMembers(ids);
-        return replyPageResponse;
-    }
+		commentRepository.save(reply);
+		commentRepository.increaseReplyCount(commentId);
 
-    @Transactional(readOnly = true)
-    public List<ReplyResponse> searchAllReplies(final MemberPayLoad memberPayLoad, final Long commentId){
-        validateCommentExist(commentId);
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
-        List<Long> ids = memberService.findBlockedMembers(member.getId());
-        List<ReplyResponse> replyResponses = commentRepository.searchAllReplies(commentId, member.getId());
-        return filteringBlockedMembers(replyResponses,ids);
-    }
+		return new ReplayCommentDto(commenterOwner.getId(),
+			member.getId(),
+			commentId,
+			member.getNickName().getValue(),
+			commentReplyCreateRequest.getContent()
+		);
+	}
 
-    public List<ReplyResponse> filteringBlockedMembers(List<ReplyResponse> commentResponses, List<Long> ids) {
-        return commentResponses.stream()
-            .filter(filterBlockedMemberPredicate(ids))
-            .collect(toList());
-    }
+	@Transactional(readOnly = true)
+	public ReplyPageResponse searchReplies(final MemberPayLoad memberPayLoad, final Long commentId,
+		final ReplyPageRequest replyPageRequest) {
+		validateCommentExist(commentId);
+		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		List<Long> ids = memberService.findBlockedMembers(member.getId());
+		ReplyPageResponse replyPageResponse = commentRepository.searchReplies(commentId, member.getId(),
+			replyPageRequest);
+		replyPageResponse.filteringBlockedMembers(ids);
+		return replyPageResponse;
+	}
 
-    private Predicate<ReplyResponse> filterBlockedMemberPredicate(List<Long> ids) {
-        return voteResponse -> ids.stream()
-            .noneMatch(id -> id.equals(voteResponse.getMemberId()));
-    }
+	@Transactional(readOnly = true)
+	public List<ReplyResponse> searchAllReplies(final MemberPayLoad memberPayLoad, final Long commentId) {
+		validateCommentExist(commentId);
+		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		List<Long> ids = memberService.findBlockedMembers(member.getId());
+		List<ReplyResponse> replyResponses = commentRepository.searchAllReplies(commentId, member.getId());
+		return filteringBlockedMembers(replyResponses, ids);
+	}
 
-    private void validateCommentExist(final Long commentId){
-        if(!commentRepository.existsById(commentId)){
-            throw new CommentException(CommentExceptionType.NOT_FOUND);
-        }
-    }
+	public List<ReplyResponse> filteringBlockedMembers(List<ReplyResponse> commentResponses, List<Long> ids) {
+		return commentResponses.stream()
+			.filter(filterBlockedMemberPredicate(ids))
+			.collect(toList());
+	}
 
-    @Transactional
-    public void updateComment(final MemberPayLoad memberPayLoad, final Long commentId, final VoteCommentUpdateRequest voteCommentUpdateRequest) {
+	private Predicate<ReplyResponse> filterBlockedMemberPredicate(List<Long> ids) {
+		return voteResponse -> ids.stream()
+			.noneMatch(id -> id.equals(voteResponse.getMemberId()));
+	}
 
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
-        final Comment comment = getCommentById(commentId);
-        final String content = voteCommentUpdateRequest.getContent();
-        validateAuthority(comment, member);
+	private void validateCommentExist(final Long commentId) {
+		if (!commentRepository.existsById(commentId)) {
+			throw new CommentException(CommentExceptionType.NOT_FOUND);
+		}
+	}
 
-        comment.updateContent(content);
+	@Transactional
+	public void updateComment(final MemberPayLoad memberPayLoad, final Long commentId,
+		final VoteCommentUpdateRequest voteCommentUpdateRequest) {
 
-        commentRepository.save(comment);
-    }
+		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Comment comment = getCommentById(commentId);
+		final String content = voteCommentUpdateRequest.getContent();
+		validateAuthority(comment, member);
 
-    private void validateAuthority(final Comment comment, final Member member) {
-        if (comment.getCommenter().getId() != member.getId()) {
-            throw new CommentException(CommentExceptionType.FORBIDDEN_UPDATE);
-        }
-    }
+		comment.updateContent(content);
 
-    @Transactional(readOnly = true)
-    public CommentPageResponse searchList(final Long voteId,
-                                          final MemberPayLoad memberPayLoad,
-                                          final CommentPageRequest commentPageRequest) {
-        final Long memberId = memberPayLoad.getId();
-        return commentRepository.searchList(voteId, memberId, commentPageRequest);
-    }
+		commentRepository.save(comment);
+	}
 
-    @Transactional(readOnly = true)
-    public List<CommentResponse> searchAllList(final Long voteId, final MemberPayLoad memberPayLoad){
-        final Long memberId = memberPayLoad.getId();
-        return commentRepository.searchAllList(voteId, memberId);
-    }
+	private void validateAuthority(final Comment comment, final Member member) {
+		if (comment.getCommenter().getId() != member.getId()) {
+			throw new CommentException(CommentExceptionType.FORBIDDEN_UPDATE);
+		}
+	}
 
-    @Transactional
-    public void likeComment(final MemberPayLoad memberPayLoad, final Long commentId){
+	@Transactional(readOnly = true)
+	public CommentPageResponse searchList(final Long voteId,
+		final MemberPayLoad memberPayLoad,
+		final CommentPageRequest commentPageRequest) {
+		final Long memberId = memberPayLoad.getId();
+		return commentRepository.searchList(voteId, memberId, commentPageRequest);
+	}
 
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
-        final Comment comment = getCommentById(commentId);
+	@Transactional(readOnly = true)
+	public List<CommentResponse> searchAllList(final Long voteId, final MemberPayLoad memberPayLoad) {
+		final Long memberId = memberPayLoad.getId();
+		return commentRepository.searchAllList(voteId, memberId);
+	}
 
-        validateCommentAlreadyLiked(comment, member);
+	@Transactional
+	public void likeComment(final MemberPayLoad memberPayLoad, final Long commentId) {
 
-        final CommentLike commentLike = CommentLike.of(comment, member);
+		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Comment comment = getCommentById(commentId);
 
-        commentLikeRepository.save(commentLike);
-        commentRepository.increaseLikeCount(commentId);
-    }
+		validateCommentAlreadyLiked(comment, member);
 
-    private void validateCommentAlreadyLiked(final Comment comment, final Member member){
-        if(commentLikeRepository.existsByCommentAndLiker(comment, member)){
-            throw new CommentLikeException(CommentLikeExceptionType.DUPLICATED_LIKE);
-        }
-    }
+		final CommentLike commentLike = CommentLike.of(comment, member);
 
-    @Transactional
-    public void unLikeComment(final MemberPayLoad memberPayLoad, final Long commentId){
+		commentLikeRepository.save(commentLike);
+		commentRepository.increaseLikeCount(commentId);
+	}
 
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
-        final Comment comment = getCommentById(commentId);
+	private void validateCommentAlreadyLiked(final Comment comment, final Member member) {
+		if (commentLikeRepository.existsByCommentAndLiker(comment, member)) {
+			throw new CommentLikeException(CommentLikeExceptionType.DUPLICATED_LIKE);
+		}
+	}
 
-        validateCommentNotLiked(comment, member);
+	@Transactional
+	public void unLikeComment(final MemberPayLoad memberPayLoad, final Long commentId) {
 
-        commentLikeRepository.deleteByCommentAndLiker(comment, member);
-        commentRepository.decreaseLikeCount(commentId);
-    }
+		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Comment comment = getCommentById(commentId);
 
-    private void validateCommentNotLiked(final Comment comment, final Member member){
-        if(!commentLikeRepository.existsByCommentAndLiker(comment, member)){
-            throw new CommentLikeException(CommentLikeExceptionType.NOT_FOUND);
-        }
-    }
+		validateCommentNotLiked(comment, member);
 
-    @Transactional
-    public void report(final MemberPayLoad memberPayLoad, final Long commentId){
+		commentLikeRepository.deleteByCommentAndLiker(comment, member);
+		commentRepository.decreaseLikeCount(commentId);
+	}
 
-        final Member member = memberService.findMemberById(memberPayLoad.getId());
-        final Comment comment = getCommentById(commentId);
-        final CommentReport commentReport = CommentReport.of(comment, member);
+	private void validateCommentNotLiked(final Comment comment, final Member member) {
+		if (!commentLikeRepository.existsByCommentAndLiker(comment, member)) {
+			throw new CommentLikeException(CommentLikeExceptionType.NOT_FOUND);
+		}
+	}
 
-        validateCommentAlreadyReport(comment, member);
+	@Transactional
+	public void report(final MemberPayLoad memberPayLoad, final Long commentId) {
 
-        commentReportRepository.save(commentReport);
-    }
+		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Comment comment = getCommentById(commentId);
+		final CommentReport commentReport = CommentReport.of(comment, member);
 
-    private void validateCommentAlreadyReport(final Comment comment, final Member member) {
-        if(commentReportRepository.existsByCommentAndReporter(comment, member)){
-            throw new CommentReportException(CommentReportExceptionType.DUPLICATED_REPORT);
-        }
-    }
+		validateCommentAlreadyReport(comment, member);
 
-    private Comment getCommentById(final Long commentId) {
-        return commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(CommentExceptionType.NOT_FOUND));
-    }
+		commentReportRepository.save(commentReport);
+	}
 
-    /**
-     * 회원 삭제 이벤트 : 댓글의 대댓글 개수 감소
-     */
-    @Transactional
-    public void decreaseReplyCountByMemberDelete(final Long memberId) {
+	private void validateCommentAlreadyReport(final Comment comment, final Member member) {
+		if (commentReportRepository.existsByCommentAndReporter(comment, member)) {
+			throw new CommentReportException(CommentReportExceptionType.DUPLICATED_REPORT);
+		}
+	}
 
-        // 회원이 작성한 대댓글 목록 조회
-        final List<Comment> replies = commentRepository.findALlByCommenter_idAndCommentType(memberId, CommentType.REPLY);
+	private Comment getCommentById(final Long commentId) {
+		return commentRepository.findById(commentId)
+			.orElseThrow(() -> new CommentException(CommentExceptionType.NOT_FOUND));
+	}
 
-        // parent_id 기준으로 Comment 묶기
-        Map<Comment, List<Comment>> commentListMap = replies.stream()
-                .collect(Collectors.groupingBy(Comment::getParentComment));
+	/**
+	 * 회원 삭제 이벤트 : 댓글의 대댓글 개수 감소
+	 */
+	@Transactional
+	public void decreaseReplyCountByMemberDelete(final Long memberId) {
 
-        // 대댓글 개수 감소
-        commentListMap.forEach((comment, replyList) -> {
-            comment.decreaseReplyCount(replyList.size());
-        });
+		// 회원이 작성한 대댓글 목록 조회
+		final List<Comment> replies = commentRepository.findALlByCommenter_idAndCommentType(memberId,
+			CommentType.REPLY);
 
-    }
+		// parent_id 기준으로 Comment 묶기
+		Map<Comment, List<Comment>> commentListMap = replies.stream()
+			.collect(Collectors.groupingBy(Comment::getParentComment));
 
-//    /**
-//     * 회원 삭제 이벤트 : 댓글의 좋아요 개수 감소
-//     */
-//    @Transactional
-//    public void decreaseLikeCountByMemberDelete(final Long memberId){
-//        // 회원이 작성한 좋아요 목록 조회
-//        final List<CommentLike> commentLikes = commentLikeRepository.findAllByLiker_Id(memberId);
-//
-//        // vote 기준으로 좋아요 묶기
-//        Map<Comment, List<CommentLike>> commentListMap = commentLikes.stream()
-//                .collect(Collectors.groupingBy(CommentLike::getComment));
-//
-//        // 좋아요 개수 감소
-//        commentListMap.forEach((comment, commentLikeList) -> {
-//            comment.decreaseLikeCount(commentLikeList.size());
-//        });
-//    }
+		// 대댓글 개수 감소
+		commentListMap.forEach((comment, replyList) -> {
+			comment.decreaseReplyCount(replyList.size());
+		});
+
+	}
+
+	//    /**
+	//     * 회원 삭제 이벤트 : 댓글의 좋아요 개수 감소
+	//     */
+	//    @Transactional
+	//    public void decreaseLikeCountByMemberDelete(final Long memberId){
+	//        // 회원이 작성한 좋아요 목록 조회
+	//        final List<CommentLike> commentLikes = commentLikeRepository.findAllByLiker_Id(memberId);
+	//
+	//        // vote 기준으로 좋아요 묶기
+	//        Map<Comment, List<CommentLike>> commentListMap = commentLikes.stream()
+	//                .collect(Collectors.groupingBy(CommentLike::getComment));
+	//
+	//        // 좋아요 개수 감소
+	//        commentListMap.forEach((comment, commentLikeList) -> {
+	//            comment.decreaseLikeCount(commentLikeList.size());
+	//        });
+	//    }
 
 }
