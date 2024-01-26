@@ -29,10 +29,10 @@ public class JwtProvider implements TokenProvider {
 		final Date endDate = new Date(nowDate.getTime() + expireMillis);
 
 		return Jwts.builder()
+			.setClaims(payload)
 			.setSubject(subject)
 			.setIssuedAt(nowDate)
 			.setExpiration(endDate)
-			.setClaims(payload)
 			.signWith(secretKey, SignatureAlgorithm.HS256)
 			.compact();
 	}
