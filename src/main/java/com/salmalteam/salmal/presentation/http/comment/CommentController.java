@@ -22,8 +22,12 @@ import com.salmalteam.salmal.auth.entity.MemberPayLoad;
 import com.salmalteam.salmal.comment.application.CommentService;
 import com.salmalteam.salmal.comment.dto.request.CommentReplyCreateRequest;
 import com.salmalteam.salmal.comment.dto.request.ReplyPageRequest;
+import com.salmalteam.salmal.comment.dto.response.ReplayCommentDto;
 import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
 import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
+import com.salmalteam.salmal.notification.dto.MessageSpec;
+import com.salmalteam.salmal.notification.service.NotificationPublisher;
+import com.salmalteam.salmal.notification.service.NotificationService;
 import com.salmalteam.salmal.vote.dto.request.VoteCommentUpdateRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -33,76 +37,81 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/comments")
 public class CommentController {
 
-    private final CommentService commentService;
-    @PutMapping("/{comment-id}")
-    @ResponseStatus(HttpStatus.OK)
-    @Login
-    public void updateComment(@LoginMember final MemberPayLoad memberPayLoad,
-                              @PathVariable(name = "comment-id") final Long commentId,
-                              @RequestBody @Valid final VoteCommentUpdateRequest voteCommentUpdateRequest){
-        commentService.updateComment(memberPayLoad, commentId, voteCommentUpdateRequest);
-    }
+	private final CommentService commentService;
+	private final NotificationService notificationService;
+	private final NotificationPublisher notificationPublisher;
 
-    @DeleteMapping("/{comment-id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Login
-    public void deleteComment(@LoginMember final MemberPayLoad memberPayLoad,
-                              @PathVariable(name = "comment-id") final Long commentId){
-        commentService.deleteComment(memberPayLoad, commentId);
-    }
+	@PutMapping("/{comment-id}")
+	@ResponseStatus(HttpStatus.OK)
+	@Login
+	public void updateComment(@LoginMember final MemberPayLoad memberPayLoad,
+		@PathVariable(name = "comment-id") final Long commentId,
+		@RequestBody @Valid final VoteCommentUpdateRequest voteCommentUpdateRequest) {
+		commentService.updateComment(memberPayLoad, commentId, voteCommentUpdateRequest);
+	}
 
-    @PostMapping("/{comment-id}/likes")
-    @ResponseStatus(HttpStatus.OK)
-    @Login
-    public void likeComment(@LoginMember final MemberPayLoad memberPayLoad,
-                            @PathVariable(name = "comment-id") final Long commentId){
-        commentService.likeComment(memberPayLoad, commentId);
-    }
+	@DeleteMapping("/{comment-id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@Login
+	public void deleteComment(@LoginMember final MemberPayLoad memberPayLoad,
+		@PathVariable(name = "comment-id") final Long commentId) {
+		commentService.deleteComment(memberPayLoad, commentId);
+	}
 
-    @DeleteMapping("/{comment-id}/likes")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Login
-    public void cancelLikeComment(@LoginMember final MemberPayLoad memberPayLoad,
-                                  @PathVariable(name = "comment-id") final Long commentId){
-        commentService.unLikeComment(memberPayLoad, commentId);
-    }
+	@PostMapping("/{comment-id}/likes")
+	@ResponseStatus(HttpStatus.OK)
+	@Login
+	public void likeComment(@LoginMember final MemberPayLoad memberPayLoad,
+		@PathVariable(name = "comment-id") final Long commentId) {
+		commentService.likeComment(memberPayLoad, commentId);
+	}
 
-    @PostMapping("/{comment-id}/reports")
-    @ResponseStatus(HttpStatus.CREATED)
-    @Login
-    public void reportComment(@LoginMember final MemberPayLoad memberPayLoad,
-                              @PathVariable(name = "comment-id") final Long commentId){
-        commentService.report(memberPayLoad, commentId);
-    }
+	@DeleteMapping("/{comment-id}/likes")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@Login
+	public void cancelLikeComment(@LoginMember final MemberPayLoad memberPayLoad,
+		@PathVariable(name = "comment-id") final Long commentId) {
+		commentService.unLikeComment(memberPayLoad, commentId);
+	}
 
-    @PostMapping("/{comment-id}/replies")
-    @ResponseStatus(HttpStatus.CREATED)
-    @Login
-    public void replyComment(@LoginMember final MemberPayLoad memberPayLoad,
-                             @PathVariable(name = "comment-id") final Long commentId,
-                             @RequestBody @Valid CommentReplyCreateRequest commentReplyCreateRequest){
-        commentService.replyComment(memberPayLoad, commentId, commentReplyCreateRequest);
-    }
+	@PostMapping("/{comment-id}/reports")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Login
+	public void reportComment(@LoginMember final MemberPayLoad memberPayLoad,
+		@PathVariable(name = "comment-id") final Long commentId) {
+		commentService.report(memberPayLoad, commentId);
+	}
 
-    @GetMapping("/{comment-id}/replies")
-    @ResponseStatus(HttpStatus.OK)
-    @Login
-    public ReplyPageResponse searchReplies(@LoginMember final MemberPayLoad memberPayLoad,
-                                           @PathVariable(name = "comment-id") final Long commentId,
-                                           @RequestParam(value = "cursor-id", required = false) final Long cursorId,
-                                           @RequestParam(value = "size", required = false) final Integer size){
-        final ReplyPageRequest replyPageRequest = ReplyPageRequest.of(cursorId, size);
-        return commentService.searchReplies(memberPayLoad, commentId, replyPageRequest);
-    }
+	@PostMapping("/{comment-id}/replies")
+	@ResponseStatus(HttpStatus.CREATED)
+	@Login
+	public void replyComment(@LoginMember final MemberPayLoad memberPayLoad,
+		@PathVariable(name = "comment-id") final Long commentId,
+		@RequestBody @Valid CommentReplyCreateRequest request) {
+		ReplayCommentDto replayComment = commentService.replyComment(memberPayLoad, commentId, request);
+		MessageSpec messageSpec = notificationService.save(replayComment.getCommentOwnerId(), replayComment.getCommentId(),
+			replayComment.getNickName(), replayComment.getContent());
+		notificationPublisher.pub(messageSpec);
+	}
 
-    @GetMapping("/{comment-id}/replies/all")
-    @ResponseStatus(HttpStatus.OK)
-    @Login
-    public List<ReplyResponse> searchAllReplies(@LoginMember final MemberPayLoad memberPayLoad,
-                                                @PathVariable(name = "comment-id") final Long commentId){
+	@GetMapping("/{comment-id}/replies")
+	@ResponseStatus(HttpStatus.OK)
+	@Login
+	public ReplyPageResponse searchReplies(@LoginMember final MemberPayLoad memberPayLoad,
+		@PathVariable(name = "comment-id") final Long commentId,
+		@RequestParam(value = "cursor-id", required = false) final Long cursorId,
+		@RequestParam(value = "size", required = false) final Integer size) {
+		final ReplyPageRequest replyPageRequest = ReplyPageRequest.of(cursorId, size);
+		return commentService.searchReplies(memberPayLoad, commentId, replyPageRequest);
+	}
 
-        return commentService.searchAllReplies(memberPayLoad, commentId);
-    }
+	@GetMapping("/{comment-id}/replies/all")
+	@ResponseStatus(HttpStatus.OK)
+	@Login
+	public List<ReplyResponse> searchAllReplies(@LoginMember final MemberPayLoad memberPayLoad,
+		@PathVariable(name = "comment-id") final Long commentId) {
 
+		return commentService.searchAllReplies(memberPayLoad, commentId);
+	}
 
 }
