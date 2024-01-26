@@ -32,4 +32,7 @@ public class Notification {
 	private boolean isRead;
 	private LocalDateTime createdAt;
 
+	public void read() {
+		isRead = true;
+	}
 }
