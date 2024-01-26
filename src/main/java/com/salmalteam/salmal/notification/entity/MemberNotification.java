@@ -28,4 +28,8 @@ public class MemberNotification {
 	public void updateToken(String token) {
 		notificationToken = token;
 	}
+
+	public String getNotificationToken() {
+		return notificationToken;
+	}
 }
