@@ -34,4 +34,8 @@ public class NotificationService {
 	private void validateMember(Long memberId) {
 		memberService.findMemberById(memberId);
 	}
+
+	public void read(Long memberId, String uuid) {
+
+	}
 }
