@@ -1,6 +1,6 @@
 package com.salmalteam.salmal.notification.entity;
 
-import java.time.LocalDateTime;
+import java.util.UUID;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,6 +8,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import com.salmalteam.salmal.common.entity.BaseCreatedTimeEntity;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -18,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Notification {
+public class Notification extends BaseCreatedTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +32,10 @@ public class Notification {
 	@Enumerated(value = EnumType.STRING)
 	private Type type;
 	private boolean isRead;
-	private LocalDateTime createdAt;
+
+	public static Notification createNewReplyType(Long memberId, Long markId, UUID uuid, String message) {
+		return new Notification(null, memberId, uuid.toString(), message, markId, Type.REPLY, false);
+	}
 
 	public void read() {
 		isRead = true;
