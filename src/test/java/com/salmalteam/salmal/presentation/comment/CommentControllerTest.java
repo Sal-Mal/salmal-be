@@ -1,10 +1,16 @@
 package com.salmalteam.salmal.presentation.comment;
 
-import com.salmalteam.salmal.comment.dto.request.CommentReplyCreateRequest;
-import com.salmalteam.salmal.vote.dto.request.VoteCommentUpdateRequest;
-import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
-import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
-import com.salmalteam.salmal.support.PresentationTest;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -14,23 +20,17 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.salmalteam.salmal.comment.dto.request.CommentReplyCreateRequest;
+import com.salmalteam.salmal.comment.dto.response.ReplayCommentDto;
+import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
+import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
+import com.salmalteam.salmal.support.PresentationTest;
+import com.salmalteam.salmal.vote.dto.request.VoteCommentUpdateRequest;
 
 class CommentControllerTest extends PresentationTest {
 
     private static final String BASE_URL = "/api/comments/{comment-id}";
+
 
     @Nested
     class 댓글_수정_테스트 {
@@ -249,7 +249,9 @@ class CommentControllerTest extends PresentationTest {
             final Long commentId = 1L;
             final String content = "이 댓글에 동의합니다!";
             final CommentReplyCreateRequest commentReplyCreateRequest = new CommentReplyCreateRequest(content);
-
+            ReplayCommentDto replayCommentDto = new ReplayCommentDto(100L, 20L, 556L, "kim", "content");
+            given(commentService.replyComment(any(),anyLong(),any()))
+                .willReturn(replayCommentDto);
             mockingForAuthorization();
 
             // when
@@ -274,6 +276,8 @@ class CommentControllerTest extends PresentationTest {
             ));
 
             verify(commentService, times(1)).replyComment(any(), any(), any());
+            verify(notificationService, times(1)).save(anyLong(),anyLong(),anyString(),anyString());
+            verify(fcmClient, times(1)).pub(any());
 
         }
     }
