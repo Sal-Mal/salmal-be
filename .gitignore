@@ -41,3 +41,4 @@ out/
 **/*.log
 **/*.log.gz
 .DS_Store
+src/main/generated/**

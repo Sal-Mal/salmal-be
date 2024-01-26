@@ -25,7 +25,10 @@ import com.salmalteam.salmal.auth.application.AuthService;
 import com.salmalteam.salmal.auth.application.TokenExtractor;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
 import com.salmalteam.salmal.comment.application.CommentService;
+import com.salmalteam.salmal.fcm.infra.FcmClient;
 import com.salmalteam.salmal.member.application.MemberService;
+import com.salmalteam.salmal.notification.service.MemberNotificationService;
+import com.salmalteam.salmal.notification.service.NotificationService;
 import com.salmalteam.salmal.vote.application.VoteService;
 import com.salmalteam.salmal.auth.application.TokenProvider;
 
@@ -65,6 +68,13 @@ public class PresentationTest {
 
     @MockBean
     protected TokenRepository tokenRepository;
+
+    @MockBean
+    protected NotificationService notificationService;
+    @MockBean
+    protected MemberNotificationService MemberNotificationService;
+	@MockBean
+	protected FcmClient fcmClient;
 
     @BeforeEach
     void setUp(RestDocumentationContextProvider restDocumentation, WebApplicationContext context) {
