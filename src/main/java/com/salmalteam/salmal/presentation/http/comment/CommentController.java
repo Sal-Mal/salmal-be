@@ -36,52 +36,52 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/comments")
 public class CommentController {
 
-	private final CommentService commentService;
-	private final NotificationService notificationService;
-	private final NotificationPublisher notificationPublisher;
+    private final CommentService commentService;
+    private final NotificationService notificationService;
+    private final NotificationPublisher notificationPublisher;
 
-	@PutMapping("/{comment-id}")
-	@ResponseStatus(HttpStatus.OK)
-	public void updateComment(@LoginMember final AuthPayload authPayload,
-		@PathVariable(name = "comment-id") final Long commentId,
-		@RequestBody @Valid final VoteCommentUpdateRequest voteCommentUpdateRequest) {
-		commentService.updateComment(authPayload, commentId, voteCommentUpdateRequest);
-	}
+    @PutMapping("/{comment-id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateComment(@LoginMember final Long memberId,
+                              @PathVariable(name = "comment-id") final Long commentId,
+                              @RequestBody @Valid final VoteCommentUpdateRequest voteCommentUpdateRequest){
+        commentService.updateComment(memberId, commentId, voteCommentUpdateRequest);
+    }
 
     @DeleteMapping("/{comment-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteComment(@LoginMember final AuthPayload authPayload,
+    public void deleteComment(@LoginMember final Long memberId,
                               @PathVariable(name = "comment-id") final Long commentId){
-        commentService.deleteComment(authPayload, commentId);
+        commentService.deleteComment(memberId, commentId);
     }
 
     @PostMapping("/{comment-id}/likes")
     @ResponseStatus(HttpStatus.OK)
-    public void likeComment(@LoginMember final AuthPayload authPayload,
+    public void likeComment(@LoginMember final Long memberId,
                             @PathVariable(name = "comment-id") final Long commentId){
-        commentService.likeComment(authPayload, commentId);
+        commentService.likeComment(memberId, commentId);
     }
 
     @DeleteMapping("/{comment-id}/likes")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cancelLikeComment(@LoginMember final AuthPayload authPayload,
+    public void cancelLikeComment(@LoginMember final Long memberId,
                                   @PathVariable(name = "comment-id") final Long commentId){
-        commentService.unLikeComment(authPayload, commentId);
+        commentService.unLikeComment(memberId, commentId);
     }
 
     @PostMapping("/{comment-id}/reports")
     @ResponseStatus(HttpStatus.CREATED)
-    public void reportComment(@LoginMember final AuthPayload authPayload,
+    public void reportComment(@LoginMember final Long memberId,
                               @PathVariable(name = "comment-id") final Long commentId){
-        commentService.report(authPayload, commentId);
+        commentService.report(memberId, commentId);
     }
 
     @PostMapping("/{comment-id}/replies")
     @ResponseStatus(HttpStatus.CREATED)
-    public void replyComment(@LoginMember final AuthPayload authPayload,
+    public void replyComment(@LoginMember final Long memberId,
         @PathVariable(name = "comment-id") final Long commentId,
         @RequestBody @Valid CommentReplyCreateRequest request) {
-        ReplayCommentDto replayComment = commentService.replyComment(authPayload, commentId, request);
+        ReplayCommentDto replayComment = commentService.replyComment(memberId, commentId, request);
         if (replayComment.isSameCommenter()) {
             return;
         }
@@ -94,19 +94,19 @@ public class CommentController {
 
     @GetMapping("/{comment-id}/replies")
     @ResponseStatus(HttpStatus.OK)
-    public ReplyPageResponse searchReplies(@LoginMember final AuthPayload authPayload,
+    public ReplyPageResponse searchReplies(@LoginMember final Long memberId,
                                            @PathVariable(name = "comment-id") final Long commentId,
                                            @RequestParam(value = "cursor-id", required = false) final Long cursorId,
                                            @RequestParam(value = "size", required = false) final Integer size){
         final ReplyPageRequest replyPageRequest = ReplyPageRequest.of(cursorId, size);
-        return commentService.searchReplies(authPayload, commentId, replyPageRequest);
+        return commentService.searchReplies(memberId, commentId, replyPageRequest);
     }
 
     @GetMapping("/{comment-id}/replies/all")
     @ResponseStatus(HttpStatus.OK)
-    public List<ReplyResponse> searchAllReplies(@LoginMember final AuthPayload authPayload,
+    public List<ReplyResponse> searchAllReplies(@LoginMember final Long memberId,
                                                 @PathVariable(name = "comment-id") final Long commentId){
 
-        return commentService.searchAllReplies(authPayload, commentId);
+        return commentService.searchAllReplies(memberId, commentId);
     }
 }
