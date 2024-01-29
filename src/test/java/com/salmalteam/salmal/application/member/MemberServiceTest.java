@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.*;
 import java.io.FileInputStream;
 import java.util.Optional;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -126,7 +127,6 @@ class MemberServiceTest {
 			// given
 			final Long memberId = 1L;
 			final Long targetMemberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
 
 			given(memberRepository.findById(eq(memberId))).willReturn(
 					Optional.of(Member.createActivatedMember("kk", "닉네임 A", "kakao", true)));
@@ -134,7 +134,7 @@ class MemberServiceTest {
 					Optional.of(Member.createActivatedMember("kk", "닉네임 A", "kakao", true)));
 
 			// when & then
-			assertThatThrownBy(() -> memberService.block(memberPayLoad, targetMemberId))
+			assertThatThrownBy(() -> memberService.block(memberId, targetMemberId))
 					.isInstanceOf(MemberBlockedException.class);
 
 		}
@@ -383,6 +383,40 @@ class MemberServiceTest {
 			assertThatThrownBy(() -> memberService.delete(memberId, 500L))
 				.isInstanceOf(MemberException.class)
 				.hasFieldOrPropertyWithValue("exceptionType", MemberExceptionType.FORBIDDEN_DELETE);
+			then(memberRepository).should(times(1)).findById(anyLong());
+		}
+
+		@Test
+		@DisplayName("탈퇴된 아이디면 false 를 반환한다.")
+		void isActivatedId_false() {
+		    //given
+			Member member = Member.createActivatedMember("1111111", "tray", "Apple", true);
+			member.remove();
+
+			given(memberRepository.findById(anyLong())).willReturn(Optional.of(member));
+
+			//when
+			boolean actual = memberService.isActivatedId(2000L);
+
+			//then
+			assertThat(actual).isFalse();
+			then(memberRepository).should(times(1)).findById(anyLong());
+		}
+
+		@Test
+		@DisplayName("활성화된 아이디면 true 를 반환한다.")
+		void isActivatedId_true() {
+			//given
+			Member member = Member.createActivatedMember("1111111", "tray", "Apple", true);
+
+			given(memberRepository.findById(anyLong()))
+				.willReturn(Optional.of(member));
+
+			//when
+			boolean actual = memberService.isActivatedId(2000L);
+
+			//then
+			assertThat(actual).isTrue();
 			then(memberRepository).should(times(1)).findById(anyLong());
 
 		}
