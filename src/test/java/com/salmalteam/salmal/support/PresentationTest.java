@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -17,12 +19,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.salmalteam.salmal.auth.application.AuthPayloadGenerator;
 import com.salmalteam.salmal.auth.application.AuthService;
 import com.salmalteam.salmal.auth.application.TokenExtractor;
 import com.salmalteam.salmal.auth.application.TokenValidator;
+import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.Role;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
 import com.salmalteam.salmal.auth.infrastructure.JwtProvider;
 import com.salmalteam.salmal.auth.infrastructure.RefreshTokenProvider;
@@ -32,20 +38,22 @@ import com.salmalteam.salmal.fcm.infra.FcmClient;
 import com.salmalteam.salmal.member.application.MemberService;
 import com.salmalteam.salmal.notification.service.MemberNotificationService;
 import com.salmalteam.salmal.notification.service.NotificationService;
+import com.salmalteam.salmal.presentation.http.auth.AuthInterceptor;
+import com.salmalteam.salmal.presentation.http.auth.AuthenticationContext;
 import com.salmalteam.salmal.vote.application.VoteService;
 
 @ExtendWith(RestDocumentationExtension.class)
 @Import(RestDocsConfig.class)
-@WebMvcTest
+@WebMvcTest(excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfigurer.class)})
 public class PresentationTest {
 
-    protected final String ACCESS_TOKEN = "Bearer accessToken";
+	protected final String ACCESS_TOKEN = "Bearer accessToken";
 
-    @Autowired
-    protected MockMvc mockMvc;
+	@Autowired
+	protected MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+	@Autowired
+	private ObjectMapper objectMapper;
 
     @Autowired
     protected RestDocumentationResultHandler restDocs;
@@ -84,21 +92,33 @@ public class PresentationTest {
     @MockBean
     protected RefreshTokenProvider refreshTokenProvider;
 
-    @BeforeEach
-    void setUp(RestDocumentationContextProvider restDocumentation, WebApplicationContext context) {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(documentationConfiguration(restDocumentation))
-                .alwaysDo(MockMvcResultHandlers.print())
-                .alwaysDo(restDocs)
-                .build();
-    }
+	@MockBean
+	protected AuthenticationContext authenticationContext;
 
-    protected String createJson(Object dto) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(dto);
-    }
+	@MockBean
+	protected AuthInterceptor authInterceptor;
 
-    protected void mockingForAuthorization(){
-        given(tokenValidator.isValidAccessToken(any())).willReturn(true);
-        given(tokenRepository.existsLogoutAccessTokenById(any())).willReturn(false);
-    }
+	@MockBean
+	protected AuthPayloadGenerator authPayloadGenerator;
+	@BeforeEach
+	void setUp(RestDocumentationContextProvider restDocumentation, WebApplicationContext context) {
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
+			.apply(documentationConfiguration(restDocumentation))
+			.alwaysDo(MockMvcResultHandlers.print())
+			.alwaysDo(restDocs)
+			.build();
+	}
+
+	protected String createJson(Object dto) throws JsonProcessingException {
+		return objectMapper.writeValueAsString(dto);
+	}
+
+	protected void mockingForAuthorization(){
+		given(tokenValidator.isValidAccessToken(any())).willReturn(true);
+		given(tokenRepository.existsLogoutAccessTokenById(any())).willReturn(false);
+		given(authPayloadGenerator.generateByToken(any())).willReturn(MemberPayLoad.of(100L, Role.MEMBER));
+		given(authenticationContext.getId()).willReturn(100L);
+		given(authenticationContext.getRole()).willReturn(Role.MEMBER);
+
+	}
 }
