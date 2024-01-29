@@ -10,7 +10,6 @@ import com.salmalteam.salmal.auth.dto.request.LoginRequest;
 import com.salmalteam.salmal.auth.dto.request.LogoutRequest;
 import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
 import com.salmalteam.salmal.auth.dto.response.LoginResponse;
-import com.salmalteam.salmal.auth.dto.response.TokenAvailableResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenResponse;
 import com.salmalteam.salmal.auth.entity.LogoutAccessToken;
 import com.salmalteam.salmal.auth.entity.RefreshToken;
@@ -30,15 +29,13 @@ public class AuthService {
 	private final TokenProvider refreshTokenProvider;
 	private final TokenRepository tokenRepository;
 	private final MemberService memberService;
-	private final TokenValidator tokenValidator;
 
 	public AuthService(TokenProvider jwtProvider, TokenProvider refreshTokenProvider, TokenRepository tokenRepository,
-		MemberService memberService, TokenValidator tokenValidator) {
+		MemberService memberService) {
 		this.jwtProvider = jwtProvider;
 		this.refreshTokenProvider = refreshTokenProvider;
 		this.tokenRepository = tokenRepository;
 		this.memberService = memberService;
-		this.tokenValidator = tokenValidator;
 	}
 
 	@Transactional
@@ -89,9 +86,5 @@ public class AuthService {
 		if (!tokenRepository.existsRefreshTokenById(refreshToken)) {
 			throw new AuthException(AuthExceptionType.NOT_FOUND_REFRESH_TOKEN);
 		}
-	}
-
-	public TokenAvailableResponse validateToken(String accessToken) {
-		return new TokenAvailableResponse(tokenValidator.isValidAccessToken(accessToken));
 	}
 }

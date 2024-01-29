@@ -21,6 +21,7 @@ import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
 import com.salmalteam.salmal.auth.dto.response.LoginResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenAvailableResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenResponse;
+import com.salmalteam.salmal.member.application.MemberService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ public class AuthController {
 
 	private final static String AUTHORIZATION_HEADER = "Authorization";
 	private final AuthService authService;
+	private final MemberService memberService;
 
 	@PostMapping("/login")
 	@ResponseStatus(HttpStatus.OK)
@@ -52,7 +54,7 @@ public class AuthController {
 	public TokenResponse reissue(@LoginMember Long memberId,
 		@RequestBody final ReissueTokenRequest reissueTokenRequest) {
 		final String refreshToken = reissueTokenRequest.getRefreshToken();
-		return authService.	reissueAccessToken(memberId, refreshToken);
+		return authService.reissueAccessToken(memberId, refreshToken);
 	}
 
 	@PostMapping("/logout")
@@ -64,14 +66,12 @@ public class AuthController {
 	}
 
 	@GetMapping("/tokens")
-	public TokenAvailableResponse validateToken(@RequestHeader(value = AUTHORIZATION_HEADER) final String authHeader) {
-		final String accessToken = extractAccessTokenFromAuthHeader(authHeader);
-		return authService.validateToken(accessToken);
+	public TokenAvailableResponse validateToken(@LoginMember final Long memberId) {
+		return new TokenAvailableResponse(memberService.isActivatedId(memberId));
 	}
 
 	private String extractAccessTokenFromAuthHeader(final String authHeader) {
 		final String accessToken = authHeader.substring(7);
 		return accessToken;
 	}
-
 }

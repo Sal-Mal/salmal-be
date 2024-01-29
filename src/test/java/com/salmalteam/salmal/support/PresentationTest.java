@@ -26,7 +26,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.salmalteam.salmal.auth.application.AuthPayloadGenerator;
 import com.salmalteam.salmal.auth.application.AuthService;
 import com.salmalteam.salmal.auth.application.TokenExtractor;
-import com.salmalteam.salmal.auth.application.TokenValidator;
 import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.auth.entity.Role;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
@@ -55,42 +54,32 @@ public class PresentationTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-    @Autowired
-    protected RestDocumentationResultHandler restDocs;
+	@Autowired
+	protected RestDocumentationResultHandler restDocs;
 
-    @MockBean
-    protected AuthService authService;
+	@MockBean
+	protected AuthService authService;
 
-    @MockBean
-    protected MemberService memberService;
+	@MockBean
+	protected MemberService memberService;
 
-    @MockBean
-    protected VoteService voteService;
+	@MockBean
+	protected VoteService voteService;
 
-    @MockBean
-    protected CommentService commentService;
+	@MockBean
+	protected CommentService commentService;
 
-    @MockBean
-    protected JwtProvider jwtProvider;
+	@MockBean
+	protected JwtProvider jwtProvider;
 
-    @MockBean
-    protected TokenExtractor tokenExtractor;
+	@MockBean
+	protected TokenExtractor tokenExtractor;
 
     @MockBean
     protected TokenRepository tokenRepository;
 
-    @MockBean
-    protected NotificationService notificationService;
-    @MockBean
-    protected MemberNotificationService MemberNotificationService;
 	@MockBean
-	protected FcmClient fcmClient;
-
-    @MockBean
-    protected TokenValidator tokenValidator;
-
-    @MockBean
-    protected RefreshTokenProvider refreshTokenProvider;
+	protected RefreshTokenProvider refreshTokenProvider;
 
 	@MockBean
 	protected AuthenticationContext authenticationContext;
@@ -100,6 +89,14 @@ public class PresentationTest {
 
 	@MockBean
 	protected AuthPayloadGenerator authPayloadGenerator;
+
+	@MockBean
+	protected NotificationService notificationService;
+	@MockBean
+	protected MemberNotificationService MemberNotificationService;
+	@MockBean
+	protected FcmClient fcmClient;
+
 	@BeforeEach
 	void setUp(RestDocumentationContextProvider restDocumentation, WebApplicationContext context) {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
@@ -114,7 +111,6 @@ public class PresentationTest {
 	}
 
 	protected void mockingForAuthorization(){
-		given(tokenValidator.isValidAccessToken(any())).willReturn(true);
 		given(tokenRepository.existsLogoutAccessTokenById(any())).willReturn(false);
 		given(authPayloadGenerator.generateByToken(any())).willReturn(AuthPayload.of(100L, Role.MEMBER));
 		given(authenticationContext.getId()).willReturn(100L);

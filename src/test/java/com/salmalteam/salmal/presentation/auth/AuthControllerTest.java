@@ -24,7 +24,6 @@ import com.salmalteam.salmal.auth.dto.request.LogoutRequest;
 import com.salmalteam.salmal.auth.dto.request.ReissueTokenRequest;
 import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
 import com.salmalteam.salmal.auth.dto.response.LoginResponse;
-import com.salmalteam.salmal.auth.dto.response.TokenAvailableResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenResponse;
 import com.salmalteam.salmal.support.PresentationTest;
 
@@ -160,8 +159,8 @@ class AuthControllerTest extends PresentationTest {
 	@DisplayName("토큰 정보확인 API (유효할 때)")
 	void validateToken() throws Exception {
 		//given
-		given(authService.validateToken(anyString()))
-			.willReturn(new TokenAvailableResponse(true));
+		given(memberService.isActivatedId(anyLong()))
+			.willReturn(true);
 
 		//expect
 		mockMvc.perform(get(BASE_URL + "/tokens")
@@ -177,15 +176,15 @@ class AuthControllerTest extends PresentationTest {
 				)
 			));
 
-		then(authService).should(times(1)).validateToken(anyString());
+		then(memberService).should(times(1)).isActivatedId(anyLong());
 	}
 
 	@Test
 	@DisplayName("토큰 정보확인 API (유효하지 않을 때)")
 	void validateToken_invalid() throws Exception {
 		//given
-		given(authService.validateToken(anyString()))
-			.willReturn(new TokenAvailableResponse(false));
+		given(memberService.isActivatedId(anyLong()))
+			.willReturn(true);
 
 		//expect
 		mockMvc.perform(get(BASE_URL + "/tokens")
@@ -194,7 +193,7 @@ class AuthControllerTest extends PresentationTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.available").value(false));
 
-		then(authService).should(times(1)).validateToken(anyString());
+		then(memberService).should(times(1)).isActivatedId(anyLong());
 	}
 
 }
