@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,17 +16,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.salmalteam.salmal.member.application.MemberService;
 import com.salmalteam.salmal.auth.application.AuthService;
-import com.salmalteam.salmal.auth.application.TokenProvider;
-import com.salmalteam.salmal.auth.entity.RefreshToken;
-import com.salmalteam.salmal.auth.entity.TokenRepository;
+import com.salmalteam.salmal.auth.application.TokenValidator;
 import com.salmalteam.salmal.auth.dto.request.LoginRequest;
 import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
 import com.salmalteam.salmal.auth.dto.response.LoginResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenAvailableResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenResponse;
+import com.salmalteam.salmal.auth.entity.RefreshToken;
+import com.salmalteam.salmal.auth.entity.TokenRepository;
 import com.salmalteam.salmal.auth.exception.AuthException;
+import com.salmalteam.salmal.auth.infrastructure.JwtProvider;
+import com.salmalteam.salmal.auth.infrastructure.RefreshTokenProvider;
+import com.salmalteam.salmal.member.application.MemberService;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -31,11 +36,15 @@ class AuthServiceTest {
 	@InjectMocks
 	AuthService authService;
 	@Mock
-	TokenProvider tokenProvider;
+	JwtProvider jwtProvider;
+	@Mock
+	RefreshTokenProvider refreshTokenProvider;
 	@Mock
 	TokenRepository tokenRepository;
 	@Mock
 	MemberService memberService;
+	@Mock
+	TokenValidator tokenValidator;
 
 	@Nested
 	class 로그인_테스트 {
@@ -46,14 +55,14 @@ class AuthServiceTest {
 			final Long memberId = 1L;
 			final String accessToken = "accessToken";
 			final String refreshToken = "refreshToken";
-			final Long refreshTokenExpiry = 10000L;
 			final String providerId = "providerId";
+			final Map<String, Object> payload = new HashMap<>();
+			payload.put("id", memberId);
 			final LoginRequest loginRequest = new LoginRequest("providerId");
 
 			given(memberService.findMemberIdByProviderId(eq(providerId))).willReturn(memberId);
-			given(tokenProvider.createAccessToken(eq(memberId))).willReturn(accessToken);
-			given(tokenProvider.createRefreshToken(eq(memberId))).willReturn(refreshToken);
-			given(tokenProvider.getTokenExpiry(eq(refreshToken))).willReturn(refreshTokenExpiry);
+			given(jwtProvider.provide(eq(payload))).willReturn(accessToken);
+			given(refreshTokenProvider.provide(eq(payload))).willReturn(refreshToken);
 
 			// when
 			final LoginResponse loginResponse = authService.login(loginRequest);
@@ -69,7 +78,7 @@ class AuthServiceTest {
 		@DisplayName("토큰이 유효한지 검사하고 유효하면 true 결과를 반환 한다.")
 		void validateToken() {
 			//given
-			given(tokenProvider.isValidAccessToken(anyString()))
+			given(tokenValidator.isValidAccessToken(anyString()))
 				.willReturn(true);
 			String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
@@ -78,13 +87,13 @@ class AuthServiceTest {
 
 			//then
 			assertThat(tokenAvailableResponse.getAvailable()).isTrue();
-			then(tokenProvider).should(times(1)).isValidAccessToken(anyString());
+			then(tokenValidator).should(times(1)).isValidAccessToken(anyString());
 		}
 
 		@Test
 		@DisplayName("토큰이 유효한지 검사하고 유효하지 않으면 false 결과를 반환 한다.")
 		void validateToken_invalid() {
-			given(tokenProvider.isValidAccessToken(anyString()))
+			given(tokenValidator.isValidAccessToken(anyString()))
 				.willReturn(false);
 			String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
@@ -93,7 +102,7 @@ class AuthServiceTest {
 
 			//then
 			assertThat(tokenAvailableResponse.getAvailable()).isFalse();
-			then(tokenProvider).should(times(1)).isValidAccessToken(anyString());
+			then(tokenValidator).should(times(1)).isValidAccessToken(anyString());
 
 		}
 
@@ -112,12 +121,13 @@ class AuthServiceTest {
 			final String refreshToken = "refreshToken";
 			final Long refreshTokenExpiry = 10000L;
 			final String providerId = "providerId";
+			final Map<String, Object> payload = new HashMap<>();
+			payload.put("id", memberId);
 			final SignUpRequest signUpRequest = new SignUpRequest(providerId, nickName, marketingInformationConsent);
 
 			given(memberService.save(eq(providerId), any())).willReturn(memberId);
-			given(tokenProvider.createAccessToken(eq(memberId))).willReturn(accessToken);
-			given(tokenProvider.createRefreshToken(eq(memberId))).willReturn(refreshToken);
-			given(tokenProvider.getTokenExpiry(eq(refreshToken))).willReturn(refreshTokenExpiry);
+			given(jwtProvider.provide(eq(payload))).willReturn(accessToken);
+			given(jwtProvider.provide(eq(payload))).willReturn(refreshToken);
 
 			// when
 			final LoginResponse loginResponse = authService.signUp(providerId, signUpRequest);
@@ -140,10 +150,9 @@ class AuthServiceTest {
 		void 재발급_토큰을_통해서_접근_토큰을_재발급_한다() {
 
 			// given
-			given(tokenProvider.isValidRefreshToken(eq(refreshToken))).willReturn(true);
+			given(tokenValidator.isValidRefreshToken(eq(refreshToken))).willReturn(true);
 			given(tokenRepository.existsRefreshTokenById(eq(refreshToken))).willReturn(true);
-			given(tokenProvider.getMemberIdFromToken(eq(refreshToken))).willReturn(memberId);
-			given(tokenProvider.createAccessToken(eq(memberId))).willReturn(accessToken);
+			given(refreshTokenProvider.provide(anyMap())).willReturn(accessToken);
 
 			// when
 			final TokenResponse tokenResponse = authService.reissueAccessToken(refreshToken);
@@ -158,7 +167,7 @@ class AuthServiceTest {
 		void 재발급_토큰이_유효하지_않으면_예외를_발생시킨다() {
 
 			// given
-			given(tokenProvider.isValidRefreshToken(any())).willReturn(false);
+			given(tokenValidator.isValidRefreshToken(any())).willReturn(false);
 
 			// when & then
 			assertThatThrownBy(() -> authService.reissueAccessToken(refreshToken))
@@ -169,7 +178,7 @@ class AuthServiceTest {
 		void 재발급_토큰이_존재하지_않으면_예외를_발생시킨다() {
 
 			// given
-			given(tokenProvider.isValidRefreshToken(any())).willReturn(true);
+			given(tokenValidator.isValidRefreshToken(any())).willReturn(true);
 			given(tokenRepository.existsRefreshTokenById(any())).willReturn(false);
 
 			// when & then
