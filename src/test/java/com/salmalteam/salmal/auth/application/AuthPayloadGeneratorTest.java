@@ -51,7 +51,7 @@ class AuthPayloadGeneratorTest {
 		//then
 		assertThat(memberPayLoad.getId()).isEqualTo(100L);
 		assertThat(memberPayLoad.getRole()).isEqualTo(Role.MEMBER);
-		then(tokenRepository).should(times(1)).existsRefreshTokenById(anyString());
+		then(tokenRepository).should(times(1)).existsLogoutAccessTokenById(anyString());
 
 	}
 
@@ -67,7 +67,7 @@ class AuthPayloadGeneratorTest {
 			.isInstanceOf(AuthException.class)
 			.hasMessage("로그아웃된 접근 토큰 요청 -> [ type = UNAUTHORIZED ] [ code = 4005 ] ");
 
-		then(tokenRepository).should(times(1)).existsRefreshTokenById(anyString());
+		then(tokenRepository).should(times(1)).existsLogoutAccessTokenById(anyString());
 	}
 
 	//TODO
