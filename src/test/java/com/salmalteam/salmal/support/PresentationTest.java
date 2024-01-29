@@ -20,17 +20,19 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.salmalteam.salmal.config.RestDocsConfig;
 import com.salmalteam.salmal.auth.application.AuthService;
 import com.salmalteam.salmal.auth.application.TokenExtractor;
+import com.salmalteam.salmal.auth.application.TokenValidator;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
+import com.salmalteam.salmal.auth.infrastructure.JwtProvider;
+import com.salmalteam.salmal.auth.infrastructure.RefreshTokenProvider;
 import com.salmalteam.salmal.comment.application.CommentService;
+import com.salmalteam.salmal.config.RestDocsConfig;
 import com.salmalteam.salmal.fcm.infra.FcmClient;
 import com.salmalteam.salmal.member.application.MemberService;
 import com.salmalteam.salmal.notification.service.MemberNotificationService;
 import com.salmalteam.salmal.notification.service.NotificationService;
 import com.salmalteam.salmal.vote.application.VoteService;
-import com.salmalteam.salmal.auth.application.TokenProvider;
 
 @ExtendWith(RestDocumentationExtension.class)
 @Import(RestDocsConfig.class)
@@ -61,7 +63,7 @@ public class PresentationTest {
     protected CommentService commentService;
 
     @MockBean
-    protected TokenProvider tokenProvider;
+    protected JwtProvider jwtProvider;
 
     @MockBean
     protected TokenExtractor tokenExtractor;
@@ -75,6 +77,12 @@ public class PresentationTest {
     protected MemberNotificationService MemberNotificationService;
 	@MockBean
 	protected FcmClient fcmClient;
+
+    @MockBean
+    protected TokenValidator tokenValidator;
+
+    @MockBean
+    protected RefreshTokenProvider refreshTokenProvider;
 
     @BeforeEach
     void setUp(RestDocumentationContextProvider restDocumentation, WebApplicationContext context) {
@@ -90,7 +98,7 @@ public class PresentationTest {
     }
 
     protected void mockingForAuthorization(){
-        given(tokenProvider.isValidAccessToken(any())).willReturn(true);
+        given(tokenValidator.isValidAccessToken(any())).willReturn(true);
         given(tokenRepository.existsLogoutAccessTokenById(any())).willReturn(false);
     }
 }
