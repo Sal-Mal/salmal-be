@@ -36,7 +36,6 @@ import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
 import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
 import com.salmalteam.salmal.comment.exception.CommentException;
 import com.salmalteam.salmal.comment.exception.CommentExceptionType;
-import com.salmalteam.salmal.auth.entity.AuthPayload;
 
 import lombok.RequiredArgsConstructor;
 
@@ -80,7 +79,6 @@ public class CommentService {
 	@Transactional
 	public ReplayCommentDto replyComment(final Long memberId, final Long commentId,
 		final CommentReplyCreateRequest commentReplyCreateRequest) {
-
 		final Member replyer = memberService.findMemberById(memberId); //대댓글 작성자
 		final Comment comment = getCommentById(commentId); //대댓글을 작성한 댓글(대댓글 주인)
 		final Comment reply = Comment.ofReply(commentReplyCreateRequest.getContent(), comment, replyer); //대댓글
@@ -89,7 +87,7 @@ public class CommentService {
 		commentRepository.increaseReplyCount(commentId);
 
 		return ReplayCommentDto.createNotificationType(replyer, commenterOwner, comment, reply, comment.getVote());
-	}
+    }
 
 	@Transactional(readOnly = true)
 	public ReplyPageResponse searchReplies(final Long memberId, final Long commentId,
@@ -150,16 +148,13 @@ public class CommentService {
 	}
 
 	@Transactional(readOnly = true)
-	public CommentPageResponse searchList(final Long voteId,
-		final AuthPayload authPayload,
+	public CommentPageResponse searchList(final Long voteId, final Long memberId,
 		final CommentPageRequest commentPageRequest) {
-		final Long memberId = authPayload.getId();
 		return commentRepository.searchList(voteId, memberId, commentPageRequest);
 	}
 
 	@Transactional(readOnly = true)
-	public List<CommentResponse> searchAllList(final Long voteId, final AuthPayload authPayload) {
-		final Long memberId = authPayload.getId();
+	public List<CommentResponse> searchAllList(final Long voteId, final Long memberId) {
 		return commentRepository.searchAllList(voteId, memberId);
 	}
 
