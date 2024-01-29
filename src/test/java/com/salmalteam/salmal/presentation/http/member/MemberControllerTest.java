@@ -23,7 +23,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.member.dto.request.MyPageUpdateRequest;
 import com.salmalteam.salmal.member.dto.response.MyPageResponse;
 import com.salmalteam.salmal.member.dto.response.block.MemberBlockedPageResponse;
@@ -104,7 +103,6 @@ class MemberControllerTest extends PresentationTest {
         void 회원_차단_성공() throws Exception {
             // given
             final Long memberId = 1L;
-            final AuthPayload authPayload = AuthPayload.from(memberId);
 
             mockingForAuthorization();
             // when
