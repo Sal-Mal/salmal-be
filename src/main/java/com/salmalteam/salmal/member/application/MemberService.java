@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.image.application.ImageUploader;
 import com.salmalteam.salmal.image.entity.ImageFile;
 import com.salmalteam.salmal.member.dto.request.MemberImageUpdateRequest;
@@ -73,9 +73,9 @@ public class MemberService {
 	 * TODO: S3 스토리지에 올라가있는 회원 데이터(이미지) 삭제
 	 */
 	@Transactional
-	public void delete(final MemberPayLoad memberPayLoad, final Long memberId) {
-		final Member member = findMemberById(memberPayLoad.getId());
-		validateDeleteAuthority(memberId, memberPayLoad.getId());
+	public void delete(final AuthPayload authPayload, final Long memberId) {
+		final Member member = findMemberById(authPayload.getId());
+		validateDeleteAuthority(memberId, authPayload.getId());
 		member.remove();
 	}
 
@@ -92,9 +92,9 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void block(final MemberPayLoad memberPayLoad, final Long memberId) {
+	public void block(final AuthPayload authPayload, final Long memberId) {
 
-		final Member blocker = findMemberById(memberPayLoad.getId());
+		final Member blocker = findMemberById(authPayload.getId());
 		final Member target = findMemberById(memberId);
 		final MemberBlocked blockedMember = MemberBlocked.of(blocker, target);
 
@@ -117,9 +117,9 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void cancelBlocking(final MemberPayLoad memberPayLoad, final Long memberId) {
+	public void cancelBlocking(final AuthPayload authPayload, final Long memberId) {
 
-		final Member blocker = findMemberById(memberPayLoad.getId());
+		final Member blocker = findMemberById(authPayload.getId());
 		final Member target = findMemberById(memberId);
 
 		validateMemberBlockedExists(blocker, target);
@@ -134,10 +134,10 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updateMyPage(final MemberPayLoad memberPayLoad, final Long memberId,
+	public void updateMyPage(final AuthPayload authPayload, final Long memberId,
 		final MyPageUpdateRequest myPageUpdateRequest) {
 
-		final Member member = findMemberById(memberPayLoad.getId());
+		final Member member = findMemberById(authPayload.getId());
 		final Member targetMember = findMemberById(memberId);
 
 		validateUpdateAuthority(member, targetMember);
@@ -154,10 +154,10 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updateImage(final MemberPayLoad memberPayLoad, final Long memberId,
+	public void updateImage(final AuthPayload authPayload, final Long memberId,
 		final MemberImageUpdateRequest memberImageUpdateRequest) {
 
-		final Member member = findMemberById(memberPayLoad.getId());
+		final Member member = findMemberById(authPayload.getId());
 		final Member targetMember = findMemberById(memberId);
 
 		validateUpdateAuthority(member, targetMember);
@@ -173,8 +173,8 @@ public class MemberService {
 	 * TODO: S3 비동기 삭제 로직 구현
 	 */
 	@Transactional
-	public void deleteImage(final MemberPayLoad memberPayLoad, final Long memberId) {
-		final Member member = findMemberById(memberPayLoad.getId());
+	public void deleteImage(final AuthPayload authPayload, final Long memberId) {
+		final Member member = findMemberById(authPayload.getId());
 		final Member targetMember = findMemberById(memberId);
 
 		validateUpdateAuthority(member, targetMember);
@@ -196,10 +196,10 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = true)
-	public MemberBlockedPageResponse searchBlockedMembers(final MemberPayLoad memberPayLoad, final Long memberId,
+	public MemberBlockedPageResponse searchBlockedMembers(final AuthPayload authPayload, final Long memberId,
 		final MemberBlockedPageRequest memberBlockedPageRequest) {
 
-		final Member member = findMemberById(memberPayLoad.getId());
+		final Member member = findMemberById(authPayload.getId());
 		final Member targetMember = findMemberById(memberId);
 
 		validateSearchAuthority(member, targetMember);
@@ -214,7 +214,7 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = true)
-	public MemberVotePageResponse searchMemberVotes(final MemberPayLoad memberPayLoad, final Long memberId,
+	public MemberVotePageResponse searchMemberVotes(final AuthPayload authPayload, final Long memberId,
 		final MemberVotePageRequest memberVotePageRequest) {
 
 		validateExistsById(memberId);
@@ -237,7 +237,7 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = true)
-	public MemberEvaluationVotePageResponse searchMemberEvaluatedVotes(final MemberPayLoad memberPayLoad,
+	public MemberEvaluationVotePageResponse searchMemberEvaluatedVotes(final AuthPayload authPayload,
 		final Long memberId, final MemberEvaluationVotePageRequest memberEvaluationVotePageRequest) {
 
 		validateExistsById(memberId);
@@ -246,7 +246,7 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = true)
-	public MemberBookmarkVotePageResponse searchMemberBookmarkedVotes(final MemberPayLoad memberPayLoad,
+	public MemberBookmarkVotePageResponse searchMemberBookmarkedVotes(final AuthPayload authPayload,
 		final Long memberId, final MemberBookmarkVotePageRequest memberBookmarkVotePageRequest) {
 
 		validateExistsById(memberId);

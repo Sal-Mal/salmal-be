@@ -14,7 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.auth.entity.Role;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
 import com.salmalteam.salmal.auth.exception.AuthException;
@@ -46,11 +46,11 @@ class AuthPayloadGeneratorTest {
 		String refreshToken = fixedTokenProvider.provideWithIdClaim(100L);
 
 		//when
-		MemberPayLoad memberPayLoad = authPayloadGenerator.generateByToken(refreshToken);
+		AuthPayload authPayload = authPayloadGenerator.generateByToken(refreshToken);
 
 		//then
-		assertThat(memberPayLoad.getId()).isEqualTo(100L);
-		assertThat(memberPayLoad.getRole()).isEqualTo(Role.MEMBER);
+		assertThat(authPayload.getId()).isEqualTo(100L);
+		assertThat(authPayload.getRole()).isEqualTo(Role.MEMBER);
 		then(tokenRepository).should(times(1)).existsLogoutAccessTokenById(anyString());
 
 	}

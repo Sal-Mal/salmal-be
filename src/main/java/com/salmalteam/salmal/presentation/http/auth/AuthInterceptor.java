@@ -11,7 +11,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.salmalteam.salmal.auth.application.AuthPayloadGenerator;
 import com.salmalteam.salmal.auth.application.TokenExtractor;
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.auth.exception.AuthException;
 
 import lombok.RequiredArgsConstructor;
@@ -29,8 +29,8 @@ public class AuthInterceptor implements HandlerInterceptor {
 		String token = tokenExtractor.extractByHeader(request.getHeader(AUTHORIZATION))
 			.orElseThrow(() -> new AuthException(UNAUTHORIZED_NO_ACCESS_TOKEN));
 
-		MemberPayLoad memberPayLoad = authPayloadGenerator.generateByToken(token);
-		authenticationContext.setAuthContext(memberPayLoad.getId(), memberPayLoad.getRole());
+		AuthPayload authPayload = authPayloadGenerator.generateByToken(token);
+		authenticationContext.setAuthContext(authPayload.getId(), authPayload.getRole());
 		return true;
 	}
 }

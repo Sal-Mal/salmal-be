@@ -22,7 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.image.application.ImageUploader;
 import com.salmalteam.salmal.member.application.MemberService;
 import com.salmalteam.salmal.member.entity.Member;
@@ -75,11 +75,11 @@ class VoteServiceTest {
 			final FileInputStream fileInputStream = new FileInputStream(filePath);
 			final String contentType = "image/jpeg";
 			final MockMultipartFile multipartFile = new MockMultipartFile(name, fileName, contentType, fileInputStream);
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 			final VoteCreateRequest voteCreateRequest = new VoteCreateRequest(multipartFile);
 
 			// when
-			voteService.register(memberPayLoad, voteCreateRequest);
+			voteService.register(authPayload, voteCreateRequest);
 
 			// then
 			verify(imageUploader, times(1)).uploadImage(any());
@@ -95,7 +95,7 @@ class VoteServiceTest {
 		void 평가를_할_투표가_존재하지_않는다면_예외를_발생시킨다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 			final Long voteId = 1L;
 			final String voteEvaluationTypeStr = "LIKE";
 			final VoteEvaluationType voteEvaluationType = VoteEvaluationType.from(voteEvaluationTypeStr);
@@ -104,7 +104,7 @@ class VoteServiceTest {
 			given(voteRepository.findById(eq(voteId))).willReturn(Optional.empty());
 
 			// when & then
-			assertThatThrownBy(() -> voteService.evaluate(memberPayLoad, voteId, voteEvaluationType))
+			assertThatThrownBy(() -> voteService.evaluate(authPayload, voteId, voteEvaluationType))
 				.isInstanceOf(VoteException.class);
 		}
 
@@ -112,7 +112,7 @@ class VoteServiceTest {
 		void 이미_동일한_타입의_투표를_이행한_적이_있다면_예외를_발생시킨다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 			final Long voteId = 1L;
 			final String voteEvaluationTypeStr = "LIKE";
 			final VoteEvaluationType voteEvaluationType = VoteEvaluationType.from(voteEvaluationTypeStr);
@@ -126,7 +126,7 @@ class VoteServiceTest {
 				true);
 
 			// when & then
-			assertThatThrownBy(() -> voteService.evaluate(memberPayLoad, voteId, voteEvaluationType))
+			assertThatThrownBy(() -> voteService.evaluate(authPayload, voteId, voteEvaluationType))
 				.isInstanceOf(VoteException.class);
 		}
 	}
@@ -138,7 +138,7 @@ class VoteServiceTest {
 		void 북마크_할_투표가_존재하지_않는다면_예외를_발생시킨다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 			final Long voteId = 1L;
 
 			given(memberService.findMemberById(eq(memberId))).willReturn(
@@ -146,7 +146,7 @@ class VoteServiceTest {
 			given(voteRepository.findById(eq(voteId))).willReturn(Optional.empty());
 
 			// when & then
-			assertThatThrownBy(() -> voteService.bookmark(memberPayLoad, voteId))
+			assertThatThrownBy(() -> voteService.bookmark(authPayload, voteId))
 				.isInstanceOf(VoteException.class);
 		}
 
@@ -154,7 +154,7 @@ class VoteServiceTest {
 		void 이미_북마크한_투표일_경우_예외를_발생시킨다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 			final Long voteId = 1L;
 			final Member member = Member.createActivatedMember("LLLLLLL", "닉네임", "KAKAO", true);
 
@@ -163,7 +163,7 @@ class VoteServiceTest {
 			given(voteBookMarkRepository.existsByVoteAndBookmaker(any(), any())).willReturn(true);
 
 			// when & then
-			assertThatThrownBy(() -> voteService.bookmark(memberPayLoad, voteId))
+			assertThatThrownBy(() -> voteService.bookmark(authPayload, voteId))
 				.isInstanceOf(VoteBookmarkException.class);
 
 		}
@@ -176,11 +176,11 @@ class VoteServiceTest {
 		void 북마크를_취소할_투표가_존재하지_않는다면_예외를_발생시킨다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 			final Long voteId = 1L;
 
 			// when & then
-			assertThatThrownBy(() -> voteService.cancelBookmark(memberPayLoad, voteId))
+			assertThatThrownBy(() -> voteService.cancelBookmark(authPayload, voteId))
 				.isInstanceOf(VoteException.class);
 
 			verify(memberService, times(1)).findMemberById(any());
@@ -194,14 +194,14 @@ class VoteServiceTest {
 		void 존재하지_않는_회원의_요청일경우_예외를_발생시킨다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 			final Long voteId = 1L;
 
 			given(memberService.findMemberById(eq(memberId))).willThrow(
 				new MemberException(MemberExceptionType.NOT_FOUND));
 
 			// when & then
-			assertThatThrownBy(() -> voteService.report(memberPayLoad, voteId))
+			assertThatThrownBy(() -> voteService.report(authPayload, voteId))
 				.isInstanceOf(MemberException.class);
 		}
 
@@ -209,7 +209,7 @@ class VoteServiceTest {
 		void 신고할_투표가_존재하지_않는다면_예외를_발생시킨다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 			final Long voteId = 1L;
 
 			given(memberService.findMemberById(eq(memberId))).willReturn(
@@ -217,7 +217,7 @@ class VoteServiceTest {
 			given(voteRepository.findById(eq(voteId))).willReturn(Optional.empty());
 
 			// when & then
-			assertThatThrownBy(() -> voteService.report(memberPayLoad, voteId))
+			assertThatThrownBy(() -> voteService.report(authPayload, voteId))
 				.isInstanceOf(VoteException.class);
 		}
 
@@ -225,7 +225,7 @@ class VoteServiceTest {
 		void 이미_해당_투표를_신고했을_경우_예외를_발생시킨다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 			final Long voteId = 1L;
 
 			given(memberService.findMemberById(eq(memberId))).willReturn(
@@ -235,7 +235,7 @@ class VoteServiceTest {
 			given(voteReportRepository.existsByVoteAndReporter(any(), any())).willReturn(true);
 
 			// when & then
-			assertThatThrownBy(() -> voteService.report(memberPayLoad, voteId))
+			assertThatThrownBy(() -> voteService.report(authPayload, voteId))
 				.isInstanceOf(VoteException.class);
 		}
 	}
@@ -247,7 +247,7 @@ class VoteServiceTest {
 		void 존재하지_않는_회원의_요청일경우_예외를_발생시킨다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 			final Long voteId = 1L;
 			final String content = "댓글입니다";
 			final VoteCommentCreateRequest voteCommentCreateRequest = new VoteCommentCreateRequest(content);
@@ -256,7 +256,7 @@ class VoteServiceTest {
 				new MemberException(MemberExceptionType.NOT_FOUND));
 
 			// when & then
-			assertThatThrownBy(() -> voteService.comment(memberPayLoad, voteId, voteCommentCreateRequest))
+			assertThatThrownBy(() -> voteService.comment(authPayload, voteId, voteCommentCreateRequest))
 				.isInstanceOf(MemberException.class);
 		}
 
@@ -264,7 +264,7 @@ class VoteServiceTest {
 		void 댓글을_추가할_투표가_존재하지_않는다면_예외를_발생시킨다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 			final Long voteId = 1L;
 			final String content = "댓글입니다";
 			final VoteCommentCreateRequest voteCommentCreateRequest = new VoteCommentCreateRequest(content);
@@ -274,7 +274,7 @@ class VoteServiceTest {
 			given(voteRepository.findById(eq(voteId))).willReturn(Optional.empty());
 
 			// when & then
-			assertThatThrownBy(() -> voteService.comment(memberPayLoad, voteId, voteCommentCreateRequest))
+			assertThatThrownBy(() -> voteService.comment(authPayload, voteId, voteCommentCreateRequest))
 				.isInstanceOf(VoteException.class);
 		}
 
@@ -286,13 +286,13 @@ class VoteServiceTest {
 		void 투표가_존재하지_않으면_오류를_발생시킨다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 			final Long voteId = 1L;
 
 			given(voteRepository.existsById(eq(voteId))).willReturn(false);
 
 			// when & then
-			assertThatThrownBy(() -> voteService.search(memberPayLoad, voteId))
+			assertThatThrownBy(() -> voteService.search(authPayload, voteId))
 				.isInstanceOf(VoteException.class);
 		}
 
@@ -301,7 +301,7 @@ class VoteServiceTest {
 		void searchList() {
 			//given
 			final Long memberId = 105L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 
 			VotePageRequest pageRequest = new VotePageRequest(21L, 100, 8, "HOME");
 			List<VoteResponse> voteResponses = new ArrayList<>();
@@ -334,7 +334,7 @@ class VoteServiceTest {
 				votePageResponse);
 
 			//when
-			VotePageResponse actual = voteService.searchList(memberPayLoad, pageRequest, SearchTypeConstant.HOME);
+			VotePageResponse actual = voteService.searchList(authPayload, pageRequest, SearchTypeConstant.HOME);
 
 
 			//then
@@ -352,7 +352,7 @@ class VoteServiceTest {
 		@DisplayName("투표 조회 시 차단한 회원의 투표는 조회되지 않는다.")
 		void searchListExcludeBlockedMembers() throws Exception {
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 
 			VotePageRequest pageRequest = new VotePageRequest(21L, 100, 8, "HOME");
 			List<VoteResponse> voteResponses = new ArrayList<>();
@@ -389,7 +389,7 @@ class VoteServiceTest {
 				.willReturn(votePageResponse);
 
 			//when
-			VotePageResponse actual = voteService.searchList(memberPayLoad, pageRequest, SearchTypeConstant.HOME);
+			VotePageResponse actual = voteService.searchList(authPayload, pageRequest, SearchTypeConstant.HOME);
 
 			//then
 			assertThat(actual.getVotes()).hasSize(5);
@@ -417,12 +417,12 @@ class VoteServiceTest {
 		void 댓글_목록을_조회할_투표가_존재하지_않으면_예외를_발생시킨다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 			final Long voteId = 1L;
 			given(voteRepository.existsById(any())).willReturn(false);
 
 			// when & then
-			assertThatThrownBy(() -> voteService.search(memberPayLoad, voteId))
+			assertThatThrownBy(() -> voteService.search(authPayload, voteId))
 				.isInstanceOf(VoteException.class);
 		}
 	}
@@ -433,11 +433,11 @@ class VoteServiceTest {
 		void 투표가_존재하지_않으면_오류를_발생시킨다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
+			final AuthPayload authPayload = AuthPayload.from(memberId);
 			final Long voteId = 1L;
 
 			// when & then
-			assertThatThrownBy(() -> voteService.cancelEvaluation(memberPayLoad, voteId))
+			assertThatThrownBy(() -> voteService.cancelEvaluation(authPayload, voteId))
 				.isInstanceOf(VoteException.class);
 
 			verify(memberService, times(1)).findMemberById(any());

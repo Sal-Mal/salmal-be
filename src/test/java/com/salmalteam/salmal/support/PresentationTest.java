@@ -27,7 +27,7 @@ import com.salmalteam.salmal.auth.application.AuthPayloadGenerator;
 import com.salmalteam.salmal.auth.application.AuthService;
 import com.salmalteam.salmal.auth.application.TokenExtractor;
 import com.salmalteam.salmal.auth.application.TokenValidator;
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.auth.entity.Role;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
 import com.salmalteam.salmal.auth.infrastructure.JwtProvider;
@@ -116,7 +116,7 @@ public class PresentationTest {
 	protected void mockingForAuthorization(){
 		given(tokenValidator.isValidAccessToken(any())).willReturn(true);
 		given(tokenRepository.existsLogoutAccessTokenById(any())).willReturn(false);
-		given(authPayloadGenerator.generateByToken(any())).willReturn(MemberPayLoad.of(100L, Role.MEMBER));
+		given(authPayloadGenerator.generateByToken(any())).willReturn(AuthPayload.of(100L, Role.MEMBER));
 		given(authenticationContext.getId()).willReturn(100L);
 		given(authenticationContext.getRole()).willReturn(Role.MEMBER);
 

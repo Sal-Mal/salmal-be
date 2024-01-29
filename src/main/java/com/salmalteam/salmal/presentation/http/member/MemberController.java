@@ -27,7 +27,7 @@ import com.salmalteam.salmal.member.dto.response.block.MemberBlockedPageResponse
 import com.salmalteam.salmal.member.dto.response.vote.MemberBookmarkVotePageResponse;
 import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVotePageResponse;
 import com.salmalteam.salmal.member.dto.response.vote.MemberVotePageResponse;
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.auth.annotation.Login;
 import com.salmalteam.salmal.auth.annotation.LoginMember;
 
@@ -50,94 +50,94 @@ public class MemberController {
     @PutMapping("/{member-id}")
     @ResponseStatus(HttpStatus.OK)
     @Login
-    public void updateMyPage(@LoginMember MemberPayLoad memberPayLoad,
+    public void updateMyPage(@LoginMember AuthPayload authPayload,
                              @PathVariable("member-id") final Long memberId,
                              @RequestBody @Valid MyPageUpdateRequest myPageUpdateRequest) {
-        memberService.updateMyPage(memberPayLoad, memberId, myPageUpdateRequest);
+        memberService.updateMyPage(authPayload, memberId, myPageUpdateRequest);
     }
 
     @DeleteMapping("/{member-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Login
-    public void deleteMember(@LoginMember MemberPayLoad memberPayLoad,
+    public void deleteMember(@LoginMember AuthPayload authPayload,
                              @PathVariable("member-id") final Long memberId){
-        memberService.delete(memberPayLoad, memberId);
+        memberService.delete(authPayload, memberId);
     }
 
     @PostMapping("/{member-id}/images")
     @ResponseStatus(HttpStatus.OK)
     @Login
-    public void updateImage(@LoginMember MemberPayLoad memberPayLoad,
+    public void updateImage(@LoginMember AuthPayload authPayload,
                             @PathVariable("member-id") final Long memberId,
                             @ModelAttribute @Valid MemberImageUpdateRequest memberImageUpdateRequest){
-        memberService.updateImage(memberPayLoad, memberId, memberImageUpdateRequest);
+        memberService.updateImage(authPayload, memberId, memberImageUpdateRequest);
     }
 
     @DeleteMapping("/{member-id}/images")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Login
-    public void deleteImage(@LoginMember MemberPayLoad memberPayLoad,
+    public void deleteImage(@LoginMember AuthPayload authPayload,
                             @PathVariable("member-id") final Long memberId){
-        memberService.deleteImage(memberPayLoad, memberId);
+        memberService.deleteImage(authPayload, memberId);
     }
 
     @PostMapping("/{member-id}/blocks")
     @ResponseStatus(HttpStatus.CREATED)
     @Login
-    public void blockMember(@LoginMember final MemberPayLoad memberPayLoad,
+    public void blockMember(@LoginMember final AuthPayload authPayload,
                             @PathVariable("member-id") final Long memberId) {
-        memberService.block(memberPayLoad, memberId);
+        memberService.block(authPayload, memberId);
     }
 
     @DeleteMapping("/{member-id}/blocks")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Login
-    public void cancelBlocking(@LoginMember final MemberPayLoad memberPayLoad,
+    public void cancelBlocking(@LoginMember final AuthPayload authPayload,
                                @PathVariable("member-id") final Long memberId) {
-        memberService.cancelBlocking(memberPayLoad, memberId);
+        memberService.cancelBlocking(authPayload, memberId);
     }
 
     @GetMapping("/{member-id}/blocks")
     @ResponseStatus(HttpStatus.OK)
     @Login
-    public MemberBlockedPageResponse searchBlockMembers(@LoginMember final MemberPayLoad memberPayLoad,
+    public MemberBlockedPageResponse searchBlockMembers(@LoginMember final AuthPayload authPayload,
                                                         @PathVariable("member-id") final Long memberId,
                                                         @RequestParam(value = "cursor-id", required = false) final Long cursorId,
                                                         @RequestParam(value = "size", required = false) final Integer size){
         final MemberBlockedPageRequest memberBlockedPageRequest = MemberBlockedPageRequest.of(cursorId, size);
-        return memberService.searchBlockedMembers(memberPayLoad, memberId, memberBlockedPageRequest);
+        return memberService.searchBlockedMembers(authPayload, memberId, memberBlockedPageRequest);
     }
 
     @GetMapping("/{member-id}/votes")
     @ResponseStatus(HttpStatus.OK)
     @Login
-    public MemberVotePageResponse searchMemberVotes(@LoginMember final MemberPayLoad memberPayLoad,
+    public MemberVotePageResponse searchMemberVotes(@LoginMember final AuthPayload authPayload,
                                                     @PathVariable("member-id") final Long memberId,
                                                     @RequestParam(value = "cursor-id", required = false) final Long cursorId,
                                                     @RequestParam(value = "size", required = false) final Integer size){
         final MemberVotePageRequest memberVotePageRequest = MemberVotePageRequest.of(cursorId, size);
-        return memberService.searchMemberVotes(memberPayLoad, memberId, memberVotePageRequest);
+        return memberService.searchMemberVotes(authPayload, memberId, memberVotePageRequest);
     }
 
     @GetMapping("/{member-id}/evaluations")
     @ResponseStatus(HttpStatus.OK)
     @Login
-    public MemberEvaluationVotePageResponse searchMemberEvaluationVotes(@LoginMember final MemberPayLoad memberPayLoad,
+    public MemberEvaluationVotePageResponse searchMemberEvaluationVotes(@LoginMember final AuthPayload authPayload,
                                                                        @PathVariable("member-id") final Long memberId,
                                                                        @RequestParam(value = "cursor-id", required = false) final Long cursorId,
                                                                        @RequestParam(value = "size", required = false) final Integer size){
         final MemberEvaluationVotePageRequest memberEvaluationVotePageRequest = MemberEvaluationVotePageRequest.of(cursorId, size);
-        return memberService.searchMemberEvaluatedVotes(memberPayLoad, memberId, memberEvaluationVotePageRequest);
+        return memberService.searchMemberEvaluatedVotes(authPayload, memberId, memberEvaluationVotePageRequest);
     }
 
     @GetMapping("/{member-id}/bookmarks")
     @ResponseStatus(HttpStatus.OK)
     @Login
-    public MemberBookmarkVotePageResponse searchMemberBookmarkVotes(@LoginMember final MemberPayLoad memberPayLoad,
+    public MemberBookmarkVotePageResponse searchMemberBookmarkVotes(@LoginMember final AuthPayload authPayload,
                                                                     @PathVariable("member-id") final Long memberId,
                                                                     @RequestParam(value = "cursor-id", required = false) final Long cursorId,
                                                                     @RequestParam(value = "size", required = false) final Integer size){
         final MemberBookmarkVotePageRequest memberBookmarkVotePageRequest = MemberBookmarkVotePageRequest.of(cursorId, size);
-        return memberService.searchMemberBookmarkedVotes(memberPayLoad, memberId, memberBookmarkVotePageRequest);
+        return memberService.searchMemberBookmarkedVotes(authPayload, memberId, memberBookmarkVotePageRequest);
     }
 }

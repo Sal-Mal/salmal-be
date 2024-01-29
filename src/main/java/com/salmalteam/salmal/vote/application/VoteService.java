@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.comment.application.CommentService;
 import com.salmalteam.salmal.comment.dto.request.CommentPageRequest;
 import com.salmalteam.salmal.comment.dto.response.CommentPageResponse;
@@ -78,10 +78,10 @@ public class VoteService {
 	}
 
 	@Transactional
-	public void register(final MemberPayLoad memberPayLoad, final VoteCreateRequest voteCreateRequest) {
+	public void register(final AuthPayload authPayload, final VoteCreateRequest voteCreateRequest) {
 		final MultipartFile multipartFile = voteCreateRequest.getImageFile();
 		final String imageUrl = imageUploader.uploadImage(ImageFile.of(multipartFile, voteImagePath));
-		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Member member = memberService.findMemberById(authPayload.getId());
 		voteRepository.save(Vote.of(imageUrl, member));
 	}
 
@@ -89,11 +89,11 @@ public class VoteService {
 	 * TODO: 비동기로 S3 에 올라가있는 투표 이미지 삭제하기
 	 */
 	@Transactional
-	public void delete(final MemberPayLoad memberPayLoad, final Long voteId) {
+	public void delete(final AuthPayload authPayload, final Long voteId) {
 		final Vote vote = getVoteById(voteId);
 
 		final Long writerId = vote.getMember().getId();
-		final Long requesterId = memberPayLoad.getId();
+		final Long requesterId = authPayload.getId();
 		validateDeleteAuthority(writerId, requesterId);
 
 		voteRepository.delete(vote);
@@ -106,10 +106,10 @@ public class VoteService {
 	}
 
 	@Transactional
-	public void evaluate(final MemberPayLoad memberPayLoad, final Long voteId,
+	public void evaluate(final AuthPayload authPayload, final Long voteId,
 		final VoteEvaluationType voteEvaluationType) {
 
-		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Member member = memberService.findMemberById(authPayload.getId());
 		final Vote vote = getVoteById(voteId);
 
 		validateEvaluationVoteDuplicated(member, vote, voteEvaluationType);
@@ -135,9 +135,9 @@ public class VoteService {
 	}
 
 	@Transactional
-	public void cancelEvaluation(final MemberPayLoad memberPayLoad, final Long voteId) {
+	public void cancelEvaluation(final AuthPayload authPayload, final Long voteId) {
 
-		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Member member = memberService.findMemberById(authPayload.getId());
 		final Vote vote = getVoteById(voteId);
 
 		deleteExistsEvaluation(member, vote);
@@ -165,9 +165,9 @@ public class VoteService {
 	}
 
 	@Transactional
-	public void bookmark(final MemberPayLoad memberPayLoad, final Long voteId) {
+	public void bookmark(final AuthPayload authPayload, final Long voteId) {
 
-		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Member member = memberService.findMemberById(authPayload.getId());
 		final Vote vote = getVoteById(voteId);
 
 		validateBookmarkExist(vote, member);
@@ -184,18 +184,18 @@ public class VoteService {
 	}
 
 	@Transactional
-	public void cancelBookmark(final MemberPayLoad memberPayLoad, final Long voteId) {
+	public void cancelBookmark(final AuthPayload authPayload, final Long voteId) {
 
-		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Member member = memberService.findMemberById(authPayload.getId());
 		final Vote vote = getVoteById(voteId);
 
 		voteBookMarkRepository.deleteByVoteAndBookmaker(vote, member);
 	}
 
 	@Transactional
-	public void report(final MemberPayLoad memberPayLoad, final Long voteId) {
+	public void report(final AuthPayload authPayload, final Long voteId) {
 
-		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Member member = memberService.findMemberById(authPayload.getId());
 		final Vote vote = getVoteById(voteId);
 
 		validateVoteReportDuplicated(vote, member);
@@ -211,10 +211,10 @@ public class VoteService {
 	}
 
 	@Transactional
-	public void comment(final MemberPayLoad memberPayLoad, final Long voteId,
+	public void comment(final AuthPayload authPayload, final Long voteId,
 		final VoteCommentCreateRequest voteCommentCreateRequest) {
 
-		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Member member = memberService.findMemberById(authPayload.getId());
 		final Vote vote = getVoteById(voteId);
 		final String content = voteCommentCreateRequest.getContent();
 
@@ -223,20 +223,20 @@ public class VoteService {
 	}
 
 	@Transactional(readOnly = true)
-	public CommentPageResponse searchComments(final Long voteId, final MemberPayLoad memberPayLoad,
+	public CommentPageResponse searchComments(final Long voteId, final AuthPayload authPayload,
 		final CommentPageRequest commentPageRequest) {
 		validateVoteExist(voteId);
-		List<Long> ids = memberService.findBlockedMembers(memberPayLoad.getId());
-		CommentPageResponse commentPageResponse = commentService.searchList(voteId, memberPayLoad, commentPageRequest);
+		List<Long> ids = memberService.findBlockedMembers(authPayload.getId());
+		CommentPageResponse commentPageResponse = commentService.searchList(voteId, authPayload, commentPageRequest);
 		commentPageResponse.filteringBlockedMembers(ids);
 		return commentPageResponse;
 	}
 
 	@Transactional(readOnly = true)
-	public List<CommentResponse> searchAllComments(final Long voteId, final MemberPayLoad memberPayLoad) {
+	public List<CommentResponse> searchAllComments(final Long voteId, final AuthPayload authPayload) {
 		validateVoteExist(voteId);
-		List<CommentResponse> commentResponses = commentService.searchAllList(voteId, memberPayLoad);
-		return filteringBlockedMembers(commentResponses, memberService.findBlockedMembers(memberPayLoad.getId()));
+		List<CommentResponse> commentResponses = commentService.searchAllList(voteId, authPayload);
+		return filteringBlockedMembers(commentResponses, memberService.findBlockedMembers(authPayload.getId()));
 	}
 
 	public List<CommentResponse> filteringBlockedMembers(List<CommentResponse> commentResponses, List<Long> ids) {
@@ -251,9 +251,9 @@ public class VoteService {
 	}
 
 	@Transactional(readOnly = true)
-	public VoteResponse search(final MemberPayLoad memberPayLoad, final Long voteId) {
+	public VoteResponse search(final AuthPayload authPayload, final Long voteId) {
 
-		final Long memberId = memberPayLoad.getId();
+		final Long memberId = authPayload.getId();
 		validateVoteExist(voteId);
 
 		return voteRepository.search(voteId, memberId);
@@ -271,9 +271,9 @@ public class VoteService {
 	}
 
 	@Transactional(readOnly = true)
-	public VotePageResponse searchList(final MemberPayLoad memberPayLoad, final VotePageRequest votePageRequest,
+	public VotePageResponse searchList(final AuthPayload authPayload, final VotePageRequest votePageRequest,
 		final SearchTypeConstant searchTypeConstant) {
-		final Long memberId = memberPayLoad.getId();
+		final Long memberId = authPayload.getId();
 		List<Long> blockedMembers = memberService.findBlockedMembers(memberId);
 		VotePageResponse votePageResponse = voteRepository.searchList(memberId, votePageRequest, searchTypeConstant);
 		votePageResponse.filteringBlockedMembers(blockedMembers);

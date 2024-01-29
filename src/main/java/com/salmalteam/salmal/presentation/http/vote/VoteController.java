@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.salmalteam.salmal.auth.annotation.Login;
 import com.salmalteam.salmal.auth.annotation.LoginMember;
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.comment.dto.request.CommentPageRequest;
 import com.salmalteam.salmal.comment.dto.response.CommentPageResponse;
 import com.salmalteam.salmal.comment.dto.response.CommentResponse;
@@ -42,71 +42,71 @@ public class VoteController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Login
-    public void registerVote(@LoginMember final MemberPayLoad memberPayLoad,
+    public void registerVote(@LoginMember final AuthPayload authPayload,
                              @ModelAttribute @Valid final VoteCreateRequest voteCreateRequest){
-        voteService.register(memberPayLoad, voteCreateRequest);
+        voteService.register(authPayload, voteCreateRequest);
     }
 
     @PostMapping("/{vote-id}/evaluations")
     @ResponseStatus(HttpStatus.CREATED)
     @Login
-    public void evaluateVote(@LoginMember final MemberPayLoad memberPayLoad,
+    public void evaluateVote(@LoginMember final AuthPayload authPayload,
                              @PathVariable(name = "vote-id") final Long voteId,
                              @RequestBody @Valid final VoteEvaluateRequest voteEvaluateRequest){
         final VoteEvaluationType voteEvaluationType = VoteEvaluationType.from(voteEvaluateRequest.getVoteEvaluationType());
-        voteService.evaluate(memberPayLoad, voteId, voteEvaluationType);
+        voteService.evaluate(authPayload, voteId, voteEvaluationType);
     }
 
     @DeleteMapping("/{vote-id}/evaluations")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Login
-    public void cancelEvaluation(@LoginMember final MemberPayLoad memberPayLoad,
+    public void cancelEvaluation(@LoginMember final AuthPayload authPayload,
                                  @PathVariable(name = "vote-id") final Long voteId){
-        voteService.cancelEvaluation(memberPayLoad, voteId);
+        voteService.cancelEvaluation(authPayload, voteId);
     }
 
     @PostMapping("/{vote-id}/bookmarks")
     @ResponseStatus(HttpStatus.CREATED)
     @Login
-    public void bookmarkVote(@LoginMember final MemberPayLoad memberPayLoad,
+    public void bookmarkVote(@LoginMember final AuthPayload authPayload,
                              @PathVariable(name = "vote-id") final Long voteId){
-        voteService.bookmark(memberPayLoad, voteId);
+        voteService.bookmark(authPayload, voteId);
     }
 
     @DeleteMapping("/{vote-id}/bookmarks")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Login
-    public void cancelBookmark(@LoginMember final MemberPayLoad memberPayLoad,
+    public void cancelBookmark(@LoginMember final AuthPayload authPayload,
                                @PathVariable(name = "vote-id") final Long voteId){
-        voteService.cancelBookmark(memberPayLoad, voteId);
+        voteService.cancelBookmark(authPayload, voteId);
     }
 
     @PostMapping("/{vote-id}/reports")
     @ResponseStatus(HttpStatus.CREATED)
     @Login
-    public void reportVote(@LoginMember final MemberPayLoad memberPayLoad,
+    public void reportVote(@LoginMember final AuthPayload authPayload,
                            @PathVariable(name = "vote-id") final Long voteId){
-        voteService.report(memberPayLoad, voteId);
+        voteService.report(authPayload, voteId);
     }
 
     @PostMapping("/{vote-id}/comments")
     @ResponseStatus(HttpStatus.CREATED)
     @Login
-    public void commentVote(@LoginMember final MemberPayLoad memberPayLoad,
+    public void commentVote(@LoginMember final AuthPayload authPayload,
                             @PathVariable(name = "vote-id") final Long voteId,
                             @RequestBody @Valid final VoteCommentCreateRequest voteCommentCreateRequest){
-        voteService.comment(memberPayLoad, voteId, voteCommentCreateRequest);
+        voteService.comment(authPayload, voteId, voteCommentCreateRequest);
     }
 
     @GetMapping("/{vote-id}/comments")
     @ResponseStatus(HttpStatus.OK)
     @Login
-    public CommentPageResponse searchComments(@LoginMember final MemberPayLoad memberPayLoad,
+    public CommentPageResponse searchComments(@LoginMember final AuthPayload authPayload,
                                               @PathVariable(name = "vote-id") final Long voteId,
                                               @RequestParam(value = "cursor-id", required = false) final Long cursorId,
                                               @RequestParam(value = "size", required = false) final Integer size){
         final CommentPageRequest commentPageRequest = CommentPageRequest.of(cursorId, size);
-        return voteService.searchComments(voteId, memberPayLoad, commentPageRequest);
+        return voteService.searchComments(voteId, authPayload, commentPageRequest);
     }
 
     /**
@@ -115,35 +115,35 @@ public class VoteController {
     @GetMapping("/{vote-id}/comments/all")
     @ResponseStatus(HttpStatus.OK)
     @Login
-    public List<CommentResponse> searchAllComments(@LoginMember final MemberPayLoad memberPayLoad,
+    public List<CommentResponse> searchAllComments(@LoginMember final AuthPayload authPayload,
                                                    @PathVariable(name = "vote-id") final Long voteId){
-        return voteService.searchAllComments(voteId, memberPayLoad);
+        return voteService.searchAllComments(voteId, authPayload);
     }
 
     @GetMapping("/{vote-id}")
     @ResponseStatus(HttpStatus.OK)
     @Login
-    public VoteResponse searchVote(@LoginMember final MemberPayLoad memberPayLoad,
+    public VoteResponse searchVote(@LoginMember final AuthPayload authPayload,
                                    @PathVariable(name = "vote-id") final Long voteId){
-        return voteService.search(memberPayLoad, voteId);
+        return voteService.search(authPayload, voteId);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Login
-    public VotePageResponse searchVotes(@LoginMember final MemberPayLoad memberPayLoad,
+    public VotePageResponse searchVotes(@LoginMember final AuthPayload authPayload,
                                         @ModelAttribute final VotePageRequest votePageRequest){
 
         final SearchTypeConstant searchTypeConstant = SearchTypeConstant.from(votePageRequest.getSearchType());
-        return voteService.searchList(memberPayLoad, votePageRequest, searchTypeConstant);
+        return voteService.searchList(authPayload, votePageRequest, searchTypeConstant);
     }
 
     @DeleteMapping("/{vote-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Login
-    public void deleteVote(@LoginMember final MemberPayLoad memberPayLoad,
+    public void deleteVote(@LoginMember final AuthPayload authPayload,
                            @PathVariable(name = "vote-id") final Long voteId){
-        voteService.delete(memberPayLoad, voteId);
+        voteService.delete(authPayload, voteId);
     }
 
 }

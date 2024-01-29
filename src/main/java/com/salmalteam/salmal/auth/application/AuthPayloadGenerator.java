@@ -2,7 +2,7 @@ package com.salmalteam.salmal.auth.application;
 
 import java.nio.charset.StandardCharsets;
 
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.auth.entity.Role;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
 import com.salmalteam.salmal.auth.exception.AuthException;
@@ -26,12 +26,12 @@ public class AuthPayloadGenerator {
 			.build();
 	}
 
-	public MemberPayLoad generateByToken(String token) {
+	public AuthPayload generateByToken(String token) {
 		validateNotLoggedOutAccessToken(token);
 		try {
 			Long id = parseBody(token, ID_KEY, Long.class);
 			String role = parseBody(token, ROLE_KEY, String.class);
-			return MemberPayLoad.of(id, Role.of(role));
+			return AuthPayload.of(id, Role.of(role));
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
