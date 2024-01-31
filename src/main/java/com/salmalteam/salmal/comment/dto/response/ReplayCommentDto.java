@@ -17,8 +17,10 @@ public class ReplayCommentDto {
 	private final String content;
 	private final String replyerImageUrl;
 	private final String VoteImageUrl;
+	private final Long voteId;
 
-	public static ReplayCommentDto createNotificationType(Member replyer, Member commenterOwner, Comment comment, Comment reply,
+	public static ReplayCommentDto createNotificationType(Member replyer, Member commenterOwner, Comment comment,
+		Comment reply,
 		Vote vote) {
 		return new ReplayCommentDto(
 			commenterOwner.getId(), //알림 타켓 ID
@@ -27,7 +29,8 @@ public class ReplayCommentDto {
 			replyer.getNickName().getValue(), //대댓글 작성자 ID
 			reply.getContent().getValue(),  //대댓글 내용
 			replyer.getMemberImage().getImageUrl(), //대댓글 작성자 이미지
-			vote.getVoteImage().getImageUrl() //대댓글 작성한 투표의 이미지
+			vote.getVoteImage().getImageUrl(), //대댓글 작성한 투표의 이미지
+			vote.getId()
 		);
 	}
 
