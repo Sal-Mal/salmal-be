@@ -24,6 +24,6 @@ public class NotificationDto {
 
 	public static NotificationDto create(Notification notification) {
 		return new NotificationDto(notification.getUuid(), notification.getMarkId(), notification.getType(),
-			notification.getMessage(), notification.isRead(), notification.getCreatedAt(), notification.getMemberImageUrl(), notification.getMemberImageUrl());
+			notification.getMessage(), notification.isRead(), notification.getCreatedAt(), notification.getMemberImageUrl(), notification.getMarkContentImageUrl());
 	}
 }
