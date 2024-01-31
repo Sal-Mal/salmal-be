@@ -94,7 +94,7 @@ public class CommentController {
 		}
 		MessageSpec messageSpec = notificationService.save(
 			replayComment.getCommentOwnerId(), replayComment.getCommentId(),
-			replayComment.getNickName(), replayComment.getContent(), replayComment.getReplyerId(),
+			replayComment.getNickName(), replayComment.getContent(), replayComment.getVoteId(),
 			replayComment.getReplyerImageUrl(), replayComment.getVoteImageUrl());
 		notificationPublisher.pub(messageSpec);
 	}
