@@ -17,7 +17,7 @@ public class NotificationDto {
 	private final Type type;
 	private final String message;
 	private final boolean isRead;
-	@JsonFormat(pattern = "yy-MM-dd'T'HH:mm")
+	@JsonFormat(pattern = "yy-MM-dd'T'HH:mm:ss")
 	private final LocalDateTime createAt;
 	private final String memberImageUrl;
 	private final String imageUrl;
