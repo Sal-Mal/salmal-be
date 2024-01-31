@@ -1,8 +1,7 @@
 package com.salmalteam.salmal.acceptancetest;
 
 import static io.restassured.http.ContentType.*;
-import static io.restassured.path.json.JsonPath.from;
-import static org.assertj.core.api.Assertions.*;
+import static org.hamcrest.Matchers.*;
 
 import java.util.HashMap;
 
@@ -47,8 +46,7 @@ public class StepDefinitions {
 
 	@Then("providerId 가 유효한 id 인지 검증하고 생성된 인증토큰과 재발급 토큰을 받는다.")
 	public void then() {
-		String json = response.asString();
-		String accessToken = from(json).getString("accessToken");
-		assertThat(accessToken).isNotBlank();
+		response.then().statusCode(200);
+		response.then().body("accessToken", not(blankOrNullString()));
 	}
 }
