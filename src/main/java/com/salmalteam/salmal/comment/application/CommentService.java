@@ -10,12 +10,15 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.comment.dto.request.CommentPageRequest;
+import com.salmalteam.salmal.comment.dto.request.CommentReplyCreateRequest;
+import com.salmalteam.salmal.comment.dto.request.ReplyPageRequest;
+import com.salmalteam.salmal.comment.dto.response.CommentPageResponse;
+import com.salmalteam.salmal.comment.dto.response.CommentResponse;
 import com.salmalteam.salmal.comment.dto.response.ReplayCommentDto;
-import com.salmalteam.salmal.comment.exception.like.CommentLikeException;
-import com.salmalteam.salmal.comment.exception.like.CommentLikeExceptionType;
-import com.salmalteam.salmal.comment.exception.report.CommentReportException;
-import com.salmalteam.salmal.comment.exception.report.CommentReportExceptionType;
-import com.salmalteam.salmal.member.application.MemberService;
+import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
+import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
 import com.salmalteam.salmal.comment.entity.Comment;
 import com.salmalteam.salmal.comment.entity.CommentRepository;
 import com.salmalteam.salmal.comment.entity.CommentType;
@@ -23,20 +26,17 @@ import com.salmalteam.salmal.comment.entity.like.CommentLike;
 import com.salmalteam.salmal.comment.entity.like.CommentLikeRepository;
 import com.salmalteam.salmal.comment.entity.report.CommentReport;
 import com.salmalteam.salmal.comment.entity.report.CommentReportRepository;
-import com.salmalteam.salmal.member.entity.Member;
-import com.salmalteam.salmal.vote.entity.Vote;
-import com.salmalteam.salmal.vote.entity.VoteRepository;
-import com.salmalteam.salmal.comment.dto.request.CommentPageRequest;
-import com.salmalteam.salmal.comment.dto.request.CommentReplyCreateRequest;
-import com.salmalteam.salmal.comment.dto.request.ReplyPageRequest;
-import com.salmalteam.salmal.vote.dto.request.VoteCommentUpdateRequest;
-import com.salmalteam.salmal.comment.dto.response.CommentPageResponse;
-import com.salmalteam.salmal.comment.dto.response.CommentResponse;
-import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
-import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
 import com.salmalteam.salmal.comment.exception.CommentException;
 import com.salmalteam.salmal.comment.exception.CommentExceptionType;
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
+import com.salmalteam.salmal.comment.exception.like.CommentLikeException;
+import com.salmalteam.salmal.comment.exception.like.CommentLikeExceptionType;
+import com.salmalteam.salmal.comment.exception.report.CommentReportException;
+import com.salmalteam.salmal.comment.exception.report.CommentReportExceptionType;
+import com.salmalteam.salmal.member.application.MemberService;
+import com.salmalteam.salmal.member.entity.Member;
+import com.salmalteam.salmal.vote.dto.request.VoteCommentUpdateRequest;
+import com.salmalteam.salmal.vote.entity.Vote;
+import com.salmalteam.salmal.vote.entity.VoteRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -81,21 +81,14 @@ public class CommentService {
 	public ReplayCommentDto replyComment(final MemberPayLoad memberPayLoad, final Long commentId,
 		final CommentReplyCreateRequest commentReplyCreateRequest) {
 
-		final Member member = memberService.findMemberById(memberPayLoad.getId());
-		final Comment comment = getCommentById(commentId);
-		final Member commenterOwner = comment.getCommenter();
-
-		final Comment reply = Comment.ofReply(commentReplyCreateRequest.getContent(), comment, member);
-
+		final Member replyer = memberService.findMemberById(memberPayLoad.getId()); //대댓글 작성자
+		final Comment comment = getCommentById(commentId); //대댓글을 작성한 댓글(대댓글 주인)
+		final Comment reply = Comment.ofReply(commentReplyCreateRequest.getContent(), comment, replyer); //대댓글
+		final Member commenterOwner = comment.getCommenter(); //댓글 주인
 		commentRepository.save(reply);
 		commentRepository.increaseReplyCount(commentId);
 
-		return new ReplayCommentDto(commenterOwner.getId(),
-			member.getId(),
-			commentId,
-			member.getNickName().getValue(),
-			commentReplyCreateRequest.getContent()
-		);
+		return ReplayCommentDto.createNotificationType(replyer, commenterOwner, comment, reply, comment.getVote());
 	}
 
 	@Transactional(readOnly = true)
