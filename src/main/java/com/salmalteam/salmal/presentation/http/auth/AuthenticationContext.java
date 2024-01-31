@@ -1,12 +1,10 @@
 package com.salmalteam.salmal.presentation.http.auth;
 
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import com.salmalteam.salmal.auth.entity.Role;
 
-@Component
 @Scope("request")
 public class AuthenticationContext {
 

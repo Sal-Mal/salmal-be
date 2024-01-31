@@ -2,9 +2,12 @@ package com.salmalteam.salmal.auth.application;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Component;
+
 import com.salmalteam.salmal.auth.exception.AuthException;
 import com.salmalteam.salmal.auth.exception.AuthExceptionType;
 
+@Component
 public class TokenExtractor {
 
 	private static final String TOKEN_TYPE = "Bearer";
