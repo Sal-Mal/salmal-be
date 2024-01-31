@@ -32,9 +32,13 @@ public class Notification extends BaseCreatedTimeEntity {
 	@Enumerated(value = EnumType.STRING)
 	private Type type;
 	private boolean isRead;
+	private String memberImageUrl;
+	private String markContentImageUrl;
 
-	public static Notification createNewReplyType(Long memberId, Long markId, UUID uuid, String message) {
-		return new Notification(null, memberId, uuid.toString(), message, markId, Type.REPLY, false);
+	public static Notification createNewReplyType(Long memberId, Long markId, UUID uuid, String message,
+		String memberImageUrl, String markContentImageUrl) {
+		return new Notification(null, memberId, uuid.toString(), message, markId, Type.REPLY, false, memberImageUrl,
+			markContentImageUrl);
 	}
 
 	public void read() {
