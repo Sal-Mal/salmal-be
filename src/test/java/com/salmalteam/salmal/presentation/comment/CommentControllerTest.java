@@ -249,7 +249,7 @@ class CommentControllerTest extends PresentationTest {
             final Long commentId = 1L;
             final String content = "이 댓글에 동의합니다!";
             final CommentReplyCreateRequest commentReplyCreateRequest = new CommentReplyCreateRequest(content);
-            ReplayCommentDto replayCommentDto = new ReplayCommentDto(100L, 20L, 556L, "kim", "content");
+            ReplayCommentDto replayCommentDto = new ReplayCommentDto(100L, 20L, 556L, "kim", "content","url","url");
             given(commentService.replyComment(any(),anyLong(),any()))
                 .willReturn(replayCommentDto);
             mockingForAuthorization();
@@ -276,7 +276,8 @@ class CommentControllerTest extends PresentationTest {
             ));
 
             verify(commentService, times(1)).replyComment(any(), any(), any());
-            verify(notificationService, times(1)).save(anyLong(),anyLong(),anyString(),anyString(),anyLong());
+            verify(notificationService, times(1)).save(anyLong(),anyLong(),anyString(),anyString(),anyLong(),
+				anyString(), anyString());
             verify(fcmClient, times(1)).pub(any());
 
         }

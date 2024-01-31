@@ -1,10 +1,10 @@
 package com.salmalteam.salmal.member.entity;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,8 +25,11 @@ public class MemberImage {
         return new MemberImage(MEMBER_IMAGE_URL);
     }
 
-    public static String getMemberImageUrl(){
+    public static String getDefaultMemberImageUrl(){
         return MEMBER_IMAGE_URL;
     }
 
+    public String getImageUrl(){
+        return imageUrl;
+    }
 }

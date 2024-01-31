@@ -1,13 +1,15 @@
 package com.salmalteam.salmal.vote.entity;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class VoteImage {
 
     @Column(name = "image_url")

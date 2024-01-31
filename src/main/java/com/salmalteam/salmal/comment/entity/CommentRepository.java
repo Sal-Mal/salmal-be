@@ -11,7 +11,8 @@ import org.springframework.data.repository.query.Param;
 public interface CommentRepository extends Repository<Comment, Long>, CommentRepositoryCustom {
 	Comment save(Comment comment);
 	void delete(Comment comment);
-	Optional<Comment> findById(Long id);
+	@Query("select c from Comment c join fetch c.commenter join fetch c.vote where c.id =:id")
+	Optional<Comment> findById(@Param("id") Long id);
 	boolean existsById(Long id);
 	List<Comment> findAllByCommenter_Id(Long commenterId);
 	List<Comment> findALlByCommenter_idAndCommentType(Long commenterId, CommentType commentType);
