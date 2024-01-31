@@ -1,9 +1,12 @@
 package com.salmalteam.salmal.presentation.http.notification;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.salmalteam.salmal.auth.annotation.Login;
@@ -30,7 +33,8 @@ public class NotificationController {
 
 	@DeleteMapping("/api/notification")
 	@Login
-	public ResponseEntity<?> delete(@LoginMember MemberPayLoad memberPayLoad, DeleteNotificationRequest request) {
+	public ResponseEntity<?> delete(@LoginMember MemberPayLoad memberPayLoad,
+		@RequestBody @Valid DeleteNotificationRequest request) {
 		notificationService.delete(memberPayLoad.getId(), request.getUuid());
 		return ResponseEntity.ok()
 			.build();
@@ -38,7 +42,8 @@ public class NotificationController {
 
 	@PostMapping("api/notification/read")
 	@Login
-	public ResponseEntity<?> readNotification(@LoginMember MemberPayLoad memberPayLoad, ReadNotificationRequest request) {
+	public ResponseEntity<?> readNotification(@LoginMember MemberPayLoad memberPayLoad,
+		@RequestBody @Valid ReadNotificationRequest request) {
 		notificationService.read(memberPayLoad.getId(), request.getUuid());
 		return ResponseEntity.ok()
 			.build();
