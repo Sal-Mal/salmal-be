@@ -54,7 +54,7 @@ public class NotificationService {
 	}
 
 	@Transactional
-	public MessageSpec save(Long targetId, Long issuedContentId, String nickName, String content, Long memberId,
+	public MessageSpec save(Long targetId, Long issuedContentId, String nickName, String content, Long contentId,
 		String memberImageUrl, String contentImageUrl) {
 
 		String message = String.format("%s님의 답댓글:%s", nickName, content);
@@ -72,6 +72,7 @@ public class NotificationService {
 		data.put("issuedContent", issuedContentId.toString());
 		data.put("notificationId", notification.getUuid());
 		data.put("createdAt", notification.getCreatedAt().toString());
+		data.put("contentId", contentId.toString());
 
 		return new MessageSpec(token, "살말", message, data);
 	}
