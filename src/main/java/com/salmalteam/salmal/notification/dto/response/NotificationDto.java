@@ -16,11 +16,15 @@ public class NotificationDto {
 	private final Long markId;
 	private final Type type;
 	private final String message;
+	private final boolean isRead;
 	@JsonFormat(pattern = "yy-MM-ddTHH:mm")
 	private final LocalDateTime createAt;
 
+	private final String memberImageUrl;
+	private final String imageUrl;
+
 	public static NotificationDto create(Notification notification) {
 		return new NotificationDto(notification.getUuid(), notification.getMarkId(), notification.getType(),
-			notification.getMessage(), notification.getCreatedAt());
+			notification.getMessage(), notification.isRead(), notification.getCreatedAt(), notification.getMemberImageUrl(), notification.getMemberImageUrl());
 	}
 }
