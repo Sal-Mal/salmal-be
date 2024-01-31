@@ -64,7 +64,7 @@ public class NotificationService {
 			.orElse("token");
 
 		Notification notification = notificationRepository.save(
-			Notification.createNewReplyType(memberId, issuedContentId, uuidGenerator.generate(), message,
+			Notification.createNewReplyType(targetId, issuedContentId, uuidGenerator.generate(), message,
 				memberImageUrl, contentImageUrl));
 
 		HashMap<String, String> data = new HashMap<>();
