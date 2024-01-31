@@ -44,3 +44,5 @@ out/
 
 ###QClass ###
 /src/main/generated/**
+
+/src/test/resources/cucumber/key/**
