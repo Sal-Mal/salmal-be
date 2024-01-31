@@ -179,7 +179,7 @@ public class MemberService {
 
 		validateUpdateAuthority(member, targetMember);
 
-		member.updateImage(MemberImage.getMemberImageUrl());
+		member.updateImage(MemberImage.getDefaultMemberImageUrl());
 		memberRepository.save(member);
 	}
 
