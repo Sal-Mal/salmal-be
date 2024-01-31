@@ -1,15 +1,18 @@
 package com.salmalteam.salmal.comment.entity;
 
-import com.salmalteam.salmal.comment.exception.CommentException;
-import com.salmalteam.salmal.comment.exception.CommentExceptionType;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import com.salmalteam.salmal.comment.exception.CommentException;
+import com.salmalteam.salmal.comment.exception.CommentExceptionType;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Content {
 
     private static final int MAX_LENGTH = 100;
