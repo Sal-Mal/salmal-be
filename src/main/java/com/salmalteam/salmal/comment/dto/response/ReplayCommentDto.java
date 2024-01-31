@@ -15,7 +15,7 @@ public class ReplayCommentDto {
 	private final Long commentId;
 	private final String nickName;
 	private final String content;
-	private final String commenterImageUrl;
+	private final String replyerImageUrl;
 	private final String VoteImageUrl;
 
 	public static ReplayCommentDto createNotificationType(Member replyer, Member commenterOwner, Comment comment, Comment reply,
