@@ -65,7 +65,7 @@ public class NotificationService {
 
 		Notification notification = notificationRepository.save(
 			Notification.createNewReplyType(targetId, issuedContentId, uuidGenerator.generate(), message,
-				memberImageUrl, contentImageUrl));
+				memberImageUrl, contentImageUrl, contentId));
 
 		HashMap<String, String> data = new HashMap<>();
 
