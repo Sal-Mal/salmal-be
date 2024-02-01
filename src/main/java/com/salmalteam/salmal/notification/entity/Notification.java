@@ -34,11 +34,12 @@ public class Notification extends BaseCreatedTimeEntity {
 	private boolean isRead;
 	private String memberImageUrl;
 	private String markContentImageUrl;
+	private Long contentId;
 
 	public static Notification createNewReplyType(Long memberId, Long markId, UUID uuid, String message,
-		String memberImageUrl, String markContentImageUrl) {
+		String memberImageUrl, String markContentImageUrl, Long contentId) {
 		return new Notification(null, memberId, uuid.toString(), message, markId, Type.REPLY, false, memberImageUrl,
-			markContentImageUrl);
+			markContentImageUrl, contentId);
 	}
 
 	public void read() {
