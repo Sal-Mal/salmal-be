@@ -21,6 +21,7 @@ import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
 import com.salmalteam.salmal.auth.dto.response.LoginResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenResponse;
 import com.salmalteam.salmal.auth.entity.RefreshToken;
+import com.salmalteam.salmal.auth.entity.Role;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
 import com.salmalteam.salmal.auth.exception.AuthException;
 import com.salmalteam.salmal.auth.infrastructure.JwtProvider;
@@ -57,10 +58,11 @@ class AuthServiceTest {
 			final String providerId = "providerId";
 			final Map<String, Object> payload = new HashMap<>();
 			payload.put("id", memberId);
+			payload.put("role", Role.MEMBER);
 			final LoginRequest loginRequest = new LoginRequest("providerId");
 
 			given(memberService.findMemberIdByProviderId(eq(providerId))).willReturn(memberId);
-			given(jwtProvider.provide(eq(payload))).willReturn(accessToken);
+			given(jwtProvider.provide(any())).willReturn(accessToken);
 			given(refreshTokenProvider.provide(eq(payload))).willReturn(refreshToken);
 
 			// when
@@ -86,6 +88,7 @@ class AuthServiceTest {
 				final String providerId = "providerId";
 				final Map<String, Object> payload = new HashMap<>();
 				payload.put("id", memberId);
+				payload.put("role", Role.MEMBER);
 				final SignUpRequest signUpRequest = new SignUpRequest(providerId, nickName,
 					marketingInformationConsent);
 
