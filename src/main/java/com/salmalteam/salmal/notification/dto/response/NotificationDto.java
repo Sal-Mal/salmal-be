@@ -21,9 +21,12 @@ public class NotificationDto {
 	private final LocalDateTime createAt;
 	private final String memberImageUrl;
 	private final String imageUrl;
+	private final Long contentId;
 
 	public static NotificationDto create(Notification notification) {
 		return new NotificationDto(notification.getUuid(), notification.getMarkId(), notification.getType(),
-			notification.getMessage(), notification.isRead(), notification.getCreatedAt(), notification.getMemberImageUrl(), notification.getMarkContentImageUrl());
+			notification.getMessage(), notification.isRead(), notification.getCreatedAt(),
+			notification.getMemberImageUrl(), notification.getMarkContentImageUrl(),
+			notification.getContentId());
 	}
 }
