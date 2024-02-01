@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.salmalteam.salmal.auth.annotation.LoginMember;
-import com.salmalteam.salmal.auth.entity.AuthPayload;
 import com.salmalteam.salmal.comment.application.CommentService;
 import com.salmalteam.salmal.comment.dto.request.CommentReplyCreateRequest;
 import com.salmalteam.salmal.comment.dto.request.ReplyPageRequest;
