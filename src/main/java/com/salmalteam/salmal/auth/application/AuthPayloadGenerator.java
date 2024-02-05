@@ -33,7 +33,7 @@ public class AuthPayloadGenerator {
 			String role = parseBody(token, ROLE_KEY, String.class);
 			return AuthPayload.of(id, Role.of(role));
 		} catch (Exception e) {
-			throw new IllegalArgumentException(e.getMessage());
+			throw new AuthException(AuthExceptionType.NOT_VALID_ACCESS_TOKEN);
 		}
 	}
 
