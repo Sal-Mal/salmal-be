@@ -1,11 +1,11 @@
 package com.salmalteam.salmal.presentation.http.auth;
 
-import org.springframework.context.annotation.Scope;
 import org.springframework.util.Assert;
+import org.springframework.web.context.annotation.RequestScope;
 
 import com.salmalteam.salmal.auth.entity.Role;
 
-@Scope("request")
+@RequestScope
 public class AuthenticationContext {
 
 	private Long id;
