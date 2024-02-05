@@ -110,13 +110,14 @@ class AuthControllerTest extends PresentationTest {
 		// given
 		final String refreshToken = "refreshToken";
 		final LogoutRequest logoutRequest = new LogoutRequest(refreshToken);
+		mockingForAuthorization();
+
 		final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "/logout")
 				.header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(createJson(logoutRequest))
 				.characterEncoding(StandardCharsets.UTF_8))
 			.andExpect(status().isOk());
-		mockingForAuthorization();
 
 		// when & then
 		resultActions.andDo(restDocs.document(
