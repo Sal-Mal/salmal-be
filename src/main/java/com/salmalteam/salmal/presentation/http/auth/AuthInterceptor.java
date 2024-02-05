@@ -6,6 +6,7 @@ import static org.springframework.http.HttpHeaders.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.salmalteam.salmal.auth.application.AuthPayloadGenerator;
@@ -16,6 +17,7 @@ import com.salmalteam.salmal.auth.exception.AuthException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@Component
 public class AuthInterceptor implements HandlerInterceptor {
 
 	private final TokenExtractor tokenExtractor;

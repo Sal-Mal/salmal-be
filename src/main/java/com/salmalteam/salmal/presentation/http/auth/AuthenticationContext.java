@@ -1,11 +1,13 @@
 package com.salmalteam.salmal.presentation.http.auth;
 
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.context.annotation.RequestScope;
 
 import com.salmalteam.salmal.auth.entity.Role;
 
 @RequestScope
+@Component
 public class AuthenticationContext {
 
 	private Long id;
