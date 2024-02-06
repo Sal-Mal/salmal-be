@@ -1,75 +1,73 @@
 package com.salmalteam.salmal.application.auth;
 
-import com.salmalteam.salmal.auth.application.TokenProvider;
-import com.salmalteam.salmal.auth.infrastructure.JwtProvider;
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.salmalteam.salmal.auth.infrastructure.JwtProvider;
+import com.salmalteam.salmal.support.TokenValidator;
 
 public class TokenProviderTest {
 
-    private TokenProvider tokenProvider;
-    private final String SECRET_KEY = "K".repeat(32);
-    private final Long ACCESS_TOKEN_EXPIRY = 100000L;
-    private final Long REFRESH_TOKEN_EXPIRY = 100000000L;
-    @BeforeEach
-    void setUp(){
-        tokenProvider = new JwtProvider(ACCESS_TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY, SECRET_KEY);
-    }
+	private JwtProvider tokenProvider;
+	private final String SECRET_KEY = "K".repeat(32);
+	private final Long ACCESS_TOKEN_EXPIRY = 100000L;
 
-    @Nested
-    class 접근_토큰_생성_테스트{
-        @Test
-        void 전달받은_ID_를_페이로드에_넣어_접근토큰을_생성_한다(){
-            // given
-            final Long id = 32L;
+	private TokenValidator tokenValidator;
 
-            // when
-            final String accessToken = tokenProvider.createAccessToken(id);
+	private String subject = "accessToken";
 
-            // then
-            assertThat(accessToken).isNotNull();
-        }
-    }
+	@BeforeEach
+	void setUp() {
+		tokenProvider = new JwtProvider(SECRET_KEY, subject, ACCESS_TOKEN_EXPIRY);
+		tokenValidator = new TokenValidator(SECRET_KEY);
+	}
 
-    @Nested
-    class 재발급_토큰_생성_테스트{
-        @Test
-        void 전달받은_ID_를_페이로드에_넣어_재발급토큰을_생성한다(){
-            // given
-            final Long id = 32L;
-            // when
-            final String refreshToken = tokenProvider.createRefreshToken(id);
-            // then
-            assertThat(refreshToken).isNotNull();
-        }
-    }
+	@Nested
+	class 접근_토큰_생성_테스트 {
+		@Test
+		void 전달받은_ID_를_페이로드에_넣어_접근토큰을_생성_한다() {
+			//given
+			HashMap<String, Object> payload = new HashMap<>();
+			payload.put("id", 500L);
+			payload.put("name", "재현");
 
-    @Nested
-    class 토큰_유효기간_추출_테스트{
+			// when
+			String actual = tokenProvider.provide(payload);
 
-        @Test
-        void 매개변수로_토큰을_전달받으면_해당_토큰의_유효기간을_반환한다(){
+			//then
+			assertThat(actual).isNotNull();
+			assertThat(tokenValidator.isValidate(actual)).isTrue();
+			assertThat(tokenValidator.hasClaims(actual, "id", 500L, Long.class)).isTrue();
+			assertThat(tokenValidator.hasClaims(actual, "name", "재현", String.class)).isTrue();
+			assertThat(tokenValidator.hasClaims(actual, "sub", subject, String.class)).isTrue();
 
-            // given
-            final Long id = 32L;
-            final String accessToken = tokenProvider.createAccessToken(id);
-            final String refreshToken = tokenProvider.createRefreshToken(id);
+		}
+	}
 
-            // when
-            final Long accessTokenExpiry = tokenProvider.getTokenExpiry(accessToken);
-            final Long refreshTokenExpiry = tokenProvider.getTokenExpiry(refreshToken);
+	@Nested
+	class 재발급_토큰_생성_테스트 {
+		@Test
+		void 전달받은_ID_를_페이로드에_넣어_재발급토큰을_생성한다() {
+			// given
+			final Long id = 32L;
+			Map<String, Object> payload = createPayloadWithIdClaim(id);
 
-            // then
-            assertAll(
-                    () ->  assertTrue(accessTokenExpiry >= ACCESS_TOKEN_EXPIRY - 10000 && accessTokenExpiry <= ACCESS_TOKEN_EXPIRY + 10000),
-                    () ->  assertTrue(refreshTokenExpiry >= REFRESH_TOKEN_EXPIRY - 10000 && accessTokenExpiry <= REFRESH_TOKEN_EXPIRY + 10000)
-            );
-        }
-    }
+			// when
+			final String refreshToken = tokenProvider.provide(payload);
+			// then
+			assertThat(refreshToken).isNotNull();
+		}
+	}
+
+	private Map<String, Object> createPayloadWithIdClaim(Long id) {
+		HashMap<String, Object> payload = new HashMap<>();
+		payload.put("id", id);
+		return payload;
+	}
 }

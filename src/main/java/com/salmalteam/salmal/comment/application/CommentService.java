@@ -10,15 +10,12 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
-import com.salmalteam.salmal.comment.dto.request.CommentPageRequest;
-import com.salmalteam.salmal.comment.dto.request.CommentReplyCreateRequest;
-import com.salmalteam.salmal.comment.dto.request.ReplyPageRequest;
-import com.salmalteam.salmal.comment.dto.response.CommentPageResponse;
-import com.salmalteam.salmal.comment.dto.response.CommentResponse;
 import com.salmalteam.salmal.comment.dto.response.ReplayCommentDto;
-import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
-import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
+import com.salmalteam.salmal.comment.exception.like.CommentLikeException;
+import com.salmalteam.salmal.comment.exception.like.CommentLikeExceptionType;
+import com.salmalteam.salmal.comment.exception.report.CommentReportException;
+import com.salmalteam.salmal.comment.exception.report.CommentReportExceptionType;
+import com.salmalteam.salmal.member.application.MemberService;
 import com.salmalteam.salmal.comment.entity.Comment;
 import com.salmalteam.salmal.comment.entity.CommentRepository;
 import com.salmalteam.salmal.comment.entity.CommentType;
@@ -26,17 +23,19 @@ import com.salmalteam.salmal.comment.entity.like.CommentLike;
 import com.salmalteam.salmal.comment.entity.like.CommentLikeRepository;
 import com.salmalteam.salmal.comment.entity.report.CommentReport;
 import com.salmalteam.salmal.comment.entity.report.CommentReportRepository;
-import com.salmalteam.salmal.comment.exception.CommentException;
-import com.salmalteam.salmal.comment.exception.CommentExceptionType;
-import com.salmalteam.salmal.comment.exception.like.CommentLikeException;
-import com.salmalteam.salmal.comment.exception.like.CommentLikeExceptionType;
-import com.salmalteam.salmal.comment.exception.report.CommentReportException;
-import com.salmalteam.salmal.comment.exception.report.CommentReportExceptionType;
-import com.salmalteam.salmal.member.application.MemberService;
 import com.salmalteam.salmal.member.entity.Member;
-import com.salmalteam.salmal.vote.dto.request.VoteCommentUpdateRequest;
 import com.salmalteam.salmal.vote.entity.Vote;
 import com.salmalteam.salmal.vote.entity.VoteRepository;
+import com.salmalteam.salmal.comment.dto.request.CommentPageRequest;
+import com.salmalteam.salmal.comment.dto.request.CommentReplyCreateRequest;
+import com.salmalteam.salmal.comment.dto.request.ReplyPageRequest;
+import com.salmalteam.salmal.vote.dto.request.VoteCommentUpdateRequest;
+import com.salmalteam.salmal.comment.dto.response.CommentPageResponse;
+import com.salmalteam.salmal.comment.dto.response.CommentResponse;
+import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
+import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
+import com.salmalteam.salmal.comment.exception.CommentException;
+import com.salmalteam.salmal.comment.exception.CommentExceptionType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -57,9 +56,9 @@ public class CommentService {
 	}
 
 	@Transactional
-	public void deleteComment(final MemberPayLoad memberPayLoad, final Long commentId) {
+	public void deleteComment(final Long memberId, final Long commentId) {
 		final Comment comment = getCommentById(commentId);
-		validateDeleteAuthority(comment.getCommenter().getId(), memberPayLoad.getId());
+		validateDeleteAuthority(comment.getCommenter().getId(), memberId);
 
 		switch (comment.getCommentType()) {
 			case COMMENT:
@@ -78,10 +77,9 @@ public class CommentService {
 	}
 
 	@Transactional
-	public ReplayCommentDto replyComment(final MemberPayLoad memberPayLoad, final Long commentId,
+	public ReplayCommentDto replyComment(final Long memberId, final Long commentId,
 		final CommentReplyCreateRequest commentReplyCreateRequest) {
-
-		final Member replyer = memberService.findMemberById(memberPayLoad.getId()); //대댓글 작성자
+		final Member replyer = memberService.findMemberById(memberId); //대댓글 작성자
 		final Comment comment = getCommentById(commentId); //대댓글을 작성한 댓글(대댓글 주인)
 		final Comment reply = Comment.ofReply(commentReplyCreateRequest.getContent(), comment, replyer); //대댓글
 		final Member commenterOwner = comment.getCommenter(); //댓글 주인
@@ -89,13 +87,13 @@ public class CommentService {
 		commentRepository.increaseReplyCount(commentId);
 
 		return ReplayCommentDto.createNotificationType(replyer, commenterOwner, comment, reply, comment.getVote());
-	}
+    }
 
 	@Transactional(readOnly = true)
-	public ReplyPageResponse searchReplies(final MemberPayLoad memberPayLoad, final Long commentId,
+	public ReplyPageResponse searchReplies(final Long memberId, final Long commentId,
 		final ReplyPageRequest replyPageRequest) {
 		validateCommentExist(commentId);
-		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Member member = memberService.findMemberById(memberId);
 		List<Long> ids = memberService.findBlockedMembers(member.getId());
 		ReplyPageResponse replyPageResponse = commentRepository.searchReplies(commentId, member.getId(),
 			replyPageRequest);
@@ -104,9 +102,9 @@ public class CommentService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ReplyResponse> searchAllReplies(final MemberPayLoad memberPayLoad, final Long commentId) {
+	public List<ReplyResponse> searchAllReplies(final Long memberId, final Long commentId) {
 		validateCommentExist(commentId);
-		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Member member = memberService.findMemberById(memberId);
 		List<Long> ids = memberService.findBlockedMembers(member.getId());
 		List<ReplyResponse> replyResponses = commentRepository.searchAllReplies(commentId, member.getId());
 		return filteringBlockedMembers(replyResponses, ids);
@@ -130,10 +128,10 @@ public class CommentService {
 	}
 
 	@Transactional
-	public void updateComment(final MemberPayLoad memberPayLoad, final Long commentId,
+	public void updateComment(final Long memberId, final Long commentId,
 		final VoteCommentUpdateRequest voteCommentUpdateRequest) {
 
-		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Member member = memberService.findMemberById(memberId);
 		final Comment comment = getCommentById(commentId);
 		final String content = voteCommentUpdateRequest.getContent();
 		validateAuthority(comment, member);
@@ -150,23 +148,20 @@ public class CommentService {
 	}
 
 	@Transactional(readOnly = true)
-	public CommentPageResponse searchList(final Long voteId,
-		final MemberPayLoad memberPayLoad,
+	public CommentPageResponse searchList(final Long voteId, final Long memberId,
 		final CommentPageRequest commentPageRequest) {
-		final Long memberId = memberPayLoad.getId();
 		return commentRepository.searchList(voteId, memberId, commentPageRequest);
 	}
 
 	@Transactional(readOnly = true)
-	public List<CommentResponse> searchAllList(final Long voteId, final MemberPayLoad memberPayLoad) {
-		final Long memberId = memberPayLoad.getId();
+	public List<CommentResponse> searchAllList(final Long voteId, final Long memberId) {
 		return commentRepository.searchAllList(voteId, memberId);
 	}
 
 	@Transactional
-	public void likeComment(final MemberPayLoad memberPayLoad, final Long commentId) {
+	public void likeComment(final Long memberId, final Long commentId) {
 
-		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Member member = memberService.findMemberById(memberId);
 		final Comment comment = getCommentById(commentId);
 
 		validateCommentAlreadyLiked(comment, member);
@@ -184,9 +179,9 @@ public class CommentService {
 	}
 
 	@Transactional
-	public void unLikeComment(final MemberPayLoad memberPayLoad, final Long commentId) {
+	public void unLikeComment(final Long memberId, final Long commentId) {
 
-		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Member member = memberService.findMemberById(memberId);
 		final Comment comment = getCommentById(commentId);
 
 		validateCommentNotLiked(comment, member);
@@ -202,9 +197,9 @@ public class CommentService {
 	}
 
 	@Transactional
-	public void report(final MemberPayLoad memberPayLoad, final Long commentId) {
+	public void report(final Long memberId, final Long commentId) {
 
-		final Member member = memberService.findMemberById(memberPayLoad.getId());
+		final Member member = memberService.findMemberById(memberId);
 		final Comment comment = getCommentById(commentId);
 		final CommentReport commentReport = CommentReport.of(comment, member);
 

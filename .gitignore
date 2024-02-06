@@ -41,4 +41,8 @@ out/
 **/*.log
 **/*.log.gz
 .DS_Store
-src/main/generated/**
+
+###QClass ###
+/src/main/generated/**
+
+/src/test/resources/cucumber/key/**

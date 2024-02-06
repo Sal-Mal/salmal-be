@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
 import com.salmalteam.salmal.comment.application.CommentService;
 import com.salmalteam.salmal.comment.entity.Comment;
 import com.salmalteam.salmal.comment.entity.CommentRepository;
@@ -50,14 +49,13 @@ class CommentServiceTest {
 		void 요청_회원이_존재하지_않는다면_예외가_발생한다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
 			final Long commentId = 1L;
 			final String content = "수정할 댓글입니다";
 			final VoteCommentUpdateRequest voteCommentUpdateRequest = new VoteCommentUpdateRequest(content);
 
 			given(memberService.findMemberById(any())).willThrow(new MemberException(MemberExceptionType.NOT_FOUND));
 			// when & then
-			assertThatThrownBy(() -> commentService.updateComment(memberPayLoad, commentId, voteCommentUpdateRequest))
+			assertThatThrownBy(() -> commentService.updateComment(memberId, commentId, voteCommentUpdateRequest))
 				.isInstanceOf(MemberException.class);
 		}
 
@@ -65,7 +63,6 @@ class CommentServiceTest {
 		void 수정할_댓글이_존재하지_않는다면_예외가_발생한다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
 			final Long commentId = 1L;
 			final String content = "수정할 댓글입니다";
 			final VoteCommentUpdateRequest voteCommentUpdateRequest = new VoteCommentUpdateRequest(content);
@@ -75,7 +72,7 @@ class CommentServiceTest {
 			given(commentRepository.findById(any())).willReturn(Optional.empty());
 
 			// when & then
-			assertThatThrownBy(() -> commentService.updateComment(memberPayLoad, commentId, voteCommentUpdateRequest))
+			assertThatThrownBy(() -> commentService.updateComment(memberId, commentId, voteCommentUpdateRequest))
 				.isInstanceOf(CommentException.class);
 
 		}
@@ -88,11 +85,10 @@ class CommentServiceTest {
 		void 좋아요할_댓글이_존재하지_않으면_예외가_발생한다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
 			final Long commentId = 1L;
 
 			// when & then
-			assertThatThrownBy(() -> commentService.likeComment(memberPayLoad, commentId))
+			assertThatThrownBy(() -> commentService.likeComment(memberId, commentId))
 				.isInstanceOf(CommentException.class);
 
 			verify(memberService).findMemberById(eq(memberId));
@@ -103,7 +99,6 @@ class CommentServiceTest {
 
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
 			final Long commentId = 1L;
 
 			final Member member = Member.createActivatedMember("xxx", "닉네임", "kakao", true);
@@ -115,7 +110,7 @@ class CommentServiceTest {
 			given(commentLikeRepository.existsByCommentAndLiker(any(), any())).willReturn(true);
 
 			// when & then
-			assertThatThrownBy(() -> commentService.likeComment(memberPayLoad, commentId))
+			assertThatThrownBy(() -> commentService.likeComment(memberId, commentId))
 				.isInstanceOf(CommentLikeException.class);
 
 		}
@@ -130,11 +125,10 @@ class CommentServiceTest {
 
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
 			final Long commentId = 1L;
 
 			// when & then
-			assertThatThrownBy(() -> commentService.unLikeComment(memberPayLoad, commentId))
+			assertThatThrownBy(() -> commentService.unLikeComment(memberId, commentId))
 				.isInstanceOf(CommentException.class);
 
 			verify(memberService).findMemberById(eq(memberId));
@@ -145,7 +139,6 @@ class CommentServiceTest {
 
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
 			final Long commentId = 1L;
 
 			final Member member = Member.createActivatedMember("xxx", "닉네임", "kakao", true);
@@ -157,7 +150,7 @@ class CommentServiceTest {
 			given(commentLikeRepository.existsByCommentAndLiker(any(), any())).willReturn(false);
 
 			// when & then
-			assertThatThrownBy(() -> commentService.unLikeComment(memberPayLoad, commentId))
+			assertThatThrownBy(() -> commentService.unLikeComment(memberId, commentId))
 				.isInstanceOf(CommentLikeException.class);
 
 		}
@@ -170,11 +163,10 @@ class CommentServiceTest {
 		void 신고할_댓글이_존재하지_않을_경우_예외가_발생한다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
 			final Long commentId = 1L;
 
 			// when & then
-			assertThatThrownBy(() -> commentService.report(memberPayLoad, commentId))
+			assertThatThrownBy(() -> commentService.report(memberId, commentId))
 				.isInstanceOf(CommentException.class);
 
 			verify(memberService).findMemberById(eq(memberId));
@@ -184,7 +176,6 @@ class CommentServiceTest {
 		void 이미_신고를_한_경우_예외가_발생한다() {
 			// given
 			final Long memberId = 1L;
-			final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
 			final Long commentId = 1L;
 
 			final Member member = Member.createActivatedMember("ss", "닉네임", "kakao", true);
@@ -195,7 +186,7 @@ class CommentServiceTest {
 			given(commentReportRepository.existsByCommentAndReporter(any(), any())).willReturn(true);
 
 			// when & then
-			assertThatThrownBy(() -> commentService.report(memberPayLoad, commentId))
+			assertThatThrownBy(() -> commentService.report(memberId, commentId))
 				.isInstanceOf(CommentReportException.class);
 
 		}

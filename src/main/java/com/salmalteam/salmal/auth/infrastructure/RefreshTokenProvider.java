@@ -11,16 +11,16 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
-public class JwtProvider implements TokenProvider {
+public class RefreshTokenProvider implements TokenProvider {
 
 	private final Key secretKey;
 	private final Long expireMillis;
 	private final String subject;
 
-	public JwtProvider(String secretKey, String subject, Long expireMillis) {
+	public RefreshTokenProvider(String secretKey, String subject, Long expireMillis) {
 		this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-		this.subject = subject;
 		this.expireMillis = expireMillis;
+		this.subject = subject;
 	}
 
 	@Override
@@ -29,10 +29,10 @@ public class JwtProvider implements TokenProvider {
 		final Date endDate = new Date(nowDate.getTime() + expireMillis);
 
 		return Jwts.builder()
-			.setClaims(payload)
 			.setSubject(subject)
 			.setIssuedAt(nowDate)
 			.setExpiration(endDate)
+			.setClaims(payload)
 			.signWith(secretKey, SignatureAlgorithm.HS256)
 			.compact();
 	}

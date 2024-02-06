@@ -48,3 +48,7 @@ image:
   path:
     vote: vote
     member: member
+
+google:
+  fcm:
+    path : /cucumber/key/salmal-f12a4-firebase-adminsdk-gg0hz-e3c86da03f.json

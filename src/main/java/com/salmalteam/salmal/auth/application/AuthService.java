@@ -1,85 +1,90 @@
 package com.salmalteam.salmal.auth.application;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.salmalteam.salmal.auth.dto.response.TokenAvailableResponse;
-import com.salmalteam.salmal.auth.entity.LogoutAccessToken;
-import com.salmalteam.salmal.auth.entity.TokenRepository;
-import com.salmalteam.salmal.member.application.MemberService;
-import com.salmalteam.salmal.auth.entity.RefreshToken;
 import com.salmalteam.salmal.auth.dto.request.LoginRequest;
 import com.salmalteam.salmal.auth.dto.request.LogoutRequest;
 import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
 import com.salmalteam.salmal.auth.dto.response.LoginResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenResponse;
+import com.salmalteam.salmal.auth.entity.LogoutAccessToken;
+import com.salmalteam.salmal.auth.entity.RefreshToken;
+import com.salmalteam.salmal.auth.entity.Role;
+import com.salmalteam.salmal.auth.entity.TokenRepository;
 import com.salmalteam.salmal.auth.exception.AuthException;
 import com.salmalteam.salmal.auth.exception.AuthExceptionType;
+import com.salmalteam.salmal.member.application.MemberService;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
-    private final TokenProvider tokenProvider;
-    private final TokenRepository tokenRepository;
-    private final MemberService memberService;
+	private final TokenProvider jwtProvider;
+	private final TokenProvider refreshTokenProvider;
+	private final TokenRepository tokenRepository;
+	private final MemberService memberService;
 
-    @Transactional
-    public LoginResponse login(final LoginRequest loginRequest) {
-        final Long memberId = memberService.findMemberIdByProviderId(loginRequest.getProviderId());
-        return generateTokenById(memberId);
-    }
+	public AuthService(TokenProvider jwtProvider, TokenProvider refreshTokenProvider, TokenRepository tokenRepository,
+		MemberService memberService) {
+		this.jwtProvider = jwtProvider;
+		this.refreshTokenProvider = refreshTokenProvider;
+		this.tokenRepository = tokenRepository;
+		this.memberService = memberService;
+	}
 
-    @Transactional
-    public LoginResponse signUp(final String provider, final SignUpRequest signUpRequest) {
-        final Long memberId = memberService.save(provider, signUpRequest);
-        return generateTokenById(memberId);
-    }
+	@Transactional
+	public LoginResponse login(final LoginRequest loginRequest) {
+		final Long memberId = memberService.findMemberIdByProviderId(loginRequest.getProviderId());
+		return generateTokenById(memberId);
+	}
 
-    private LoginResponse generateTokenById(final Long memberId) {
-        final String accessToken = tokenProvider.createAccessToken(memberId);
-        final String refreshToken = tokenProvider.createRefreshToken(memberId);
-        final Long refreshTokenExpiry = tokenProvider.getTokenExpiry(refreshToken);
-        tokenRepository.saveRefreshToken(RefreshToken.of(refreshToken, refreshTokenExpiry));
+	@Transactional
+	public LoginResponse signUp(final String provider, final SignUpRequest signUpRequest) {
+		final Long memberId = memberService.save(provider, signUpRequest);
+		return generateTokenById(memberId);
+	}
 
-        return LoginResponse.of(accessToken, refreshToken);
-    }
+	//TODO 리프래시 토큰 저장타입 개선
+	private LoginResponse generateTokenById(final Long memberId) {
+		Map<String, Object> payload = createPayloadWithIdClaim(memberId);
+		String accessToken = jwtProvider.provide(payload);
+		String refreshToken = refreshTokenProvider.provide(payload);
+		tokenRepository.saveRefreshToken(RefreshToken.of(refreshToken));
+		return LoginResponse.of(accessToken, refreshToken);
+	}
 
-    @Transactional
-    public void logout(final String accessToken, final LogoutRequest logoutRequest){
-        final String refreshToken = logoutRequest.getRefreshToken();
-        final Long accessTokenExpiry = tokenProvider.getTokenExpiry(accessToken);
+	//TODO logout 로직 개선
+	@Transactional
+	public void logout(final String accessToken, final LogoutRequest logoutRequest) {
+		final String refreshToken = logoutRequest.getRefreshToken();
+		tokenRepository.saveLogoutAccessToken(LogoutAccessToken.of(accessToken));
+		tokenRepository.deleteRefreshTokenById(refreshToken);
+	}
 
-        tokenRepository.saveLogoutAccessToken(LogoutAccessToken.of(accessToken, accessTokenExpiry));
-        tokenRepository.deleteRefreshTokenById(refreshToken);
-    }
+	//TODO 리프래시 토큰발급 개선 (저장 타입 개선, 리프레시토큰 인증헤더 사용)
+	@Transactional
+	public TokenResponse reissueAccessToken(Long memberId, final String refreshToken) {
+		validateRefreshTokenExists(refreshToken);
+		final String accessToken = jwtProvider.provide(createPayloadWithIdClaim(memberId));
+		return TokenResponse.from(accessToken);
+	}
 
-    @Transactional
-    public TokenResponse reissueAccessToken(final String refreshToken){
-        validateRefreshToken(refreshToken);
-        validateRefreshTokenExists(refreshToken);
-        final Long memberId = tokenProvider.getMemberIdFromToken(refreshToken);
-        final String accessToken = tokenProvider.createAccessToken(memberId);
-        return TokenResponse.from(accessToken);
-    }
+	private Map<String, Object> createPayloadWithIdClaim(Long memberId) {
+		Map<String, Object> payload = new HashMap<>();
+		payload.put("id", memberId);
+		payload.put("role", Role.MEMBER);
+		return payload;
+	}
 
-    private void validateRefreshToken(final String refreshToken) {
-        if(!tokenProvider.isValidRefreshToken(refreshToken)){
-            throw new AuthException(AuthExceptionType.NOT_VALID_REFRESH_TOKEN);
-        }
-    }
-
-    private void validateRefreshTokenExists(final String refreshToken){
-        if(!tokenRepository.existsRefreshTokenById(refreshToken)){
-            throw new AuthException(AuthExceptionType.NOT_FOUND_REFRESH_TOKEN);
-        }
-    }
-
-    public TokenAvailableResponse validateToken(String accessToken) {
-        return new TokenAvailableResponse(tokenProvider.isValidAccessToken(accessToken));
-    }
+	private void validateRefreshTokenExists(final String refreshToken) {
+		if (!tokenRepository.existsRefreshTokenById(refreshToken)) {
+			throw new AuthException(AuthExceptionType.NOT_FOUND_REFRESH_TOKEN);
+		}
+	}
 }

@@ -1,17 +1,18 @@
 package com.salmalteam.salmal.presentation.http.member;
 
-import com.salmalteam.salmal.member.dto.request.MyPageUpdateRequest;
-import com.salmalteam.salmal.member.dto.response.MyPageResponse;
-import com.salmalteam.salmal.member.dto.response.block.MemberBlockedPageResponse;
-import com.salmalteam.salmal.member.dto.response.block.MemberBlockedResponse;
-import com.salmalteam.salmal.auth.entity.MemberPayLoad;
-import com.salmalteam.salmal.member.dto.response.vote.MemberBookmarkVotePageResponse;
-import com.salmalteam.salmal.member.dto.response.vote.MemberBookmarkVoteResponse;
-import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVotePageResponse;
-import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVoteResponse;
-import com.salmalteam.salmal.member.dto.response.vote.MemberVotePageResponse;
-import com.salmalteam.salmal.member.dto.response.vote.MemberVoteResponse;
-import com.salmalteam.salmal.support.PresentationTest;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -22,21 +23,17 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.io.FileInputStream;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.salmalteam.salmal.member.dto.request.MyPageUpdateRequest;
+import com.salmalteam.salmal.member.dto.response.MyPageResponse;
+import com.salmalteam.salmal.member.dto.response.block.MemberBlockedPageResponse;
+import com.salmalteam.salmal.member.dto.response.block.MemberBlockedResponse;
+import com.salmalteam.salmal.member.dto.response.vote.MemberBookmarkVotePageResponse;
+import com.salmalteam.salmal.member.dto.response.vote.MemberBookmarkVoteResponse;
+import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVotePageResponse;
+import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVoteResponse;
+import com.salmalteam.salmal.member.dto.response.vote.MemberVotePageResponse;
+import com.salmalteam.salmal.member.dto.response.vote.MemberVoteResponse;
+import com.salmalteam.salmal.support.PresentationTest;
 
 class MemberControllerTest extends PresentationTest {
 
@@ -106,7 +103,6 @@ class MemberControllerTest extends PresentationTest {
         void 회원_차단_성공() throws Exception {
             // given
             final Long memberId = 1L;
-            final MemberPayLoad memberPayLoad = MemberPayLoad.from(memberId);
 
             mockingForAuthorization();
             // when

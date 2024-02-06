@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.salmalteam.salmal.auth.annotation.LoginMember;
 import com.salmalteam.salmal.auth.application.AuthService;
 import com.salmalteam.salmal.auth.dto.request.LoginRequest;
 import com.salmalteam.salmal.auth.dto.request.LogoutRequest;
@@ -20,6 +21,7 @@ import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
 import com.salmalteam.salmal.auth.dto.response.LoginResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenAvailableResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenResponse;
+import com.salmalteam.salmal.member.application.MemberService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +34,7 @@ public class AuthController {
 
 	private final static String AUTHORIZATION_HEADER = "Authorization";
 	private final AuthService authService;
+	private final MemberService memberService;
 
 	@PostMapping("/login")
 	@ResponseStatus(HttpStatus.OK)
@@ -48,9 +51,10 @@ public class AuthController {
 
 	@PostMapping("/reissue")
 	@ResponseStatus(HttpStatus.OK)
-	public TokenResponse reissue(@RequestBody final ReissueTokenRequest reissueTokenRequest) {
+	public TokenResponse reissue(@LoginMember Long memberId,
+		@RequestBody final ReissueTokenRequest reissueTokenRequest) {
 		final String refreshToken = reissueTokenRequest.getRefreshToken();
-		return authService.reissueAccessToken(refreshToken);
+		return authService.reissueAccessToken(memberId, refreshToken);
 	}
 
 	@PostMapping("/logout")
@@ -62,14 +66,12 @@ public class AuthController {
 	}
 
 	@GetMapping("/tokens")
-	public TokenAvailableResponse validateToken(@RequestHeader(value = AUTHORIZATION_HEADER) final String authHeader) {
-		final String accessToken = extractAccessTokenFromAuthHeader(authHeader);
-		return authService.validateToken(accessToken);
+	public TokenAvailableResponse validateToken(@LoginMember final Long memberId) {
+		return new TokenAvailableResponse(memberService.isActivatedId(memberId));
 	}
 
 	private String extractAccessTokenFromAuthHeader(final String authHeader) {
 		final String accessToken = authHeader.substring(7);
 		return accessToken;
 	}
-
 }

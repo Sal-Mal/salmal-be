@@ -24,7 +24,6 @@ import com.salmalteam.salmal.auth.dto.request.LogoutRequest;
 import com.salmalteam.salmal.auth.dto.request.ReissueTokenRequest;
 import com.salmalteam.salmal.auth.dto.request.SignUpRequest;
 import com.salmalteam.salmal.auth.dto.response.LoginResponse;
-import com.salmalteam.salmal.auth.dto.response.TokenAvailableResponse;
 import com.salmalteam.salmal.auth.dto.response.TokenResponse;
 import com.salmalteam.salmal.support.PresentationTest;
 
@@ -42,6 +41,7 @@ class AuthControllerTest extends PresentationTest {
 		final LoginRequest loginRequest = new LoginRequest(providerId);
 		final LoginResponse loginResponse = LoginResponse.of(accessToken, refreshToken);
 		given(authService.login(any())).willReturn(loginResponse);
+		mockingForAuthorization();
 
 		// when
 		final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "/login")
@@ -75,7 +75,8 @@ class AuthControllerTest extends PresentationTest {
 		final Boolean marketingInformationConsent = true;
 		final SignUpRequest signUpRequest = new SignUpRequest(providerId, nickName, marketingInformationConsent);
 		final LoginResponse loginResponse = LoginResponse.of(accessToken, refreshToken);
-		given(authService.signUp(eq(provider), any())).willReturn(loginResponse);
+		given(authService.signUp(any(), any())).willReturn(loginResponse);
+		mockingForAuthorization();
 
 		// when
 		final ResultActions resultActions = mockMvc.perform(
@@ -109,6 +110,8 @@ class AuthControllerTest extends PresentationTest {
 		// given
 		final String refreshToken = "refreshToken";
 		final LogoutRequest logoutRequest = new LogoutRequest(refreshToken);
+		mockingForAuthorization();
+
 		final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "/logout")
 				.header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -136,7 +139,8 @@ class AuthControllerTest extends PresentationTest {
 		final String refreshToken = "refreshToken";
 		final ReissueTokenRequest reissueTokenRequest = new ReissueTokenRequest(refreshToken);
 		final TokenResponse tokenResponse = TokenResponse.from(accessToken);
-		given(authService.reissueAccessToken(any())).willReturn(tokenResponse);
+		given(authService.reissueAccessToken(anyLong(), any())).willReturn(tokenResponse);
+		mockingForAuthorization();
 
 		final ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "/reissue")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -159,8 +163,9 @@ class AuthControllerTest extends PresentationTest {
 	@DisplayName("토큰 정보확인 API (유효할 때)")
 	void validateToken() throws Exception {
 		//given
-		given(authService.validateToken(anyString()))
-			.willReturn(new TokenAvailableResponse(true));
+		given(memberService.isActivatedId(anyLong()))
+			.willReturn(true);
+		mockingForAuthorization();
 
 		//expect
 		mockMvc.perform(get(BASE_URL + "/tokens")
@@ -176,24 +181,6 @@ class AuthControllerTest extends PresentationTest {
 				)
 			));
 
-		then(authService).should(times(1)).validateToken(anyString());
+		then(memberService).should(times(1)).isActivatedId(anyLong());
 	}
-
-	@Test
-	@DisplayName("토큰 정보확인 API (유효하지 않을 때)")
-	void validateToken_invalid() throws Exception {
-		//given
-		given(authService.validateToken(anyString()))
-			.willReturn(new TokenAvailableResponse(false));
-
-		//expect
-		mockMvc.perform(get(BASE_URL + "/tokens")
-				.characterEncoding(StandardCharsets.UTF_8)
-				.header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.available").value(false));
-
-		then(authService).should(times(1)).validateToken(anyString());
-	}
-
 }
