@@ -133,7 +133,34 @@ include::{snippets}/auth-controller-test/접근_토큰_재발급/http-request.ad
 
 include::{snippets}/auth-controller-test/접근_토큰_재발급/http-response.adoc[]
 
----
+=== 📌 토큰 유효성 검사
+
+==== 기본정보
+
+- 메서드 : POST
+- URL : `/api/auth/reissue`
+
+==== 요청
+
+===== 본문
+
+include::{snippets}/auth-controller-test/validate-token/request-headers.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/auth-controller-test/validate-token/response-fields.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/auth-controller-test/validate-token/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/auth-controller-test/validate-token/http-response.adoc[]
 
 == 투표 API
 
