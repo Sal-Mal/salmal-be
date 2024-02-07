@@ -88,7 +88,7 @@ public class PresentationTest {
 	@MockBean
 	protected NotificationService notificationService;
 	@MockBean
-	protected MemberNotificationService MemberNotificationService;
+	protected MemberNotificationService memberNotificationService;
 	@MockBean
 	protected FcmClient fcmClient;
 
