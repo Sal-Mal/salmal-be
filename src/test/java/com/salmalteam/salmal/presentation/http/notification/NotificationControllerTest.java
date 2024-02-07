@@ -100,7 +100,7 @@ class NotificationControllerTest extends PresentationTest {
 					fieldWithPath("markId").type(JsonFieldType.NUMBER).description("알림이 발생된 컨텐츠 ID(댓글 ID)"),
 					fieldWithPath("type").type(JsonFieldType.STRING).description("알림 타입"),
 					fieldWithPath("message").type(JsonFieldType.STRING).description("알림 본문"),
-					fieldWithPath("createAt").type(JsonFieldType.STRING).description("알림 생성 시간"),
+					fieldWithPath("createAt").type(JsonFieldType.STRING).description("알림 생성 시"),
 					fieldWithPath("memberImageUrl").type(JsonFieldType.STRING).description("알림을 발생시킨 회원의 프로필 이미지"),
 					fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("알림이 발생된 원문(투표)의 이미지"),
 					fieldWithPath("contentId").type(JsonFieldType.NUMBER).description("알림이 발생된 원문(투표)의 ID"),
@@ -126,7 +126,7 @@ class NotificationControllerTest extends PresentationTest {
 			.andExpect(status().isOk())
 			.andDo(restDocs.document(
 				requestHeaders(headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 인증용 JWT 토큰")),
-				requestFields(fieldWithPath("uuid").type(String.class).description("알림 고유 번호")))
+				requestFields(fieldWithPath("uuid").type(JsonFieldType.STRING).description("알림 고유 번호")))
 			);
 
 		then(notificationService).should(times(1)).delete(anyLong(), anyString());
@@ -170,7 +170,7 @@ class NotificationControllerTest extends PresentationTest {
 				requestHeaders(
 					headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 인증용 JWT 토큰")),
 				requestFields(
-					fieldWithPath("uuid").type(String.class).description("알림 고유 번호")
+					fieldWithPath("uuid").type(JsonFieldType.STRING).description("알림 고유 번호")
 				)
 			));
 
