@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDateTime;
@@ -15,7 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.payload.PayloadDocumentation;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.salmalteam.salmal.notification.dto.request.ReadNotificationRequest;
@@ -31,6 +32,7 @@ class NotificationControllerTest extends PresentationTest {
 	@Test
 	@DisplayName("알림이 조회되어야 한다.")
 	void findNotification() throws Exception {
+		//given
 		String testImageUrl = "https://healthix.org/wp-content/uploads/2016/06/testimage.jpeg";
 
 		List<NotificationDto> notifications = List.of(
@@ -91,10 +93,19 @@ class NotificationControllerTest extends PresentationTest {
 
 			.andDo(restDocs.document(
 				requestHeaders(
-					headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 인증용 JWT 토큰")
-				)
-			));
-
+					headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 인증용 JWT 토큰")),
+				responseFields(
+					beneathPath("notifications").withSubsectionId("notifications"),
+					fieldWithPath("uuid").type(JsonFieldType.STRING).description("알림 고유 번호"),
+					fieldWithPath("markId").type(JsonFieldType.NUMBER).description("알림이 발생된 컨텐츠 ID(댓글 ID)"),
+					fieldWithPath("type").type(JsonFieldType.STRING).description("알림 타입"),
+					fieldWithPath("message").type(JsonFieldType.STRING).description("알림 본문"),
+					fieldWithPath("createAt").type(JsonFieldType.STRING).description("알림 생성 시간"),
+					fieldWithPath("memberImageUrl").type(JsonFieldType.STRING).description("알림을 발생시킨 회원의 프로필 이미지"),
+					fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("알림이 발생된 원문(투표)의 이미지"),
+					fieldWithPath("contentId").type(JsonFieldType.NUMBER).description("알림이 발생된 원문(투표)의 ID"),
+					fieldWithPath("read").type(JsonFieldType.BOOLEAN).description("알림 읽음 여부")))
+			);
 		then(notificationService).should(times(1)).findAll(any());
 	}
 
@@ -114,19 +125,16 @@ class NotificationControllerTest extends PresentationTest {
 			)
 			.andExpect(status().isOk())
 			.andDo(restDocs.document(
-				requestHeaders(
-					headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 인증용 JWT 토큰")),
-				PayloadDocumentation.requestFields(
-					PayloadDocumentation.fieldWithPath("uuid").type(String.class).description("알림 고유 번호")
-				)
-			));
+				requestHeaders(headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 인증용 JWT 토큰")),
+				requestFields(fieldWithPath("uuid").type(String.class).description("알림 고유 번호")))
+			);
 
 		then(notificationService).should(times(1)).delete(anyLong(), anyString());
 	}
 
 	@Test
 	@DisplayName("알림 삭제 시 uuid 없으면 예외 발생")
-	void delete_notification_invalid_request() throws Exception{
+	void delete_notification_invalid_request() throws Exception {
 		//given
 		mockingForAuthorization();
 		DeleteNotificationRequest request = new DeleteNotificationRequest("");
@@ -161,8 +169,8 @@ class NotificationControllerTest extends PresentationTest {
 			.andDo(restDocs.document(
 				requestHeaders(
 					headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 타입의 인증용 JWT 토큰")),
-				PayloadDocumentation.requestFields(
-					PayloadDocumentation.fieldWithPath("uuid").type(String.class).description("알림 고유 번호")
+				requestFields(
+					fieldWithPath("uuid").type(String.class).description("알림 고유 번호")
 				)
 			));
 
@@ -171,7 +179,7 @@ class NotificationControllerTest extends PresentationTest {
 
 	@Test
 	@DisplayName("알림 읽기 상태 변경 시 uuid 없으면 예외 발생")
-	void read_notification_invalid_request() throws Exception{
+	void read_notification_invalid_request() throws Exception {
 		//given
 		mockingForAuthorization();
 		DeleteNotificationRequest request = new DeleteNotificationRequest("");
