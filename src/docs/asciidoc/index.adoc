@@ -789,3 +789,20 @@ include::{snippets}/notification-controller-test/read-notification/response-body
 include::{snippets}/notification-controller-test/read-notification/http-request.adoc[]
 ===== 요청
 include::{snippets}/notification-controller-test/read-notification/http-response.adoc[]
+
+=== 📌 FCM 토큰 등록
+==== 기본정보
+- 메서드 : POST
+- URL : `/api/fcm/add-token`
+
+==== 요청
+===== 헤더
+include::{snippets}/fcm-controller-test/add-fcm/request-fields.adoc[]
+==== 응답
+===== 본문
+include::{snippets}/fcm-controller-test/add-fcm/response-body.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/fcm-controller-test/add-fcm/http-request.adoc[]
+===== 요청
+include::{snippets}/fcm-controller-test/add-fcm/http-response.adoc[]
