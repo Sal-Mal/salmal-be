@@ -735,3 +735,57 @@ include::{snippets}/회원_삭제/회원_삭제_성공/path-parameters.adoc[]
 include::{snippets}/회원_삭제/회원_삭제_성공/http-request.adoc[]
 ===== 응답
 include::{snippets}/회원_삭제/회원_삭제_성공/http-response.adoc[]
+
+
+== 알림 API
+
+=== 📌 알림 삭제
+==== 기본정보
+- 메서드 : GET
+- URL : `/api/notification`
+
+==== 요청
+===== 헤더
+include::{snippets}/notification-controller-test/find-notification/request-headers.adoc[]
+==== 응답
+===== 본문
+include::{snippets}/notification-controller-test/find-notification/response-fields-notifications.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/notification-controller-test/find-notification/http-request.adoc[]
+===== 요청
+include::{snippets}/notification-controller-test/find-notification/http-response.adoc[]
+
+=== 📌 알림 삭제
+==== 기본정보
+- 메서드 : DELETE
+- URL : `/api/notification`
+
+==== 요청
+===== 헤더
+include::{snippets}/notification-controller-test/delete-notification/request-fields.adoc[]
+==== 응답
+===== 본문
+include::{snippets}/notification-controller-test/delete-notification/response-body.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/notification-controller-test/delete-notification/http-request.adoc[]
+===== 요청
+include::{snippets}/notification-controller-test/delete-notification/http-response.adoc[]
+
+=== 📌 알림 읽기 업데이트
+==== 기본정보
+- 메서드 : POST
+- URL : `/api/notification/read`
+
+==== 요청
+===== 헤더
+include::{snippets}/notification-controller-test/read-notification/request-fields.adoc[]
+==== 응답
+===== 본문
+include::{snippets}/notification-controller-test/read-notification/response-body.adoc[]
+==== 예시
+===== 요청
+include::{snippets}/notification-controller-test/read-notification/http-request.adoc[]
+===== 요청
+include::{snippets}/notification-controller-test/read-notification/http-response.adoc[]
