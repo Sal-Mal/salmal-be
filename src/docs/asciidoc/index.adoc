@@ -137,7 +137,7 @@ include::{snippets}/auth-controller-test/접근_토큰_재발급/http-response.a
 
 ==== 기본정보
 
-- 메서드 : POST
+- 메서드 : GET
 - URL : `/api/auth/tokens`
 
 ==== 요청
