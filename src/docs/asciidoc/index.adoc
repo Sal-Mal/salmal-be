@@ -10,95 +10,179 @@
 == 인증 API
 
 === 📌 로그인
+
 ==== 기본정보
+
 - 메서드 : POST
 - URL : `/api/auth/login`
 
 ==== 요청
+
 ===== 본문
+
 include::{snippets}/auth-controller-test/로그인/request-fields.adoc[]
+
 ==== 응답
+
 ===== 본문
+
 include::{snippets}/auth-controller-test/로그인/response-fields.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/auth-controller-test/로그인/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/auth-controller-test/로그인/http-response.adoc[]
 
 ---
 
 === 📌 회원가입
+
 ==== 기본정보
+
 - 메서드 : POST
 - URL : `/api/auth/signup/{provider}`
 
 ==== 요청
+
 ===== 경로 변수
+
 include::{snippets}/auth-controller-test/회원가입/path-parameters.adoc[]
+
 ===== 본문
+
 include::{snippets}/auth-controller-test/회원가입/request-fields.adoc[]
+
 ==== 응답
+
 ===== 본문
+
 include::{snippets}/auth-controller-test/회원가입/response-fields.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/auth-controller-test/회원가입/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/auth-controller-test/회원가입/http-response.adoc[]
 
 ---
 
 === 📌 로그아웃
+
 ==== 기본정보
+
 - 메서드 : POST
 - URL : `/api/auth/logout`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/auth-controller-test/로그아웃/request-headers.adoc[]
+
 ===== 본문
+
 include::{snippets}/auth-controller-test/로그아웃/request-fields.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/auth-controller-test/로그아웃/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/auth-controller-test/로그아웃/http-response.adoc[]
 
 ---
 
 === 📌 접근 토큰 재발급
+
 ==== 기본정보
+
 - 메서드 : POST
 - URL : `/api/auth/reissue`
 
 ==== 요청
+
 ===== 본문
+
 include::{snippets}/auth-controller-test/접근_토큰_재발급/request-fields.adoc[]
+
 ==== 응답
+
 ===== 본문
+
 include::{snippets}/auth-controller-test/접근_토큰_재발급/response-fields.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/auth-controller-test/접근_토큰_재발급/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/auth-controller-test/접근_토큰_재발급/http-response.adoc[]
 
----
+=== 📌 토큰 유효성 검사
+
+==== 기본정보
+
+- 메서드 : POST
+- URL : `/api/auth/tokens`
+
+==== 요청
+
+===== 본문
+
+include::{snippets}/auth-controller-test/validate-token/request-headers.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/auth-controller-test/validate-token/response-fields.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/auth-controller-test/validate-token/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/auth-controller-test/validate-token/http-response.adoc[]
 
 == 투표 API
 
 === 📌 투표 등록
+
 ==== 기본정보
+
 - 메서드 : POST
 - URL : `/api/votes`
 
 ==== 요청
+
 ===== 혜더
+
 include::{snippets}/투표_등록_테스트/투표_등록_성공/request-headers.adoc[]
+
 ===== 본문
+
 include::{snippets}/투표_등록_테스트/투표_등록_성공/request-parts.adoc[]
+
 ==== 예시
+
 ===== 요청
 
 [source]
@@ -113,461 +197,755 @@ Content-Type: image/jpeg
 ---
 
 ===== 응답
+
 include::{snippets}/투표_등록_테스트/투표_등록_성공/http-response.adoc[]
 
 ---
 
 === 📌 투표 삭제
+
 ==== 기본정보
+
 - 메서드 : DELETE
 - URL : `/api/votes/{vote-id}`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/투표_삭제_테스트/투표_삭제_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/투표_삭제_테스트/투표_삭제_성공/path-parameters.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/투표_삭제_테스트/투표_삭제_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/투표_삭제_테스트/투표_삭제_성공/http-response.adoc[]
 
 ---
 
 === 📌 투표 평가
+
 ==== 기본정보
+
 - 메서드 : POST
 - URL : `/api/votes/{vote-id}/evaluations`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/투표_평가_테스트/투표_평가_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/투표_평가_테스트/투표_평가_성공/path-parameters.adoc[]
+
 ===== 본문
+
 include::{snippets}/투표_평가_테스트/투표_평가_성공/request-fields.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/투표_평가_테스트/투표_평가_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/투표_평가_테스트/투표_평가_성공/http-response.adoc[]
 
 ---
 
 === 📌 투표 평가 취소
+
 ==== 기본정보
+
 - 메서드 : DELETE
 - URL : `/api/votes/{vote-id}/evaluations`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/투표_평가_취소_테스트/투표_평가_취소_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/투표_평가_취소_테스트/투표_평가_취소_성공/path-parameters.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/투표_평가_취소_테스트/투표_평가_취소_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/투표_평가_취소_테스트/투표_평가_취소_성공/http-response.adoc[]
 
 ---
 
 === 📌 투표 북마킹
+
 ==== 기본정보
+
 - 메서드 : POST
 - URL : `/api/votes/{vote-id}/bookmarks`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/path-parameters.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/투표_북마크_테스트/투표_북마킹_성공/http-response.adoc[]
 
 ---
 
 === 📌 투표 북마킹 취소
+
 ==== 기본정보
+
 - 메서드 : DELETE
 - URL : `/api/votes/{vote-id}/bookmarks`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/북마크_취소_테스트/투표_북마킹_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/북마크_취소_테스트/투표_북마킹_성공/path-parameters.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/북마크_취소_테스트/투표_북마킹_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/북마크_취소_테스트/투표_북마킹_성공/http-response.adoc[]
 
 ---
 
 === 📌 투표 신고
+
 ==== 기본정보
+
 - 메서드 : POST
 - URL : `/api/votes/{vote-id}/reports`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/투표_신고_테스트/투표_신고_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/투표_신고_테스트/투표_신고_성공/path-parameters.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/투표_신고_테스트/투표_신고_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/투표_신고_테스트/투표_신고_성공/http-response.adoc[]
 
 ---
 
 === 📌 투표 댓글 추가
+
 ==== 기본정보
+
 - 메서드 : POST
 - URL : `/api/votes/{vote-id}/comments`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/투표_댓글_생성_테스트/댓글_생성_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/투표_댓글_생성_테스트/댓글_생성_성공/path-parameters.adoc[]
+
 ===== 본문
+
 include::{snippets}/투표_댓글_생성_테스트/댓글_생성_성공/request-fields.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/투표_댓글_생성_테스트/댓글_생성_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/투표_댓글_생성_테스트/댓글_생성_성공/http-response.adoc[]
 
 ---
 
 === 📌 투표 조회
+
 ==== 기본정보
+
 - 메서드 : GET
 - URL : `/api/votes/{vote-id}`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/투표_조회/투표_조회_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/투표_조회/투표_조회_성공/path-parameters.adoc[]
+
 ==== 응답
+
 ===== 본문
+
 include::{snippets}/투표_조회/투표_조회_성공/response-fields.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/투표_조회/투표_조회_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/투표_조회/투표_조회_성공/http-response.adoc[]
 
 
 ---
 
-
 === 📌 투표 목록 조회
+
 ==== 기본정보
+
 - 메서드 : GET
 - URL : `/api/votes`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/투표_목록_조회/투표_조회_성공/request-headers.adoc[]
+
 ===== 쿼리 변수
+
 include::{snippets}/투표_목록_조회/투표_조회_성공/request-parameters.adoc[]
+
 ==== 응답
+
 ===== 본문
+
 include::{snippets}/투표_목록_조회/투표_조회_성공/response-fields.adoc[]
+
 ===== votes
+
 include::{snippets}/투표_목록_조회/투표_조회_성공/response-fields-votes.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/투표_목록_조회/투표_조회_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/투표_목록_조회/투표_조회_성공/http-response.adoc[]
 
 
 ---
 
 === 📌 투표 댓글 목록 조회
+
 ==== 기본정보
+
 - 메서드 : GET
 - URL : `/api/votes/{vote-id}/comments`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/투표_댓글_목록_조회_테스트/댓글_목록_조회_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/투표_댓글_목록_조회_테스트/댓글_목록_조회_성공/path-parameters.adoc[]
+
 ===== 쿼리 변수
+
 include::{snippets}/투표_댓글_목록_조회_테스트/댓글_목록_조회_성공/request-parameters.adoc[]
+
 ==== 응답
+
 ===== 본문
+
 include::{snippets}/투표_댓글_목록_조회_테스트/댓글_목록_조회_성공/response-fields.adoc[]
+
 ===== comments
+
 include::{snippets}/투표_댓글_목록_조회_테스트/댓글_목록_조회_성공/response-fields-comments.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/투표_댓글_목록_조회_테스트/댓글_목록_조회_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/투표_댓글_목록_조회_테스트/댓글_목록_조회_성공/http-response.adoc[]
 
 ---
 
 === 📌 투표 댓글 목록 전체 조회 ( 임시 )
+
 ==== 기본정보
+
 - 메서드 : GET
 - URL : `/api/votes/{vote-id}/comments/all`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/투표_댓글_목록_전체_조회_테스트/투표_댓글_목록_전체_조회_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/투표_댓글_목록_전체_조회_테스트/투표_댓글_목록_전체_조회_성공/path-parameters.adoc[]
+
 ==== 응답
+
 ===== 본문
+
 include::{snippets}/투표_댓글_목록_전체_조회_테스트/투표_댓글_목록_전체_조회_성공/response-fields.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/투표_댓글_목록_전체_조회_테스트/투표_댓글_목록_전체_조회_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/투표_댓글_목록_전체_조회_테스트/투표_댓글_목록_전체_조회_성공/http-response.adoc[]
 
 == 댓글 API
 
 === 📌 댓글 수정
+
 ==== 기본정보
+
 - 메서드 : PUT
 - URL : `/api/comments/{comment-id}`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/댓글_수정_테스트/댓글_수정_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/댓글_수정_테스트/댓글_수정_성공/path-parameters.adoc[]
+
 ===== 본문
+
 include::{snippets}/댓글_수정_테스트/댓글_수정_성공/request-fields.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/댓글_수정_테스트/댓글_수정_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/댓글_수정_테스트/댓글_수정_성공/http-response.adoc[]
 
 ---
 
 === 📌 댓글 수정
+
 ==== 기본정보
+
 - 메서드 : DELETE
 - URL : `/api/comments/{comment-id}`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/댓글_삭제_테스트/댓글_삭제_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/댓글_삭제_테스트/댓글_삭제_성공/path-parameters.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/댓글_삭제_테스트/댓글_삭제_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/댓글_삭제_테스트/댓글_삭제_성공/http-response.adoc[]
 
 ---
 
 === 대댓글 생성
+
 ==== 기본정보
+
 - 메서드 : POST
 - URL : `/api/comments/{comment-id}/replies`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/대댓글_생성_테스트/대댓글_생성_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/대댓글_생성_테스트/대댓글_생성_성공/path-parameters.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/대댓글_생성_테스트/대댓글_생성_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/대댓글_생성_테스트/대댓글_생성_성공/http-response.adoc[]
 
 ---
 
 === 📌 댓글 좋아요
+
 ==== 기본정보
+
 - 메서드 : POST
 - URL : `/api/comments/{comment-id}/likes`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/댓글_좋아요_테스트/댓글_좋아요_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/댓글_좋아요_테스트/댓글_좋아요_성공/path-parameters.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/댓글_좋아요_테스트/댓글_좋아요_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/댓글_좋아요_테스트/댓글_좋아요_성공/http-response.adoc[]
 
 ---
 
 === 📌 댓글 좋아요 취소
+
 ==== 기본정보
+
 - 메서드 : DELETE
 - URL : `/api/comments/{comment-id}/likes`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/댓글_좋아요_취소_테스트/댓글_좋아요_취소_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/댓글_좋아요_취소_테스트/댓글_좋아요_취소_성공/path-parameters.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/댓글_좋아요_취소_테스트/댓글_좋아요_취소_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/댓글_좋아요_취소_테스트/댓글_좋아요_취소_성공/http-response.adoc[]
 
 ---
 
 === 📌 댓글 신고
+
 ==== 기본정보
+
 - 메서드 : DELETE
 - URL : `/api/comments/{comment-id}/reports`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/댓글_신고_테스트/댓글_신고_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/댓글_신고_테스트/댓글_신고_성공/path-parameters.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/댓글_신고_테스트/댓글_신고_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/댓글_신고_테스트/댓글_신고_성공/http-response.adoc[]
 
 
 ---
+
 === 📌 대댓글 목록 조회
+
 ==== 기본정보
+
 - 메서드 : GET
 - URL : `/api/comments/{comment-id}/replies`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/대댓글_목록_조회_테스트/대댓글_목록_조회_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/대댓글_목록_조회_테스트/대댓글_목록_조회_성공/path-parameters.adoc[]
+
 ===== 쿼리 변수
+
 include::{snippets}/대댓글_목록_조회_테스트/대댓글_목록_조회_성공/request-parameters.adoc[]
+
 ==== 응답
+
 ===== 본문
+
 include::{snippets}/대댓글_목록_조회_테스트/대댓글_목록_조회_성공/response-fields.adoc[]
+
 ===== comments
+
 include::{snippets}/대댓글_목록_조회_테스트/대댓글_목록_조회_성공/response-fields-comments.adoc
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/대댓글_목록_조회_테스트/대댓글_목록_조회_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/대댓글_목록_조회_테스트/대댓글_목록_조회_성공/http-response.adoc[]
 
 ---
+
 === 📌 댓글 신고
+
 ==== 기본정보
+
 - 메서드 : GET
 - URL : `/api/comments/{comment-id}/replies/all`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/대댓글_목록_전체_조회_테스트/대댓글_목록_전체_조회_테스트_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/대댓글_목록_전체_조회_테스트/대댓글_목록_전체_조회_테스트_성공/path-parameters.adoc[]
+
 ==== 응답
+
 ===== 본문
+
 include::{snippets}/대댓글_목록_전체_조회_테스트/대댓글_목록_전체_조회_테스트_성공/response-fields.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/대댓글_목록_전체_조회_테스트/대댓글_목록_전체_조회_테스트_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/대댓글_목록_전체_조회_테스트/대댓글_목록_전체_조회_테스트_성공/http-response.adoc[]
 
 == 회원 API
 
 === 📌 마이페이지 조회
+
 ==== 기본정보
+
 - 메서드 : GET
 - URL : `/api/members/{member-id}`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/마이페이지_조회/마이페이지_조회_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/마이페이지_조회/마이페이지_조회_성공/request-parameters.adoc[]
+
 ==== 응답
+
 ===== 본문
+
 include::{snippets}/마이페이지_조회/마이페이지_조회_성공/response-fields.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/마이페이지_조회/마이페이지_조회_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/마이페이지_조회/마이페이지_조회_성공/http-response.adoc[]
 
 ---
 
 === 📌 마이페이지 수정
+
 ==== 기본정보
+
 - 메서드 : PUT
 - URL : `/api/members/{member-id}`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/마이페이지_수정/마이페이지_수정_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/마이페이지_수정/마이페이지_수정_성공/path-parameters.adoc[]
+
 ===== 본문
+
 include::{snippets}/마이페이지_수정/마이페이지_수정_성공/request-fields.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/마이페이지_수정/마이페이지_수정_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/마이페이지_수정/마이페이지_수정_성공/http-response.adoc[]
 
 ---
 
 === 📌 회원 이미지 삭제
+
 ==== 기본정보
+
 - 메서드 : DELETE
 - URL : `/api/members/{member-id}/images`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/회원_프로필_이미지_삭제/회원_프로필_이미지_삭제_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/회원_프로필_이미지_삭제/회원_프로필_이미지_삭제_성공/path-parameters.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/회원_프로필_이미지_삭제/회원_프로필_이미지_삭제_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/회원_프로필_이미지_삭제/회원_프로필_이미지_삭제_성공/http-response.adoc[]
 
 ---
 
 === 📌 회원 이미지 수정
+
 ==== 기본정보
+
 - 메서드 : POST
 - URL : `/api/members/{member-id}/images`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/회원_이미지_수정/회원_이미지_수정_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/회원_이미지_수정/회원_이미지_수정_성공/path-parameters.adoc[]
+
 ===== 본문
+
 include::{snippets}/회원_이미지_수정/회원_이미지_수정_성공/request-parts.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 [source]
 POST /api/votes HTTP/1.1
 Content-Type: application/json;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -578,160 +956,384 @@ Content-Disposition: form-data; name=imageFile; filename=testImage.jpg
 Content-Type: image/jpeg
 
 ===== 응답
+
 include::{snippets}/회원_이미지_수정/회원_이미지_수정_성공/http-response.adoc[]
 
 ---
 
 === 📌 회원 차단
+
 ==== 기본정보
+
 - 메서드 : POST
 - URL : `/api/members/{member-id}/reports`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/회원_차단/회원_차단_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/회원_차단/회원_차단_성공/request-parameters.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/회원_차단/회원_차단_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/회원_차단/회원_차단_성공/http-response.adoc[]
 
 ---
 
 === 📌 회원 차단 목록 조회
+
 ==== 기본정보
+
 - 메서드 : GET
 - URL : `/api/members/{member-id}/blocks`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/회원_차단_목록_조회/회원_차단_목록_조회_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/회원_차단_목록_조회/회원_차단_목록_조회_성공/path-parameters.adoc[]
+
 ===== 쿼리 변수
+
 include::{snippets}/회원_차단_목록_조회/회원_차단_목록_조회_성공/request-parameters.adoc[]
+
 ==== 응답
+
 ===== 본문
+
 include::{snippets}/회원_차단_목록_조회/회원_차단_목록_조회_성공/response-fields.adoc[]
+
 ===== blockedMembers
+
 include::{snippets}/회원_차단_목록_조회/회원_차단_목록_조회_성공/response-fields-blockedMembers.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/회원_차단_목록_조회/회원_차단_목록_조회_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/회원_차단_목록_조회/회원_차단_목록_조회_성공/http-response.adoc[]
 
 ---
 
 === 📌 회원 차단 취소
+
 ==== 기본정보
+
 - 메서드 : DELETE
 - URL : `/api/members/{member-id}/reports`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/회원_차단_취소/회원_차단_취소_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/회원_차단_취소/회원_차단_취소_성공/request-parameters.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/회원_차단_취소/회원_차단_취소_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/회원_차단_취소/회원_차단_취소_성공/http-response.adoc[]
 
 ---
 
 === 📌 회원 투표 목록 조회
+
 ==== 기본정보
+
 - 메서드 : GET
 - URL : `/api/members/{member-id}/votes`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/회원_투표_목록_조회_테스트/회원_투표_목록_조회_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/회원_투표_목록_조회_테스트/회원_투표_목록_조회_성공/path-parameters.adoc[]
+
 ===== 쿼리 변수
+
 include::{snippets}/회원_투표_목록_조회_테스트/회원_투표_목록_조회_성공/request-parameters.adoc[]
+
 ==== 응답
+
 ===== 본문
+
 include::{snippets}/회원_투표_목록_조회_테스트/회원_투표_목록_조회_성공/response-fields.adoc[]
+
 ===== votes
+
 include::{snippets}/회원_투표_목록_조회_테스트/회원_투표_목록_조회_성공/response-fields-votes.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/회원_투표_목록_조회_테스트/회원_투표_목록_조회_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/회원_투표_목록_조회_테스트/회원_투표_목록_조회_성공/http-response.adoc[]
 
 ---
 
 === 📌 회원 평가 투표 목록 조회
+
 ==== 기본정보
+
 - 메서드 : GET
 - URL : `/api/members/{member-id}/evaluations`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/회원_평가_투표_목록_조회/회원_평가_투표_목록_조회_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/회원_평가_투표_목록_조회/회원_평가_투표_목록_조회_성공/path-parameters.adoc[]
+
 ===== 쿼리 변수
+
 include::{snippets}/회원_평가_투표_목록_조회/회원_평가_투표_목록_조회_성공/request-parameters.adoc[]
+
 ==== 응답
+
 ===== 본문
+
 include::{snippets}/회원_평가_투표_목록_조회/회원_평가_투표_목록_조회_성공/response-fields.adoc[]
+
 ===== votes
+
 include::{snippets}/회원_평가_투표_목록_조회/회원_평가_투표_목록_조회_성공/response-fields-votes.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/회원_평가_투표_목록_조회/회원_평가_투표_목록_조회_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/회원_평가_투표_목록_조회/회원_평가_투표_목록_조회_성공/http-response.adoc[]
 
 ---
 
 === 📌 회원 북마크 투표 목록 조회
+
 ==== 기본정보
+
 - 메서드 : GET
 - URL : `/api/members/{member-id}/bookmarks`
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/회원_북마크_투표_목록_조회/회원_북마크_투표_목록_조회_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/회원_북마크_투표_목록_조회/회원_북마크_투표_목록_조회_성공/path-parameters.adoc[]
+
 ===== 쿼리 변수
+
 include::{snippets}/회원_북마크_투표_목록_조회/회원_북마크_투표_목록_조회_성공/request-parameters.adoc[]
+
 ==== 응답
+
 ===== 본문
+
 include::{snippets}/회원_북마크_투표_목록_조회/회원_북마크_투표_목록_조회_성공/response-fields.adoc[]
+
 ===== votes
+
 include::{snippets}/회원_북마크_투표_목록_조회/회원_북마크_투표_목록_조회_성공/response-fields-votes.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/회원_북마크_투표_목록_조회/회원_북마크_투표_목록_조회_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/회원_북마크_투표_목록_조회/회원_북마크_투표_목록_조회_성공/http-response.adoc[]
 
 ---
 
 === 📌 회원 탈퇴
+
 ==== 기본정보
+
 - 메서드 : DELETE
 - URL : `/api/members/{member-id}`
 
 탈퇴 시 회원과 관련된 모든 데이터( 회원정보, 게시물 등 )가 삭제됩니다.
 
 ==== 요청
+
 ===== 헤더
+
 include::{snippets}/회원_삭제/회원_삭제_성공/request-headers.adoc[]
+
 ===== 경로 변수
+
 include::{snippets}/회원_삭제/회원_삭제_성공/path-parameters.adoc[]
+
 ==== 예시
+
 ===== 요청
+
 include::{snippets}/회원_삭제/회원_삭제_성공/http-request.adoc[]
+
 ===== 응답
+
 include::{snippets}/회원_삭제/회원_삭제_성공/http-response.adoc[]
+
+== 알림 API
+
+=== 📌 알림 조회
+
+==== 기본정보
+
+- 메서드 : GET
+- URL : `/api/notification`
+
+==== 요청
+
+===== 헤더
+
+include::{snippets}/notification-controller-test/find-notification/request-headers.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/notification-controller-test/find-notification/response-fields-notifications.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/notification-controller-test/find-notification/http-request.adoc[]
+
+===== 요청
+
+include::{snippets}/notification-controller-test/find-notification/http-response.adoc[]
+
+=== 📌 알림 삭제
+
+==== 기본정보
+
+- 메서드 : DELETE
+- URL : `/api/notification`
+
+==== 요청
+
+===== 헤더
+
+include::{snippets}/notification-controller-test/delete-notification/request-fields.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/notification-controller-test/delete-notification/response-body.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/notification-controller-test/delete-notification/http-request.adoc[]
+
+===== 요청
+
+include::{snippets}/notification-controller-test/delete-notification/http-response.adoc[]
+
+=== 📌 알림 읽기 업데이트
+
+==== 기본정보
+
+- 메서드 : POST
+- URL : `/api/notification/read`
+
+==== 요청
+
+===== 헤더
+
+include::{snippets}/notification-controller-test/read-notification/request-fields.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/notification-controller-test/read-notification/response-body.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/notification-controller-test/read-notification/http-request.adoc[]
+
+===== 요청
+
+include::{snippets}/notification-controller-test/read-notification/http-response.adoc[]
+
+=== 📌 FCM 토큰 등록
+
+==== 기본정보
+
+- 메서드 : POST
+- URL : `/api/fcm/add-token`
+
+==== 요청
+
+===== 헤더
+
+include::{snippets}/fcm-controller-test/add-fcm/request-fields.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/fcm-controller-test/add-fcm/response-body.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/fcm-controller-test/add-fcm/http-request.adoc[]
+
+===== 요청
+
+include::{snippets}/fcm-controller-test/add-fcm/http-response.adoc[]

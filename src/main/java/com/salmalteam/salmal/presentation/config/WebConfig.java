@@ -18,13 +18,19 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
+
+	private static final String LOGIN_URL = "/api/auth/login";
+	private static final String SIGN_UP_URL = "/api/auth/signup/**";
+	private static final String HEALTH_CHECK_URL = "/api/health";
+
 	private final AuthInterceptor authInterceptor;
 	private final AuthenticationContext authenticationContext;
 
 	@Override
 	public void addInterceptors(final InterceptorRegistry registry) {
 		registry.addInterceptor(authInterceptor)
-			.excludePathPatterns("/api/auth/login", "/api/auth/signup/**", "/api/health");
+			.addPathPatterns("/api/**")
+			.excludePathPatterns(LOGIN_URL, SIGN_UP_URL, HEALTH_CHECK_URL);
 	}
 
 	@Override
