@@ -57,6 +57,7 @@ public class MemberService {
 	public Long findMemberIdByProviderId(final String providerId) {
 		final Member member = memberRepository.findByProviderId(providerId)
 			.orElseThrow(() -> new MemberException(MemberExceptionType.NOT_FOUND));
+		validateActivatedMember(member);
 		return member.getId();
 	}
 
