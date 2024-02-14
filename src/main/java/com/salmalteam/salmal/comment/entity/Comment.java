@@ -1,8 +1,26 @@
 package com.salmalteam.salmal.comment.entity;
 
-import com.salmalteam.salmal.common.entity.BaseEntity;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import com.salmalteam.salmal.comment.entity.like.CommentLike;
 import com.salmalteam.salmal.comment.entity.report.CommentReport;
+import com.salmalteam.salmal.common.entity.BaseEntity;
 import com.salmalteam.salmal.member.entity.Member;
 import com.salmalteam.salmal.vote.entity.Vote;
 
@@ -10,10 +28,6 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Entity
@@ -57,7 +71,7 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "parent_comment_id")
     private Comment parentComment;
 
-    @OneToMany(mappedBy = "parentComment")
+    @OneToMany(mappedBy = "parentComment",cascade = CascadeType.REMOVE)
     private List<Comment> childComments = new ArrayList<>();
 
     public void decreaseReplyCount(final int size){
