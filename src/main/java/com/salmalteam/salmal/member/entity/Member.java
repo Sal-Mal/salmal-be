@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import com.salmalteam.salmal.common.entity.BaseEntity;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -21,6 +22,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @EqualsAndHashCode(of = {"id"}, callSuper = true)
 @Table(name = "member")
 public class Member extends BaseEntity {
