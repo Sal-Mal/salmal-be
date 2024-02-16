@@ -1,5 +1,6 @@
 package com.salmalteam.salmal.application.member;
 
+import static com.salmalteam.salmal.member.entity.Provider.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
@@ -22,9 +23,14 @@ import com.salmalteam.salmal.member.application.MemberService;
 import com.salmalteam.salmal.member.dto.request.MemberImageUpdateRequest;
 import com.salmalteam.salmal.member.dto.request.MyPageUpdateRequest;
 import com.salmalteam.salmal.member.dto.request.block.MemberBlockedPageRequest;
+import com.salmalteam.salmal.member.entity.Introduction;
 import com.salmalteam.salmal.member.entity.Member;
 import com.salmalteam.salmal.member.entity.MemberBlockedRepository;
+import com.salmalteam.salmal.member.entity.MemberImage;
 import com.salmalteam.salmal.member.entity.MemberRepository;
+import com.salmalteam.salmal.member.entity.NickName;
+import com.salmalteam.salmal.member.entity.Setting;
+import com.salmalteam.salmal.member.entity.Status;
 import com.salmalteam.salmal.member.exception.MemberException;
 import com.salmalteam.salmal.member.exception.MemberExceptionType;
 import com.salmalteam.salmal.member.exception.block.MemberBlockedException;
@@ -418,6 +424,38 @@ class MemberServiceTest {
 			//then
 			assertThat(actual).isTrue();
 			then(memberRepository).should(times(1)).findById(anyLong());
+
+		}
+
+		@Test
+		@DisplayName("탈퇴된 회원의 providerId 와 nickname 변경하고 새로운 회원을 저장한다.")
+		void rejoin() {
+		    //given
+			long memberId = 150L;
+			String providerId = "providerId";
+			String nickName = "testNickName";
+
+			Member removedMember = new Member(111111L, providerId, KAKAO, NickName.from(nickName), Introduction.from("test"),
+				Setting.of(true),
+				MemberImage.initMemberImage(), Status.REMOVED);
+
+			Member newMember = new Member(memberId, providerId, KAKAO, NickName.from("newNickName"), Introduction.from("test"),
+				Setting.of(true),
+				MemberImage.initMemberImage(), Status.ACTIVATED);
+
+			given(memberRepository.findByProviderId(anyString())).willReturn(Optional.of(removedMember));
+			given(memberRepository.save(any(Member.class))).willReturn(newMember);
+			given(memberRepository.existsByNickName(any(NickName.class))).willReturn(false);
+
+		    //when
+			long actual = memberService.rejoin("KAKAO", providerId, nickName, false);
+
+			//then
+			assertThat(actual).isEqualTo(150L);
+			then(memberRepository).should(times(1)).findByProviderId(anyString());
+			then(memberRepository).should(times(1)).existsByNickName(any(NickName.class));
+			then(memberRepository).should(times(1)).save(any(Member.class));
+
 
 		}
 	}
