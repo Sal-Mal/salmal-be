@@ -93,7 +93,6 @@ public class Member extends BaseEntity {
 	}
 
 	public void rejoin() {
-		nickName = NickName.rejoin();
 		providerId = "#####################";
 	}
 }

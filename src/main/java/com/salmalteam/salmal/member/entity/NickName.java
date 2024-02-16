@@ -30,10 +30,6 @@ public class NickName {
         return new NickName(value);
     }
 
-    public static NickName rejoin() {
-        return new NickName("####################");
-    }
-
 	private void validateNickName(final String value) {
         if (isNotValidLength(value)) {
             throw new MemberException(MemberExceptionType.INVALID_NICKNAME_LENGTH);
