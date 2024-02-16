@@ -18,11 +18,15 @@ import com.salmalteam.salmal.auth.entity.TokenRepository;
 import com.salmalteam.salmal.auth.exception.AuthException;
 import com.salmalteam.salmal.auth.exception.AuthExceptionType;
 import com.salmalteam.salmal.member.application.MemberService;
+import com.salmalteam.salmal.member.entity.MemberRepository;
+import com.salmalteam.salmal.member.entity.Status;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
 	private final TokenProvider jwtProvider;
@@ -30,13 +34,7 @@ public class AuthService {
 	private final TokenRepository tokenRepository;
 	private final MemberService memberService;
 
-	public AuthService(TokenProvider jwtProvider, TokenProvider refreshTokenProvider, TokenRepository tokenRepository,
-		MemberService memberService) {
-		this.jwtProvider = jwtProvider;
-		this.refreshTokenProvider = refreshTokenProvider;
-		this.tokenRepository = tokenRepository;
-		this.memberService = memberService;
-	}
+	private final MemberRepository memberRepository;
 
 	@Transactional
 	public LoginResponse login(final LoginRequest loginRequest) {
@@ -46,8 +44,18 @@ public class AuthService {
 
 	@Transactional
 	public LoginResponse signUp(final String provider, final SignUpRequest signUpRequest) {
+		if (checkRejoin(signUpRequest.getProviderId())) {
+			final Long memberId = memberService.rejoin(provider,signUpRequest.getProviderId(),signUpRequest.getNickName(),signUpRequest.getMarketingInformationConsent());
+			return generateTokenById(memberId);
+		}
 		final Long memberId = memberService.save(provider, signUpRequest);
 		return generateTokenById(memberId);
+	}
+
+	private boolean checkRejoin(String providerId) {
+		return memberRepository.findByProviderId(providerId)
+			.map(m-> m.getStatus().equals(Status.REMOVED))
+			.orElse(false);
 	}
 
 	//TODO 리프래시 토큰 저장타입 개선

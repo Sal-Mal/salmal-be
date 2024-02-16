@@ -267,4 +267,17 @@ public class MemberService {
 			.map(member -> !member.isRemoved())
 			.orElse(false);
 	}
+
+	@Transactional
+	public Long rejoin(String provider, String providerId, String nickName, Boolean marketingInformationConsent) {
+
+		Member removedMember = memberRepository.findByProviderId(providerId)
+			.orElseThrow(() -> new MemberException(MemberExceptionType.NOT_FOUND));
+		removedMember.rejoin();
+
+		validateNickNameExists(nickName);
+		return memberRepository.save(
+			Member.createActivatedMember(providerId, nickName, provider, marketingInformationConsent))
+			.getId();
+	}
 }

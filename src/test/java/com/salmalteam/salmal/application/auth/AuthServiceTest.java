@@ -1,5 +1,6 @@
 package com.salmalteam.salmal.application.auth;
 
+import static com.salmalteam.salmal.member.entity.Provider.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -7,8 +8,10 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +30,13 @@ import com.salmalteam.salmal.auth.exception.AuthException;
 import com.salmalteam.salmal.auth.infrastructure.JwtProvider;
 import com.salmalteam.salmal.auth.infrastructure.RefreshTokenProvider;
 import com.salmalteam.salmal.member.application.MemberService;
+import com.salmalteam.salmal.member.entity.Introduction;
+import com.salmalteam.salmal.member.entity.Member;
+import com.salmalteam.salmal.member.entity.MemberImage;
+import com.salmalteam.salmal.member.entity.MemberRepository;
+import com.salmalteam.salmal.member.entity.NickName;
+import com.salmalteam.salmal.member.entity.Setting;
+import com.salmalteam.salmal.member.entity.Status;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -40,10 +50,13 @@ class AuthServiceTest {
 	TokenRepository tokenRepository;
 	@Mock
 	MemberService memberService;
+	@Mock
+	MemberRepository memberRepository;
 
 	@BeforeEach
 	void setUp() {
-		authService = new AuthService(jwtProvider, refreshTokenProvider, tokenRepository, memberService);
+		authService = new AuthService(jwtProvider, refreshTokenProvider, tokenRepository, memberService,
+			memberRepository);
 	}
 
 	@Nested
@@ -78,7 +91,6 @@ class AuthServiceTest {
 		class 회원_가입_테스트 {
 			@Test
 			void 접근_토큰과_재발급_토큰을_발급한다() {
-
 				// given
 				final Long memberId = 1L;
 				final String nickName = "닉네임";
@@ -95,6 +107,9 @@ class AuthServiceTest {
 				given(memberService.save(eq(providerId), any())).willReturn(memberId);
 				given(jwtProvider.provide(eq(payload))).willReturn(accessToken);
 				given(refreshTokenProvider.provide(eq(payload))).willReturn(refreshToken);
+				given(memberRepository.findByProviderId(anyString())).willReturn(
+					Optional.of(Member.createActivatedMember(providerId, nickName, "KAKAO",
+						true)));
 
 				// when
 				final LoginResponse loginResponse = authService.signUp(providerId, signUpRequest);
@@ -104,6 +119,50 @@ class AuthServiceTest {
 					() -> assertThat(loginResponse).isEqualTo(LoginResponse.of(accessToken, refreshToken)),
 					() -> verify(tokenRepository, times(1)).saveRefreshToken(any(RefreshToken.class))
 				);
+
+				then(memberRepository).should(times(1)).findByProviderId(anyString());
+				then(memberService).should(times(1)).save(anyString(), any(SignUpRequest.class));
+				then(jwtProvider).should(times(1)).provide(eq(payload));
+				then(refreshTokenProvider).should(times(1)).provide(eq(payload));
+			}
+
+			@Test
+			@DisplayName("탈퇴된 회원 재가입 테스트")
+			void rejoin() {
+				// given
+				final Long memberId = 100L;
+				final String nickName = "닉네임";
+				final Boolean marketingInformationConsent = false;
+				final String accessToken = "accessToken";
+				final String refreshToken = "refreshToken";
+				final String providerId = "providerId";
+				final Map<String, Object> payload = new HashMap<>();
+				payload.put("id", memberId);
+				payload.put("role", Role.MEMBER);
+				final SignUpRequest signUpRequest = new SignUpRequest(providerId, nickName,
+					marketingInformationConsent);
+				Member member = new Member(memberId, providerId, KAKAO, NickName.from(nickName), Introduction.from("test"),
+					Setting.of(true),
+					MemberImage.initMemberImage(), Status.REMOVED);
+				given(jwtProvider.provide(eq(payload))).willReturn(accessToken);
+				given(refreshTokenProvider.provide(eq(payload))).willReturn(refreshToken);
+				given(memberRepository.findByProviderId(anyString())).willReturn(Optional.of(member));
+				given(memberService.rejoin(anyString(), anyString(), anyString(), anyBoolean())).willReturn(memberId);
+				// when
+				final LoginResponse loginResponse = authService.signUp(providerId, signUpRequest);
+
+				// then
+				assertAll(
+					() -> assertThat(loginResponse).isEqualTo(LoginResponse.of(accessToken, refreshToken)),
+					() -> verify(tokenRepository, times(1)).saveRefreshToken(any(RefreshToken.class))
+				);
+
+				then(memberRepository).should(times(1)).findByProviderId(anyString());
+				then(memberService).should(times(0)).save(anyString(), any(SignUpRequest.class));
+				then(memberService).should(times(1)).rejoin(anyString(), anyString(), anyString(), anyBoolean());
+				then(jwtProvider).should(times(1)).provide(eq(payload));
+				then(refreshTokenProvider).should(times(1)).provide(eq(payload));
+
 			}
 
 			@Nested
