@@ -89,4 +89,9 @@ public class Member extends BaseEntity {
 	public void remove() {
 		status = Status.REMOVED;
 	}
+
+	public void rejoin() {
+		nickName = NickName.rejoin();
+		providerId = "#####################";
+	}
 }

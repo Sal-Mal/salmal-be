@@ -1,13 +1,14 @@
 package com.salmalteam.salmal.member.entity;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
 import com.salmalteam.salmal.member.exception.MemberException;
 import com.salmalteam.salmal.member.exception.MemberExceptionType;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 
 @Getter
 @Embeddable
@@ -29,7 +30,11 @@ public class NickName {
         return new NickName(value);
     }
 
-    private void validateNickName(final String value) {
+    public static NickName rejoin() {
+        return new NickName("####################");
+    }
+
+	private void validateNickName(final String value) {
         if (isNotValidLength(value)) {
             throw new MemberException(MemberExceptionType.INVALID_NICKNAME_LENGTH);
         }
