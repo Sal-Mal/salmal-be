@@ -27,6 +27,7 @@ import com.salmalteam.salmal.auth.exception.AuthException;
 import com.salmalteam.salmal.auth.infrastructure.JwtProvider;
 import com.salmalteam.salmal.auth.infrastructure.RefreshTokenProvider;
 import com.salmalteam.salmal.member.application.MemberService;
+import com.salmalteam.salmal.member.entity.MemberRepository;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -40,10 +41,13 @@ class AuthServiceTest {
 	TokenRepository tokenRepository;
 	@Mock
 	MemberService memberService;
+	@Mock
+	MemberRepository memberRepository;
 
 	@BeforeEach
 	void setUp() {
-		authService = new AuthService(jwtProvider, refreshTokenProvider, tokenRepository, memberService);
+		authService = new AuthService(jwtProvider, refreshTokenProvider, tokenRepository, memberService,
+			memberRepository);
 	}
 
 	@Nested
