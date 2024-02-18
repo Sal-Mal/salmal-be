@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberImage {
-    private static final String MEMBER_IMAGE_URL = "https://salmal-image.s3.ap-northeast-2.amazonaws.com/member/default.JPG";
+    private static final String MEMBER_IMAGE_URL = "https://salmal-image.s3.ap-northeast-2.amazonaws.com/default.png";
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
 
