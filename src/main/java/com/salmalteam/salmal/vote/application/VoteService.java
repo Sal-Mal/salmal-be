@@ -3,6 +3,7 @@ package com.salmalteam.salmal.vote.application;
 import static java.util.stream.Collectors.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -97,7 +98,7 @@ public class VoteService {
 	}
 
 	private void validateDeleteAuthority(final Long writerId, final Long requesterId) {
-		if (writerId == null || writerId != requesterId) {
+		if (writerId == null || !Objects.equals(writerId,requesterId)) {
 			throw new VoteException(VoteExceptionType.FORBIDDEN_DELETE);
 		}
 	}

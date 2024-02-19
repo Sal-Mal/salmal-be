@@ -3,39 +3,37 @@ package com.salmalteam.salmal.comment.application;
 import static java.util.stream.Collectors.*;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.salmalteam.salmal.comment.dto.request.CommentPageRequest;
+import com.salmalteam.salmal.comment.dto.request.CommentReplyCreateRequest;
+import com.salmalteam.salmal.comment.dto.request.ReplyPageRequest;
+import com.salmalteam.salmal.comment.dto.response.CommentPageResponse;
+import com.salmalteam.salmal.comment.dto.response.CommentResponse;
 import com.salmalteam.salmal.comment.dto.response.ReplayCommentDto;
+import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
+import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
+import com.salmalteam.salmal.comment.entity.Comment;
+import com.salmalteam.salmal.comment.entity.CommentRepository;
+import com.salmalteam.salmal.comment.entity.like.CommentLike;
+import com.salmalteam.salmal.comment.entity.like.CommentLikeRepository;
+import com.salmalteam.salmal.comment.entity.report.CommentReport;
+import com.salmalteam.salmal.comment.entity.report.CommentReportRepository;
+import com.salmalteam.salmal.comment.exception.CommentException;
+import com.salmalteam.salmal.comment.exception.CommentExceptionType;
 import com.salmalteam.salmal.comment.exception.like.CommentLikeException;
 import com.salmalteam.salmal.comment.exception.like.CommentLikeExceptionType;
 import com.salmalteam.salmal.comment.exception.report.CommentReportException;
 import com.salmalteam.salmal.comment.exception.report.CommentReportExceptionType;
 import com.salmalteam.salmal.member.application.MemberService;
-import com.salmalteam.salmal.comment.entity.Comment;
-import com.salmalteam.salmal.comment.entity.CommentRepository;
-import com.salmalteam.salmal.comment.entity.CommentType;
-import com.salmalteam.salmal.comment.entity.like.CommentLike;
-import com.salmalteam.salmal.comment.entity.like.CommentLikeRepository;
-import com.salmalteam.salmal.comment.entity.report.CommentReport;
-import com.salmalteam.salmal.comment.entity.report.CommentReportRepository;
 import com.salmalteam.salmal.member.entity.Member;
+import com.salmalteam.salmal.vote.dto.request.VoteCommentUpdateRequest;
 import com.salmalteam.salmal.vote.entity.Vote;
 import com.salmalteam.salmal.vote.entity.VoteRepository;
-import com.salmalteam.salmal.comment.dto.request.CommentPageRequest;
-import com.salmalteam.salmal.comment.dto.request.CommentReplyCreateRequest;
-import com.salmalteam.salmal.comment.dto.request.ReplyPageRequest;
-import com.salmalteam.salmal.vote.dto.request.VoteCommentUpdateRequest;
-import com.salmalteam.salmal.comment.dto.response.CommentPageResponse;
-import com.salmalteam.salmal.comment.dto.response.CommentResponse;
-import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
-import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
-import com.salmalteam.salmal.comment.exception.CommentException;
-import com.salmalteam.salmal.comment.exception.CommentExceptionType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -71,7 +69,7 @@ public class CommentService {
 	}
 
 	private void validateDeleteAuthority(final Long commenterId, final Long requesterId) {
-		if (commenterId != requesterId) {
+		if (!Objects.equals(commenterId, requesterId)) {
 			throw new CommentException(CommentExceptionType.FORBIDDEN_DELETE);
 		}
 	}
@@ -142,7 +140,7 @@ public class CommentService {
 	}
 
 	private void validateAuthority(final Comment comment, final Member member) {
-		if (comment.getCommenter().getId() != member.getId()) {
+		if (!Objects.equals(comment.getCommenter().getId(), member.getId())) {
 			throw new CommentException(CommentExceptionType.FORBIDDEN_UPDATE);
 		}
 	}
@@ -218,44 +216,4 @@ public class CommentService {
 		return commentRepository.findById(commentId)
 			.orElseThrow(() -> new CommentException(CommentExceptionType.NOT_FOUND));
 	}
-
-	/**
-	 * 회원 삭제 이벤트 : 댓글의 대댓글 개수 감소
-	 */
-	@Transactional
-	public void decreaseReplyCountByMemberDelete(final Long memberId) {
-
-		// 회원이 작성한 대댓글 목록 조회
-		final List<Comment> replies = commentRepository.findALlByCommenter_idAndCommentType(memberId,
-			CommentType.REPLY);
-
-		// parent_id 기준으로 Comment 묶기
-		Map<Comment, List<Comment>> commentListMap = replies.stream()
-			.collect(Collectors.groupingBy(Comment::getParentComment));
-
-		// 대댓글 개수 감소
-		commentListMap.forEach((comment, replyList) -> {
-			comment.decreaseReplyCount(replyList.size());
-		});
-
-	}
-
-	//    /**
-	//     * 회원 삭제 이벤트 : 댓글의 좋아요 개수 감소
-	//     */
-	//    @Transactional
-	//    public void decreaseLikeCountByMemberDelete(final Long memberId){
-	//        // 회원이 작성한 좋아요 목록 조회
-	//        final List<CommentLike> commentLikes = commentLikeRepository.findAllByLiker_Id(memberId);
-	//
-	//        // vote 기준으로 좋아요 묶기
-	//        Map<Comment, List<CommentLike>> commentListMap = commentLikes.stream()
-	//                .collect(Collectors.groupingBy(CommentLike::getComment));
-	//
-	//        // 좋아요 개수 감소
-	//        commentListMap.forEach((comment, commentLikeList) -> {
-	//            comment.decreaseLikeCount(commentLikeList.size());
-	//        });
-	//    }
-
 }
