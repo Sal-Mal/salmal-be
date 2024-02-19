@@ -81,11 +81,14 @@ public class CommentService {
 		final Comment comment = getCommentById(commentId); //대댓글을 작성한 댓글(대댓글 주인)
 		final Comment reply = Comment.ofReply(commentReplyCreateRequest.getContent(), comment, replyer); //대댓글
 		final Member commenterOwner = comment.getCommenter(); //댓글 주인
+		Vote vote = comment.getVote();
+		Long voteId = vote.getId();
+		String imageUrl = vote.getVoteImage().getImageUrl();
 		commentRepository.save(reply);
 		commentRepository.increaseReplyCount(commentId);
 
-		return ReplayCommentDto.createNotificationType(replyer, commenterOwner, comment, reply, comment.getVote());
-    }
+		return ReplayCommentDto.createNotificationType(replyer, commenterOwner, comment, reply, imageUrl, voteId);
+	}
 
 	@Transactional(readOnly = true)
 	public ReplyPageResponse searchReplies(final Long memberId, final Long commentId,
