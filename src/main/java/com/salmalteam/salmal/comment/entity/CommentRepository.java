@@ -9,8 +9,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface CommentRepository extends JpaRepository<Comment, Long>, CommentRepositoryCustom {
 
-	@Query("select c from Comment c join fetch c.commenter join fetch c.vote where c.id =:id")
-	Optional<Comment> findById(@Param("id") Long id);
+	@Query("select c from Comment c join fetch c.commenter where c.id =:id")
+	Optional<Comment> findByIdFetchJoinCommenter(@Param("id") Long id);
 
 	boolean existsById(Long id);
 
