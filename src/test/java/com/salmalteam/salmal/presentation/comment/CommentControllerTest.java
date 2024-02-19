@@ -158,7 +158,7 @@ class CommentControllerTest extends PresentationTest {
                     )
             ));
 
-            verify(commentService, times(1)).likeComment(any(), any());
+            verify(commentLikeService, times(1)).likeComment(any(), any());
         }
     }
 
@@ -189,7 +189,7 @@ class CommentControllerTest extends PresentationTest {
                     )
             ));
 
-            verify(commentService, times(1)).unLikeComment(any(), any());
+            verify(commentLikeService, times(1)).unLikeComment(any(), any());
         }
 
     }

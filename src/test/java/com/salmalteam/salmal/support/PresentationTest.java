@@ -30,6 +30,7 @@ import com.salmalteam.salmal.auth.entity.Role;
 import com.salmalteam.salmal.auth.entity.TokenRepository;
 import com.salmalteam.salmal.auth.infrastructure.JwtProvider;
 import com.salmalteam.salmal.auth.infrastructure.RefreshTokenProvider;
+import com.salmalteam.salmal.comment.application.CommentLikeService;
 import com.salmalteam.salmal.comment.application.CommentService;
 import com.salmalteam.salmal.config.RestDocsConfig;
 import com.salmalteam.salmal.fcm.infra.FcmClient;
@@ -91,6 +92,9 @@ public class PresentationTest {
 	protected MemberNotificationService memberNotificationService;
 	@MockBean
 	protected FcmClient fcmClient;
+
+	@MockBean
+	protected CommentLikeService commentLikeService;
 
 	@BeforeEach
 	void setUp(RestDocumentationContextProvider restDocumentation, WebApplicationContext context) {

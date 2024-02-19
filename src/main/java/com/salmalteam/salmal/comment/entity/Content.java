@@ -18,7 +18,7 @@ public class Content {
     private static final int MAX_LENGTH = 100;
     private static final int MIN_LENGTH = 1;
 
-    @Column
+    @Column(name = "content")
     private String value;
 
     private Content(final String value){

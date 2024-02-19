@@ -2,7 +2,6 @@ package com.salmalteam.salmal.comment.dto.response;
 
 import com.salmalteam.salmal.comment.entity.Comment;
 import com.salmalteam.salmal.member.entity.Member;
-import com.salmalteam.salmal.vote.entity.Vote;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,8 +19,7 @@ public class ReplayCommentDto {
 	private final Long voteId;
 
 	public static ReplayCommentDto createNotificationType(Member replyer, Member commenterOwner, Comment comment,
-		Comment reply,
-		Vote vote) {
+		Comment reply, String imageUrl, Long voteId) {
 		return new ReplayCommentDto(
 			commenterOwner.getId(), //알림 타켓 ID
 			replyer.getId(), //대댓글 작성자
@@ -29,8 +27,8 @@ public class ReplayCommentDto {
 			replyer.getNickName().getValue(), //대댓글 작성자 ID
 			reply.getContent().getValue(),  //대댓글 내용
 			replyer.getMemberImage().getImageUrl(), //대댓글 작성자 이미지
-			vote.getVoteImage().getImageUrl(), //대댓글 작성한 투표의 이미지
-			vote.getId()
+			imageUrl, //대댓글 작성한 투표의 이미지
+			voteId
 		);
 	}
 
