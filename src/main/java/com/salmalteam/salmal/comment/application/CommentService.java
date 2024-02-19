@@ -19,14 +19,10 @@ import com.salmalteam.salmal.comment.dto.response.ReplyPageResponse;
 import com.salmalteam.salmal.comment.dto.response.ReplyResponse;
 import com.salmalteam.salmal.comment.entity.Comment;
 import com.salmalteam.salmal.comment.entity.CommentRepository;
-import com.salmalteam.salmal.comment.entity.like.CommentLike;
-import com.salmalteam.salmal.comment.entity.like.CommentLikeRepository;
 import com.salmalteam.salmal.comment.entity.report.CommentReport;
 import com.salmalteam.salmal.comment.entity.report.CommentReportRepository;
 import com.salmalteam.salmal.comment.exception.CommentException;
 import com.salmalteam.salmal.comment.exception.CommentExceptionType;
-import com.salmalteam.salmal.comment.exception.like.CommentLikeException;
-import com.salmalteam.salmal.comment.exception.like.CommentLikeExceptionType;
 import com.salmalteam.salmal.comment.exception.report.CommentReportException;
 import com.salmalteam.salmal.comment.exception.report.CommentReportExceptionType;
 import com.salmalteam.salmal.member.application.MemberService;
@@ -44,7 +40,6 @@ public class CommentService {
 	private final MemberService memberService;
 	private final CommentRepository commentRepository;
 	private final CommentReportRepository commentReportRepository;
-	private final CommentLikeRepository commentLikeRepository;
 	private final VoteRepository voteRepository;
 
 	@Transactional
@@ -157,44 +152,6 @@ public class CommentService {
 	@Transactional(readOnly = true)
 	public List<CommentResponse> searchAllList(final Long voteId, final Long memberId) {
 		return commentRepository.searchAllList(voteId, memberId);
-	}
-
-	@Transactional
-	public void likeComment(final Long memberId, final Long commentId) {
-
-		final Member member = memberService.findMemberById(memberId);
-		final Comment comment = getCommentById(commentId);
-
-		validateCommentAlreadyLiked(comment, member);
-
-		final CommentLike commentLike = CommentLike.of(comment, member);
-
-		commentLikeRepository.save(commentLike);
-		commentRepository.increaseLikeCount(commentId);
-	}
-
-	private void validateCommentAlreadyLiked(final Comment comment, final Member member) {
-		if (commentLikeRepository.existsByCommentAndLiker(comment, member)) {
-			throw new CommentLikeException(CommentLikeExceptionType.DUPLICATED_LIKE);
-		}
-	}
-
-	@Transactional
-	public void unLikeComment(final Long memberId, final Long commentId) {
-
-		final Member member = memberService.findMemberById(memberId);
-		final Comment comment = getCommentById(commentId);
-
-		validateCommentNotLiked(comment, member);
-
-		commentLikeRepository.deleteByCommentAndLiker(comment, member);
-		commentRepository.decreaseLikeCount(commentId);
-	}
-
-	private void validateCommentNotLiked(final Comment comment, final Member member) {
-		if (!commentLikeRepository.existsByCommentAndLiker(comment, member)) {
-			throw new CommentLikeException(CommentLikeExceptionType.NOT_FOUND);
-		}
 	}
 
 	@Transactional
