@@ -56,10 +56,10 @@ public class CommentService {
 		switch (comment.getCommentType()) {
 			case COMMENT:
 				commentRepository.deleteAllRepliesByParentCommentId(commentId);
-				voteRepository.decreaseCommentCount(comment.getVote().getId());
 			case REPLY:
 				commentRepository.decreaseReplyCount(commentId);
 		}
+		voteRepository.decreaseCommentCount(comment.getVote().getId());
 		commentRepository.delete(comment);
 	}
 
