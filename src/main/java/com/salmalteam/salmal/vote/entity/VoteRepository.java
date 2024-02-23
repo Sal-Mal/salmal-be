@@ -58,8 +58,4 @@ public interface VoteRepository extends Repository<Vote, Long>, VoteRepositoryCu
             "v.evaluationCount = v.evaluationCount - 1 " +
             "where v.id = :id")
     void updateVoteEvaluationsStatisticsForEvaluationDisLikeDelete(Long id);
-
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query(value = "update Vote v set v.commentCount = v.commentCount - :count where v.id = :id")
-    void decreaseCommentCount(Long id,Long count);
 }

@@ -53,14 +53,17 @@ public class CommentService {
 		final Comment comment = getCommentById(commentId);
 		validateDeleteAuthority(comment.getCommenter().getId(), memberId);
 		if (comment.isComment()) {
-			Long deleteComment = commentRepository.countByParentComment(comment) + 1;
+			long deleteComment = commentRepository.countByParentComment(comment) + 1;
+			Vote vote = comment.getVote();
+			vote.decreaseCommentCount(Math.toIntExact(deleteComment));
 			commentRepository.deleteAllRepliesByParentCommentId(commentId);
-			voteRepository.decreaseCommentCount(comment.getVote().getId(), deleteComment);
 			commentRepository.delete(comment);
 			return;
 		}
+
+		Comment parentComment = comment.getParentComment();
 		commentRepository.decreaseReplyCount(commentId);
-		voteRepository.decreaseCommentCount(comment.getVote().getId());
+		voteRepository.decreaseCommentCount(parentComment.getVote().getId());
 		commentRepository.delete(comment);
 	}
 
