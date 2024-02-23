@@ -33,4 +33,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
 	@Modifying(clearAutomatically = true, flushAutomatically = true)
 	@Query(value = "update Comment c set c.replyCount = c.replyCount + 1 where c.id = :id")
 	void increaseReplyCount(Long id);
+
+	Long countByParentComment(Comment comment);
 }
