@@ -79,9 +79,9 @@ public class CommentService {
 		Vote vote = comment.getVote();
 		Long voteId = vote.getId();
 		String imageUrl = vote.getVoteImage().getImageUrl();
+		voteRepository.increaseCommentCount(vote.getId());
 		commentRepository.save(reply);
 		commentRepository.increaseReplyCount(commentId);
-
 		return ReplayCommentDto.createNotificationType(replyer, commenterOwner, comment, reply, imageUrl, voteId);
 	}
 
