@@ -1,12 +1,12 @@
 package com.salmalteam.salmal.vote.entity;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface VoteRepository extends Repository<Vote, Long>, VoteRepositoryCustom {
     Vote save(Vote vote);
@@ -58,4 +58,8 @@ public interface VoteRepository extends Repository<Vote, Long>, VoteRepositoryCu
             "v.evaluationCount = v.evaluationCount - 1 " +
             "where v.id = :id")
     void updateVoteEvaluationsStatisticsForEvaluationDisLikeDelete(Long id);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(value = "update Vote v set v.commentCount = v.commentCount - :count where v.id = :id")
+    void decreaseCommentCount(Long id,Long count);
 }
