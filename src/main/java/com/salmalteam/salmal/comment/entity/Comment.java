@@ -106,4 +106,8 @@ public class Comment extends BaseEntity {
     public void updateContent(final String content){
         this.content = Content.of(content);
     }
+
+    public boolean isComment() {
+        return commentType.isComment();
+    }
 }
