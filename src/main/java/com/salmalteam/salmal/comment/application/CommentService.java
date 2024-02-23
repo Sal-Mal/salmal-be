@@ -52,13 +52,14 @@ public class CommentService {
 	public void deleteComment(final Long memberId, final Long commentId) {
 		final Comment comment = getCommentById(commentId);
 		validateDeleteAuthority(comment.getCommenter().getId(), memberId);
-
-		switch (comment.getCommentType()) {
-			case COMMENT:
-				commentRepository.deleteAllRepliesByParentCommentId(commentId);
-			case REPLY:
-				commentRepository.decreaseReplyCount(commentId);
+		if (comment.isComment()) {
+			Long deleteComment = commentRepository.countByParentComment(comment) + 1;
+			commentRepository.deleteAllRepliesByParentCommentId(commentId);
+			voteRepository.decreaseCommentCount(comment.getVote().getId(), deleteComment);
+			commentRepository.delete(comment);
+			return;
 		}
+		commentRepository.decreaseReplyCount(commentId);
 		voteRepository.decreaseCommentCount(comment.getVote().getId());
 		commentRepository.delete(comment);
 	}
