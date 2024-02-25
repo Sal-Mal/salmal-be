@@ -62,22 +62,20 @@ public class CommentService {
 			long deleteComment = commentRepository.countByParentComment(comment) + 1;
 			Vote vote = voteRepository.findById(comment.getVote().getId())
 				.orElseThrow(() -> new VoteException(VoteExceptionType.NOT_FOUND));
-
+      
 			vote.decreaseCommentCount(Math.toIntExact(deleteComment));
-
 			commentRepository.deleteAllRepliesByParentCommentId(commentId);
 			commentRepository.delete(comment);
-
 			return;
 		}
 
 		Comment parentComment = commentRepository.findByIdFetchJoinVote(comment.getParentComment().getId())
 			.orElseThrow(() -> new CommentException(CommentExceptionType.NOT_FOUND));
-
+    
 		parentComment.decreaseReplyCount(1);
 		Vote vote = parentComment.getVote();
 		vote.decreaseCommentCount(1);
-
+    
 		commentRepository.delete(comment);
 	}
 
