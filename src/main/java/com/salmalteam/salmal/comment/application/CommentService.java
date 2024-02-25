@@ -30,6 +30,8 @@ import com.salmalteam.salmal.member.entity.Member;
 import com.salmalteam.salmal.vote.dto.request.VoteCommentUpdateRequest;
 import com.salmalteam.salmal.vote.entity.Vote;
 import com.salmalteam.salmal.vote.entity.VoteRepository;
+import com.salmalteam.salmal.vote.exception.VoteException;
+import com.salmalteam.salmal.vote.exception.VoteExceptionType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,20 +52,30 @@ public class CommentService {
 
 	@Transactional
 	public void deleteComment(final Long memberId, final Long commentId) {
-		final Comment comment = getCommentById(commentId);
+
+		final Comment comment = commentRepository.findByIdFetchJoinCommenter(commentId)
+			.orElseThrow(() -> new CommentException(CommentExceptionType.NOT_FOUND));
+
 		validateDeleteAuthority(comment.getCommenter().getId(), memberId);
+
 		if (comment.isComment()) {
 			long deleteComment = commentRepository.countByParentComment(comment) + 1;
-			Vote vote = comment.getVote();
+			Vote vote = voteRepository.findById(comment.getVote().getId())
+				.orElseThrow(() -> new VoteException(VoteExceptionType.NOT_FOUND));
+      
 			vote.decreaseCommentCount(Math.toIntExact(deleteComment));
 			commentRepository.deleteAllRepliesByParentCommentId(commentId);
 			commentRepository.delete(comment);
 			return;
 		}
 
-		Comment parentComment = comment.getParentComment();
-		commentRepository.decreaseReplyCount(commentId);
-		voteRepository.decreaseCommentCount(parentComment.getVote().getId());
+		Comment parentComment = commentRepository.findByIdFetchJoinVote(comment.getParentComment().getId())
+			.orElseThrow(() -> new CommentException(CommentExceptionType.NOT_FOUND));
+    
+		parentComment.decreaseReplyCount(1);
+		Vote vote = parentComment.getVote();
+		vote.decreaseCommentCount(1);
+    
 		commentRepository.delete(comment);
 	}
 

@@ -35,4 +35,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
 	void increaseReplyCount(Long id);
 
 	Long countByParentComment(Comment comment);
+
+	@Query("select c from Comment c join fetch c.vote where c.id=:id")
+	Optional<Comment> findByIdFetchJoinVote(@Param("id") Long id);
 }
