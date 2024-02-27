@@ -79,7 +79,7 @@ public class MemberController {
 	@DeleteMapping("/{member-id}/blocks")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void cancelBlocking(@LoginMember final Long memberId, @PathVariable("member-id") final Long targetId) {
-		memberService.cancelBlocking(memberId, memberId);
+		memberService.cancelBlocking(memberId, targetId);
 	}
 
 	@GetMapping("/{member-id}/blocks")
