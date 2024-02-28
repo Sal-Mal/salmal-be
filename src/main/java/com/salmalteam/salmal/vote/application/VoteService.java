@@ -269,8 +269,10 @@ public class VoteService {
 	public VotePageResponse searchList(final Long memberId, final VotePageRequest votePageRequest,
 		final SearchTypeConstant searchTypeConstant) {
 		List<Long> blockedMembers = memberService.findBlockedMembers(memberId);
+		List<Long> reportVoteIds = voteReportRepository.findReportVoteIdByMemberId(memberId);
 		VotePageResponse votePageResponse = voteRepository.searchList(memberId, votePageRequest, searchTypeConstant);
 		votePageResponse.filteringBlockedMembers(blockedMembers);
+		votePageResponse.filteringReportVotes(reportVoteIds);
 		return votePageResponse;
 	}
 }
