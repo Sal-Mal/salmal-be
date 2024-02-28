@@ -17,6 +17,7 @@ public class VoteReportRepositoryCustomImpl implements VoteReportRepositoryCusto
 	@Override
 	public List<Long> findReportVoteIdByMemberId(Long memberId) {
 		return queryFactory.select(voteReport.vote.id)
+			.from(voteReport)
 			.where(voteReport.reporter.id.eq(memberId))
 			.fetch();
 	}
