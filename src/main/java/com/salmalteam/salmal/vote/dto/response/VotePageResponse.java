@@ -25,15 +25,27 @@ public class VotePageResponse {
 		return new VotePageResponse(hasNext, voteResponses);
 	}
 
+
 	public void filteringBlockedMembers(List<Long> ids) {
 		votes = votes.stream()
 			.filter(filterBlockedMemberPredicate(ids))
 			.collect(toList());
 	}
 
+	public void filteringReportVotes(List<Long> ids) {
+		votes = votes.stream()
+			.filter(filterReportVotePredicate(ids))
+			.collect(toList());
+	}
+
 	private Predicate<VoteResponse> filterBlockedMemberPredicate(List<Long> ids) {
 		return voteResponse -> ids.stream()
 			.noneMatch(id -> id.equals(voteResponse.getMemberId()));
+	}
+
+	private Predicate<VoteResponse> filterReportVotePredicate(List<Long> ids) {
+		return voteResponse -> ids.stream()
+			.noneMatch(id -> id.equals(voteResponse.getId()));
 	}
 
 }
