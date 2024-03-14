@@ -3,6 +3,7 @@ package com.salmalteam.salmal.presentation.http.vote;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +24,7 @@ public class VoteV2Controller {
 	@PostMapping("/{vote-id}/reports")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void reportVote(@LoginMember final Long memberId, @PathVariable(name = "vote-id") final Long voteId,
-		VoteReportRequest request) {
-		voteService.report(memberId, voteId,request.getReason());
+		@RequestBody VoteReportRequest request) {
+		voteService.report(memberId, voteId, request.getReason());
 	}
 }
