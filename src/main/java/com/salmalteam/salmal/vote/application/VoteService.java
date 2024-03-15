@@ -98,7 +98,7 @@ public class VoteService {
 	}
 
 	private void validateDeleteAuthority(final Long writerId, final Long requesterId) {
-		if (writerId == null || !Objects.equals(writerId,requesterId)) {
+		if (writerId == null || !Objects.equals(writerId, requesterId)) {
 			throw new VoteException(VoteExceptionType.FORBIDDEN_DELETE);
 		}
 	}
@@ -198,6 +198,18 @@ public class VoteService {
 
 		validateVoteReportDuplicated(vote, member);
 		final VoteReport voteReport = VoteReport.of(vote, member);
+
+		voteReportRepository.save(voteReport);
+	}
+
+	@Transactional
+	public void report(final Long memberId, final Long voteId, final String reason) {
+
+		final Member member = memberService.findMemberById(memberId);
+		final Vote vote = getVoteById(voteId);
+
+		validateVoteReportDuplicated(vote, member);
+		final VoteReport voteReport = VoteReport.createByReason(vote, member, reason);
 
 		voteReportRepository.save(voteReport);
 	}
