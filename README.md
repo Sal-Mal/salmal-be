@@ -13,12 +13,10 @@
 
 ## Back-End 팀 구성 👪
 
-|               BackEnd & DevOps               | 
-|:--------------------------------------------:|
-| ![](https://github.com/pia2011.png?size=200) |
-|   [김규성](https://github.com/pia2011)   | 
-
-
+|               BackEnd & DevOps               |               BackEnd & DevOps             | 
+|:--------------------------------------------:|:--------------------------------------------:|
+| ![](https://github.com/pia2011.png?size=200) | ![]((https://github.com/kimJH47.png?size=200)) |
+|   [김규성](https://github.com/pia2011)   |   [김재현]((https://github.com/kimJH47))   | 
 
 ## 기술 스택
 
