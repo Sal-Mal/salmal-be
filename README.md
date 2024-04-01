@@ -4,7 +4,7 @@
 
 ## 링크 모음📌  
 
-[![API Docs](http://img.shields.io/badge/-API%20Docs-important?style=flat&logo=dev.to&logoColor=white&link=http://3.38.192.126/docs/)](http://3.38.192.126/docs/)
+[![API Docs](http://img.shields.io/badge/-API%20Docs-important?style=flat&logo=dev.to&logoColor=white&link=https://api.sal-mal.com/docs)](https://api.sal-mal.com/docs/)
 [![WIKI](http://img.shields.io/badge/-GitHub%20WiKi-395FC1?style=flat&logo=GitHub&logoColor=white&link=https://github.com/Sal-Mal/salmal-be/wiki)](https://github.com/Sal-Mal/salmal-be/wiki)
 [![Notion](http://img.shields.io/badge/-Notion-81B441?style=flat&logo=Pinboard&logoColor=white&link=https://honorable-overcoat-a54.notion.site/0e119f2539aa482e8b6aa1cdeb77c57e?pvs=4)](https://honorable-overcoat-a54.notion.site/0e119f2539aa482e8b6aa1cdeb77c57e?pvs=4)
 
