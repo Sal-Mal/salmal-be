@@ -26,6 +26,7 @@ import com.salmalteam.salmal.vote.dto.request.VoteCreateRequest;
 import com.salmalteam.salmal.vote.dto.request.VoteEvaluateRequest;
 import com.salmalteam.salmal.vote.dto.request.VotePageRequest;
 import com.salmalteam.salmal.vote.dto.response.VotePageResponse;
+import com.salmalteam.salmal.vote.dto.response.VoteParticipantsResponse;
 import com.salmalteam.salmal.vote.dto.response.VoteResponse;
 import com.salmalteam.salmal.vote.entity.evaluation.VoteEvaluationType;
 
@@ -36,100 +37,108 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/votes")
 public class VoteController {
 
-    private final VoteService voteService;
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void registerVote(@LoginMember final Long memberId,
-                             @ModelAttribute @Valid final VoteCreateRequest voteCreateRequest){
-        voteService.register(memberId, voteCreateRequest);
-    }
+	private final VoteService voteService;
 
-    @PostMapping("/{vote-id}/evaluations")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void evaluateVote(@LoginMember final Long memberId,
-                             @PathVariable(name = "vote-id") final Long voteId,
-                             @RequestBody @Valid final VoteEvaluateRequest voteEvaluateRequest){
-        final VoteEvaluationType voteEvaluationType = VoteEvaluationType.from(voteEvaluateRequest.getVoteEvaluationType());
-        voteService.evaluate(memberId, voteId, voteEvaluationType);
-    }
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public void registerVote(@LoginMember final Long memberId,
+		@ModelAttribute @Valid final VoteCreateRequest voteCreateRequest) {
+		voteService.register(memberId, voteCreateRequest);
+	}
 
-    @DeleteMapping("/{vote-id}/evaluations")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cancelEvaluation(@LoginMember final Long memberId,
-                                 @PathVariable(name = "vote-id") final Long voteId){
-        voteService.cancelEvaluation(memberId, voteId);
-    }
+	@PostMapping("/{vote-id}/evaluations")
+	@ResponseStatus(HttpStatus.CREATED)
+	public void evaluateVote(@LoginMember final Long memberId,
+		@PathVariable(name = "vote-id") final Long voteId,
+		@RequestBody @Valid final VoteEvaluateRequest voteEvaluateRequest) {
+		final VoteEvaluationType voteEvaluationType = VoteEvaluationType.from(
+			voteEvaluateRequest.getVoteEvaluationType());
+		voteService.evaluate(memberId, voteId, voteEvaluationType);
+	}
 
-    @PostMapping("/{vote-id}/bookmarks")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void bookmarkVote(@LoginMember final Long memberId,
-                             @PathVariable(name = "vote-id") final Long voteId){
-        voteService.bookmark(memberId, voteId);
-    }
+	@DeleteMapping("/{vote-id}/evaluations")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void cancelEvaluation(@LoginMember final Long memberId,
+		@PathVariable(name = "vote-id") final Long voteId) {
+		voteService.cancelEvaluation(memberId, voteId);
+	}
 
-    @DeleteMapping("/{vote-id}/bookmarks")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cancelBookmark(@LoginMember final Long memberId,
-                               @PathVariable(name = "vote-id") final Long voteId){
-        voteService.cancelBookmark(memberId, voteId);
-    }
+	@PostMapping("/{vote-id}/bookmarks")
+	@ResponseStatus(HttpStatus.CREATED)
+	public void bookmarkVote(@LoginMember final Long memberId,
+		@PathVariable(name = "vote-id") final Long voteId) {
+		voteService.bookmark(memberId, voteId);
+	}
 
-    @PostMapping("/{vote-id}/reports")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void reportVote(@LoginMember final Long memberId,
-                           @PathVariable(name = "vote-id") final Long voteId){
-        voteService.report(memberId, voteId);
-    }
+	@DeleteMapping("/{vote-id}/bookmarks")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void cancelBookmark(@LoginMember final Long memberId,
+		@PathVariable(name = "vote-id") final Long voteId) {
+		voteService.cancelBookmark(memberId, voteId);
+	}
 
-    @PostMapping("/{vote-id}/comments")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void commentVote(@LoginMember final Long memberId,
-                            @PathVariable(name = "vote-id") final Long voteId,
-                            @RequestBody @Valid final VoteCommentCreateRequest voteCommentCreateRequest){
-        voteService.comment(memberId, voteId, voteCommentCreateRequest);
-    }
+	@PostMapping("/{vote-id}/reports")
+	@ResponseStatus(HttpStatus.CREATED)
+	public void reportVote(@LoginMember final Long memberId,
+		@PathVariable(name = "vote-id") final Long voteId) {
+		voteService.report(memberId, voteId);
+	}
 
-    @GetMapping("/{vote-id}/comments")
-    @ResponseStatus(HttpStatus.OK)
-    public CommentPageResponse searchComments(@LoginMember final Long memberId,
-                                              @PathVariable(name = "vote-id") final Long voteId,
-                                              @RequestParam(value = "cursor-id", required = false) final Long cursorId,
-                                              @RequestParam(value = "size", required = false) final Integer size){
-        final CommentPageRequest commentPageRequest = CommentPageRequest.of(cursorId, size);
-        return voteService.searchComments(voteId, memberId, commentPageRequest);
-    }
+	@PostMapping("/{vote-id}/comments")
+	@ResponseStatus(HttpStatus.CREATED)
+	public void commentVote(@LoginMember final Long memberId,
+		@PathVariable(name = "vote-id") final Long voteId,
+		@RequestBody @Valid final VoteCommentCreateRequest voteCommentCreateRequest) {
+		voteService.comment(memberId, voteId, voteCommentCreateRequest);
+	}
 
-    /**
-     * iOS 요청 사항 : 댓글 전체 목록 조회 API
-     */
-    @GetMapping("/{vote-id}/comments/all")
-    @ResponseStatus(HttpStatus.OK)
-    public List<CommentResponse> searchAllComments(@LoginMember final Long memberId,
-                                                   @PathVariable(name = "vote-id") final Long voteId){
-        return voteService.searchAllComments(voteId, memberId);
-    }
+	@GetMapping("/{vote-id}/comments")
+	@ResponseStatus(HttpStatus.OK)
+	public CommentPageResponse searchComments(@LoginMember final Long memberId,
+		@PathVariable(name = "vote-id") final Long voteId,
+		@RequestParam(value = "cursor-id", required = false) final Long cursorId,
+		@RequestParam(value = "size", required = false) final Integer size) {
+		final CommentPageRequest commentPageRequest = CommentPageRequest.of(cursorId, size);
+		return voteService.searchComments(voteId, memberId, commentPageRequest);
+	}
 
-    @GetMapping("/{vote-id}")
-    @ResponseStatus(HttpStatus.OK)
-    public VoteResponse searchVote(@LoginMember final Long memberId,
-                                   @PathVariable(name = "vote-id") final Long voteId){
-        return voteService.search(memberId, voteId);
-    }
+	/**
+	 * iOS 요청 사항 : 댓글 전체 목록 조회 API
+	 */
+	@GetMapping("/{vote-id}/comments/all")
+	@ResponseStatus(HttpStatus.OK)
+	public List<CommentResponse> searchAllComments(@LoginMember final Long memberId,
+		@PathVariable(name = "vote-id") final Long voteId) {
+		return voteService.searchAllComments(voteId, memberId);
+	}
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public VotePageResponse searchVotes(@LoginMember final Long memberId,
-                                        @ModelAttribute final VotePageRequest votePageRequest){
+	@GetMapping("/{vote-id}")
+	@ResponseStatus(HttpStatus.OK)
+	public VoteResponse searchVote(@LoginMember final Long memberId,
+		@PathVariable(name = "vote-id") final Long voteId) {
+		return voteService.search(memberId, voteId);
+	}
 
-        final SearchTypeConstant searchTypeConstant = SearchTypeConstant.from(votePageRequest.getSearchType());
-        return voteService.searchList(memberId, votePageRequest, searchTypeConstant);
-    }
+	@GetMapping
+	@ResponseStatus(HttpStatus.OK)
+	public VotePageResponse searchVotes(@LoginMember final Long memberId,
+		@ModelAttribute final VotePageRequest votePageRequest) {
 
-    @DeleteMapping("/{vote-id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteVote(@LoginMember final Long memberId,
-                           @PathVariable(name = "vote-id") final Long voteId){
-        voteService.delete(memberId, voteId);
-    }
+		final SearchTypeConstant searchTypeConstant = SearchTypeConstant.from(votePageRequest.getSearchType());
+		return voteService.searchList(memberId, votePageRequest, searchTypeConstant);
+	}
 
+	@DeleteMapping("/{vote-id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteVote(@LoginMember final Long memberId,
+		@PathVariable(name = "vote-id") final Long voteId) {
+		voteService.delete(memberId, voteId);
+	}
+
+	@GetMapping("/{vote-id}/participants")
+	@ResponseStatus(HttpStatus.OK)
+	public VoteParticipantsResponse findVoteParticipants(@LoginMember final Long memberId,
+		@PathVariable("vote-id") Long voteId) {
+		return voteService.findVoteParticipants(voteId);
+	}
 }
