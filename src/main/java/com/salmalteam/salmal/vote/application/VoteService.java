@@ -289,8 +289,9 @@ public class VoteService {
 		return votePageResponse;
 	}
 
+	@Transactional(readOnly = true)
 	public VoteParticipantsResponse findVoteParticipants(Long voteId) {
-
-		return null;
+		validateVoteExist(voteId);
+		return new VoteParticipantsResponse(voteEvaluationRepository.findVoteMemberVoteParticipants(voteId));
 	}
 }
