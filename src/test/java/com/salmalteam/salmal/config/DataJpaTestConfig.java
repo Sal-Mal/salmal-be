@@ -12,6 +12,7 @@ import com.salmalteam.salmal.comment.entity.CommentRepositoryCustomImpl;
 import com.salmalteam.salmal.member.entity.MemberBlockedRepositoryCustomImpl;
 import com.salmalteam.salmal.member.entity.MemberRepositoryCustomImpl;
 import com.salmalteam.salmal.vote.entity.VoteRepositoryCustomImpl;
+import com.salmalteam.salmal.vote.entity.evaluation.VoteEvaluationCustomImpl;
 
 @TestConfiguration
 @EnableJpaAuditing
@@ -42,5 +43,10 @@ public class DataJpaTestConfig {
 	@Bean
 	public VoteRepositoryCustomImpl voteRepositoryCustom() {
 		return new VoteRepositoryCustomImpl(jpaQueryFactory());
+	}
+
+	@Bean
+	public VoteEvaluationCustomImpl voteEvaluationCustom() {
+		return new VoteEvaluationCustomImpl(jpaQueryFactory());
 	}
 }
