@@ -598,6 +598,40 @@ include::{snippets}/투표_댓글_목록_전체_조회_테스트/투표_댓글_�
 
 include::{snippets}/투표_댓글_목록_전체_조회_테스트/투표_댓글_목록_전체_조회_성공/http-response.adoc[]
 
+=== 📌 투표 참여 회원 조회
+
+==== 기본정보
+
+- 메서드 : GET
+- URL : `/api/votes/{vote-id}/participants`
+
+==== 요청
+
+===== 헤더
+
+include::{snippets}/투표_참여_회원_테스트/find-vote-participants/request-headers.adoc[]
+
+===== 경로 변수
+
+include::{snippets}/투표_참여_회원_테스트/find-vote-participants/path-parameters.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/투표_참여_회원_테스트/find-vote-participants/response-fields-memberVoteParticipants.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/투표_참여_회원_테스트/find-vote-participants/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/투표_참여_회원_테스트/find-vote-participants/http-response.adoc[]
+
+
 == 댓글 API
 
 === 📌 댓글 수정
@@ -662,7 +696,7 @@ include::{snippets}/댓글_삭제_테스트/댓글_삭제_성공/http-response.a
 
 ---
 
-=== 대댓글 생성
+=== 📌 대댓글 생성
 
 ==== 기본정보
 
