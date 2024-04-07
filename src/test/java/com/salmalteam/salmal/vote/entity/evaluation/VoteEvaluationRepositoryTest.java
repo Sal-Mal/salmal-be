@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 
 import com.salmalteam.salmal.config.DataJpaTestConfig;
 import com.salmalteam.salmal.member.entity.Member;
@@ -42,11 +43,11 @@ class VoteEvaluationRepositoryTest {
 	}
 
 	@Test
+	@DirtiesContext
 	@DisplayName("투표에 참여한 회원정보들을 조회해야한다.")
 	void findVoteMemberVoteParticipants() {
 		//given
 		Vote vote = voteRepository.findById(1L).get();
-
 		Member member1 = memberRepository.findById(1L).get();
 		Member member2 = memberRepository.findById(2L).get();
 		Member member3 = memberRepository.findById(3L).get();
@@ -63,6 +64,5 @@ class VoteEvaluationRepositoryTest {
 		//then
 		assertThat(actual).extracting(MemberVoteParticipantsDto::getId)
 			.containsOnly(1L, 2L, 3L, 4L);
-
 	}
 }
