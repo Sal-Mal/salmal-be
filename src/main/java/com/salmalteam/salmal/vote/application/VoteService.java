@@ -26,6 +26,7 @@ import com.salmalteam.salmal.vote.dto.request.VoteCommentCreateRequest;
 import com.salmalteam.salmal.vote.dto.request.VoteCreateRequest;
 import com.salmalteam.salmal.vote.dto.request.VotePageRequest;
 import com.salmalteam.salmal.vote.dto.response.VotePageResponse;
+import com.salmalteam.salmal.vote.dto.response.VoteParticipantsResponse;
 import com.salmalteam.salmal.vote.dto.response.VoteResponse;
 import com.salmalteam.salmal.vote.entity.Vote;
 import com.salmalteam.salmal.vote.entity.VoteBookMark;
@@ -286,5 +287,11 @@ public class VoteService {
 		votePageResponse.filteringBlockedMembers(blockedMembers);
 		votePageResponse.filteringReportVotes(reportVoteIds);
 		return votePageResponse;
+	}
+
+	@Transactional(readOnly = true)
+	public VoteParticipantsResponse findVoteParticipants(Long voteId) {
+		validateVoteExist(voteId);
+		return new VoteParticipantsResponse(voteEvaluationRepository.findVoteMemberVoteParticipants(voteId));
 	}
 }
