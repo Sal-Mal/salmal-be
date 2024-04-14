@@ -22,7 +22,8 @@ public class VoteEvaluationCustomImpl implements VoteEvaluationCustom {
 				voteEvaluation.evaluator.id, voteEvaluation.evaluator.nickName.value.as("nickname"),
 				voteEvaluation.evaluator.memberImage.imageUrl.as("profileImageUrl")))
 			.from(voteEvaluation)
-			.leftJoin(voteEvaluation.evaluator, member).on(voteEvaluation.vote.id.eq(voteId))
+			.leftJoin(voteEvaluation.evaluator, member)
+			.where(voteEvaluation.vote.id.eq(voteId))
 			.fetch();
 	}
 }
