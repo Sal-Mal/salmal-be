@@ -925,6 +925,40 @@ include::{snippets}/마이페이지_조회/마이페이지_조회_성공/http-re
 include::{snippets}/마이페이지_조회/마이페이지_조회_성공/http-response.adoc[]
 
 ---
+=== 📌 마이페이지 조회V2
+
+==== 기본정보
+
+- 메서드 : GET
+- URL : `/api/v2/members/{search-member-id}`
+
+==== 요청
+
+===== 헤더
+
+include::{snippets}/member-v2-controller-test/find-my-page-v2/request-headers.adoc[]
+
+===== 경로 변수
+
+include::{snippets}member-v2-controller-test/find-my-page-v2/request-parameters.adoc[]
+
+==== 응답
+
+===== 본문
+
+include::{snippets}/member-v2-controller-test/find-my-page-v2/response-fields.adoc[]
+
+==== 예시
+
+===== 요청
+
+include::{snippets}/member-v2-controller-test/find-my-page-v2/http-request.adoc[]
+
+===== 응답
+
+include::{snippets}/member-v2-controller-test/find-my-page-v2/http-response.adoc[]
+
+---
 
 === 📌 마이페이지 수정
 

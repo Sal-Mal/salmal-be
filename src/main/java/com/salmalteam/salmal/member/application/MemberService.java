@@ -17,6 +17,7 @@ import com.salmalteam.salmal.member.dto.request.vote.MemberBookmarkVotePageReque
 import com.salmalteam.salmal.member.dto.request.vote.MemberEvaluationVotePageRequest;
 import com.salmalteam.salmal.member.dto.request.vote.MemberVotePageRequest;
 import com.salmalteam.salmal.member.dto.response.MyPageResponse;
+import com.salmalteam.salmal.member.dto.response.MyPageV2Response;
 import com.salmalteam.salmal.member.dto.response.block.MemberBlockedPageResponse;
 import com.salmalteam.salmal.member.dto.response.vote.MemberBookmarkVotePageResponse;
 import com.salmalteam.salmal.member.dto.response.vote.MemberEvaluationVotePageResponse;
@@ -279,5 +280,11 @@ public class MemberService {
 		return memberRepository.save(
 			Member.createActivatedMember(providerId, nickName, provider, marketingInformationConsent))
 			.getId();
+	}
+
+	public MyPageV2Response findMemberProfile(Long memberId, Long searchMemberId) {
+		validateExistsById(memberId);
+		validateExistsById(searchMemberId);
+		return memberRepository.searchMyPageV2(memberId, searchMemberId);
 	}
 }
