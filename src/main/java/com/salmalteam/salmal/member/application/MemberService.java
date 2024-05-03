@@ -282,6 +282,7 @@ public class MemberService {
 			.getId();
 	}
 
+	@Transactional(readOnly = true)
 	public MyPageV2Response findMemberProfile(Long memberId, Long searchMemberId) {
 		validateExistsById(memberId);
 		validateExistsById(searchMemberId);
