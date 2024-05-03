@@ -48,19 +48,20 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
 	@Override
 	public MyPageV2Response searchMyPageV2(final Long memberId, Long searchMemberId) {
 		return jpaQueryFactory.select(
-				new QMyPageV2Response(member.id,
+				new QMyPageV2Response(
+					member.id,
 					member.memberImage.imageUrl,
 					member.nickName.value,
 					member.introduction.value,
-					vote.likeCount.sum().as("likeCount"),
-					vote.dislikeCount.sum().as("dislikeCount"),
+					vote.likeCount.sum().coalesce(0).as("likeCount"),
+					vote.dislikeCount.sum().coalesce(0).as("dislikeCount"),
 					asBoolean(existsBlockMember(memberId, searchMemberId)),
-					vote.id.count().as("totalCount")))
+					vote.id.count().as("totalVoteCount")))
 			.from(member)
 			.leftJoin(vote)
-			.on(vote.member.id.eq(searchMemberId))
-			.groupBy(member.id)
+			.on(member.id.eq(vote.member.id))
 			.where(member.id.eq(searchMemberId))
+			.groupBy(member.id)
 			.fetchOne();
 	}
 
