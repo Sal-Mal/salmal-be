@@ -42,10 +42,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Clean up docker image') {
-
-        }
     }
     post {
         success {
