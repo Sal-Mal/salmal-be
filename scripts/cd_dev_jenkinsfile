@@ -1,0 +1,59 @@
+pipeline {
+    environment {
+        DOCKER_HUB_ID = credentials('DOCKER_HUB_ID')
+    }
+    agent any
+
+    tools {
+        gradle 'gradle'
+    }
+    stages {
+        stage('GitHub') {
+            steps {
+                checkout scmGit(
+                        branches: [[name: 'dev']],
+                        extensions: [submodule(parentCredentials: true, trackingSubmodules: true)],
+                        userRemoteConfigs: [[credentialsId: 'git-account', url: 'https://github.com/Sal-Mal/salmal-be']]
+                )
+            }
+        }
+        stage('Build Gradle') {
+            steps {
+                sh "./gradlew clean bootJar"
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    dir('docker/') {
+                        docker.build('tray1147/salmal')
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_HUB_ID) {
+                        docker.image('tray117/salmal').push('latest')
+                        docker.image('tray117/salmal').push('${BUILD_NUMBER}')
+                    }
+                }
+            }
+        }
+
+        stage('Clean up docker image') {
+
+        }
+    }
+    post {
+        success {
+            echo '성공적으로 살말서버 도커 이미지가 도커허브로 푸시되었습니다.'
+        }
+        failure {
+            echo '오류가 발생했습니다.'
+        }
+
+    }
+}
