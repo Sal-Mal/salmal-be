@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  dev-app:
+    container_name: dev-salmal-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "50000:8080"
+    depends_on:
+      - redis
+      - mysql
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+  mysql:
+    image: mysql:8.1
+    ports:
+      - "33336:3306"
+
