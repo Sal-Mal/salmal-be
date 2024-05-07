@@ -17,11 +17,13 @@ pipeline {
                 )
             }
         }
+
         stage('Build Gradle') {
             steps {
-                sh "./gradlew clean bootJar"
+                sh "SPRING_PROFILES_ACTIVE=dev ./gradlew clean bootJar"
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 script {
