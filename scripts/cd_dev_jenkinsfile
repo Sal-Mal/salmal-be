@@ -7,13 +7,24 @@ pipeline {
     tools {
         gradle 'gradle'
     }
+
+
     stages {
-        stage('GitHub') {
+
+        stage('Build and Run Redis Container') {
+            steps {
+                script {
+                    sh 'docker run --name test_redis_docker -p 6379:6379 --network jenkins_default -d --rm redis:alpine'
+                }
+            }
+        }
+
+        stage('GitHub pull') {
             steps {
                 checkout scmGit(
                         branches: [[name: 'dev']],
                         extensions: [submodule(parentCredentials: true, trackingSubmodules: true)],
-                        userRemoteConfigs: [[credentialsId: 'git-account', url: 'https://github.com/Sal-Mal/salmal-be']]
+                        userRemoteConfigs: [[credentialsId: 'git_account', url: 'https://github.com/Sal-Mal/salmal-be']]
                 )
             }
         }
@@ -24,32 +35,15 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    dir('docker/') {
-                        docker.build('tray1147/salmal')
-                    }
-                }
-            }
-        }
-
-        stage('Push Docker Image to Docker Hub') {
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_HUB_ID) {
-                        docker.image('tray117/salmal').push('latest')
-                        docker.image('tray117/salmal').push('${BUILD_NUMBER}')
-                    }
-                }
-            }
-        }
     }
+
     post {
         success {
+            sh "docker stop test_redis_docker"
             echo '성공적으로 살말서버 도커 이미지가 도커허브로 푸시되었습니다.'
         }
         failure {
+            sh "docker stop test_redis_docker"
             echo '오류가 발생했습니다.'
         }
 
