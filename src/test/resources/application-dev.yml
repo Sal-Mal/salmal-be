@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.h2.Driver
   redis:
     port: 6379
-    host: host.docker.internal
+    host: docker_test_redis
 
 ---
 # JPA
