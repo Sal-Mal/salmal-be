@@ -1,0 +1,57 @@
+# DB
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MYSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  redis:
+    port: 6379
+    host: test_redis_docker
+
+---
+# JPA
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+
+---
+#JWT
+
+jwt:
+  secret-key: secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret
+  access-token-expiry: 10800000 # 3시간(ms)
+  refresh-token-expiry: 1209600033 # 2주
+
+---
+# AWS
+
+cloud:
+  aws:
+    credentials:
+      access-key: access-key
+      secret-key: secret-key
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    s3:
+      bucket-name: s3-bucket-name
+      bucket-path: xxx.bucketpath.com/
+
+
+image:
+  path:
+    vote: vote
+    member: member
+
+google:
+  fcm:
+    path : /cucumber/key/salmal-f12a4-firebase-adminsdk-gg0hz-e3c86da03f.json
