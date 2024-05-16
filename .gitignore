@@ -46,3 +46,7 @@ out/
 /src/main/generated/**
 
 /src/test/resources/cucumber/key/**
+
+
+##DOCS HTML
+/src/main/resources/static/docs/index.html
