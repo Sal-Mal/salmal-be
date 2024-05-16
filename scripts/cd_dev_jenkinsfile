@@ -1,20 +1,22 @@
 pipeline {
     environment {
-        DOCKER_HUB_ID = credentials('DOCKER_HUB_ID')
+        DOCKER_HUB_CREDENTIALS = credentials('DOCKER_HUB_ID')
+        docker_image_name = 'tray1147/salmal:latest'
+
     }
+
     agent any
 
     tools {
         gradle 'gradle'
     }
 
-
     stages {
 
         stage('Build and Run Redis Container') {
             steps {
                 script {
-                    sh 'docker run --name test_redis_docker -p 6379:6379 --network jenkins_default -d --rm redis:alpine'
+                    sh 'docker run --name docker_test_redis -p 6379:6379 --network jenkins_default -d --rm redis:alpine'
                 }
             }
         }
@@ -35,17 +37,58 @@ pipeline {
             }
         }
 
+        stage('Build Dockerfile') {
+            steps{
+                script {
+                    docker.build(env.docker_image_name, '-f docker/Dockerfile .')
+                }
+            }
+
+        }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'DOCKER_HUB_ID') {
+                        docker.image(env.docker_image_name).push()
+                    }
+                }
+            }
+            post {
+                success {
+                    echo '성공적으로 살말서버 도커 이미지가 도커허브로 푸시되었습니다.'
+
+                }
+                failure {
+                    echo '이미지 푸시 실패'
+                }
+            }
+        }
+
+        stage('Build And run Dev') {
+            steps {
+                sshagent(credentials: ['salmal_dev']){
+                    sh '''
+                       ssh -o StrictHostKeyChecking=no ubuntu@146.56.114.84
+                       ssh ubuntu@146.56.114.84 "sudo docker compose up -d" 
+                      '''
+                }
+            }
+        }
+
+
     }
 
     post {
+        always {
+            sh "docker stop docker_test_redis"
+            sh "docker rmi $docker_image_name"
+        }
         success {
-            sh "docker stop test_redis_docker"
-            echo '성공적으로 살말서버 도커 이미지가 도커허브로 푸시되었습니다.'
+            echo '살말 Dev 서버 배포 파이프라인 성공'
         }
         failure {
-            sh "docker stop test_redis_docker"
-            echo '오류가 발생했습니다.'
+            echo '살말 Dev 서버 배포 파이프라인 실패'
         }
-
     }
 }
