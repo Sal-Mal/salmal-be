@@ -69,8 +69,8 @@ pipeline {
             steps {
                 sshagent(credentials: ['salmal_dev']){
                     sh '''
-                       ssh -o StrictHostKeyChecking=no ubuntu@146.56.114.84
-                       ssh ubuntu@146.56.114.84 "sudo docker compose up -d" 
+                       ssh -o StrictHostKeyChecking=no ubuntu@$SERVER_IP
+                       ssh ubuntu@$SERVER_IP "sudo docker compose up -d" 
                       '''
                 }
             }
